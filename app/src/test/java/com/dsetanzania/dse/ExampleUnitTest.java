@@ -1,4 +1,4 @@
-package com.example.dse;
+package com.dsetanzania.dse;
 
 import org.junit.Test;
 
