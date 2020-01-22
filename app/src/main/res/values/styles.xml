@@ -1,13 +1,65 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!-- android:textColorPrimary is the color of the title text in the Toolbar  -->
+        <item name="android:textColorPrimary">@color/colorAccent</item>
+    </style>
+
+    <!-- This configures the styles for the title within the Toolbar  -->
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <!--        <item name="android:fontFamily">@font/faster_one</item>-->
+    </style>
+
+    <style name="NavigationViewTheme">
+    </style>
+
+
+    <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+
+    <style name="MyTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+
+        <!-- Style attributes -->
+
+        <item name="hintTextColor">@color/colorAccent</item>
+        <item name="boxStrokeColor">@android:color/transparent</item>
+        <item name="boxBackgroundColor">@color/colorPrimaryDark</item>
+        <item name="hintTextAppearance">@style/HintText</item>
+        <item name="errorTextAppearance">@style/ErrorText</item>
+        <item name="counterTextAppearance">@style/HintText</item>
+
+
+        <!-- Theme attributes -->
+        <item name="android:textColorHint">@color/colorAccent</item>
+
+        <item name="colorControlNormal">#7C7C7C</item>
+        <item name="colorControlActivated">#ACACAC</item>
+
+    </style>
+
+
+    <style name="ErrorText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/holo_red_light</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="HintText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/holo_green_dark</item>
+        <item name="android:textSize">14sp</item>
+
     </style>
 
 </resources>

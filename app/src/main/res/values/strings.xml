@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DSE</string>
+    <string name="forgotpass">Forgot you password ?</string>
+    <string name="signuptxt">New here? <u>Sign up instead</u></string>
 </resources>
