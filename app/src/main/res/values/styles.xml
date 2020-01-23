@@ -9,6 +9,7 @@
         <item name="android:textColorSecondary">@color/colorAccent</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="colorControlActivated">@color/colorAccent</item>
+
     </style>
 
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -36,7 +37,7 @@
 
         <item name="hintTextColor">@color/colorAccent</item>
         <item name="boxStrokeColor">@android:color/transparent</item>
-        <item name="boxBackgroundColor">@color/colorPrimaryDark</item>
+        <item name="boxBackgroundColor">@color/colorPrimary</item>
         <item name="hintTextAppearance">@style/HintText</item>
         <item name="errorTextAppearance">@style/ErrorText</item>
         <item name="counterTextAppearance">@style/HintText</item>
