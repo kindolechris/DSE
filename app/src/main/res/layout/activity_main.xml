@@ -5,18 +5,33 @@
     android:layout_width="match_parent"
     android:background="@color/colorPrimary"
     android:fitsSystemWindows="true"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/signuptxt"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toEndOf="parent"
+        android:clickable="true"
+        android:focusableInTouchMode="false"
+        android:descendantFocusability="blocksDescendants"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline8"></TextView>
+        app:layout_constraintTop_toTopOf="@+id/guideline8">
+        <Button
+            android:id="@+id/registerNewAccountTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/colorAccent"
+            android:textAllCaps="false"
+            app:backgroundTint="@android:color/transparent"
+            style="?android:attr/borderlessButtonStyle"
+            app:rippleColor="@android:color/transparent"
+            android:text="@string/signuptxt">
+        </Button>
+    </FrameLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/materialButton"
@@ -105,9 +120,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_bold"
+        android:fontFamily="@font/montserrat"
         android:text="Welcome"
-        android:textSize="20dp"
+        android:textFontWeight="900"
+        android:textSize="25dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -151,7 +167,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.78" />
+        app:layout_constraintGuide_percent="0.76" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline8"
@@ -159,14 +175,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.9" />
+        app:layout_constraintGuide_percent="0.89" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.99"
+        app:layout_constraintGuide_percent="0.96"
         app:layout_constraintGuide_end="87dp" />
 
     <LinearLayout
