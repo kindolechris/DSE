@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "947913756717",
+    "firebase_url": "https://dse-tz.firebaseio.com",
+    "project_id": "dse-tz",
+    "storage_bucket": "dse-tz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947913756717:android:ef6f6ca0a886f95d0e68a4",
+        "android_client_info": {
+          "package_name": "com.dsetanzania.dse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "947913756717-jgr0nm1c9gb872ht3v4dif9kthbneurl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAQLrzUQQhpPVGGB82fWYE3hycO9aoTSE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "947913756717-jgr0nm1c9gb872ht3v4dif9kthbneurl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

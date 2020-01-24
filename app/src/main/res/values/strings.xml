@@ -2,4 +2,7 @@
     <string name="app_name">DSE</string>
     <string name="forgotpass">Forgot you password ?</string>
     <string name="signuptxt">New here? <u>Sign up instead</u></string>
+    <string name="open_drawer">Open navigation drawer</string>
+    <string name="close_drawer">Close navigation drawer</string>
+
 </resources>
