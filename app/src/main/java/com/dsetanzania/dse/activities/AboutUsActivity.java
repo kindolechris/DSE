@@ -1,14 +1,16 @@
-package com.dsetanzania.dse;
+package com.dsetanzania.dse.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class LiveMarketActivity extends AppCompatActivity {
+import com.dsetanzania.dse.R;
+
+public class AboutUsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_live_market);
+        setContentView(R.layout.activity_about_us);
     }
 }

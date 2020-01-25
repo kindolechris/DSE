@@ -1,4 +1,4 @@
-package com.dsetanzania.dse;
+package com.dsetanzania.dse.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -11,11 +11,24 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.models.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -25,6 +38,9 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout tellafriendlinearlayout;
     LinearLayout faqslinearlayout;
     LinearLayout aboutUstlinearlayout;
+    TextView txttradername;
+    TextView txtvirtualshare;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +50,10 @@ public class HomeActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_home);
 
+        mAuth = FirebaseAuth.getInstance();
 
+        txttradername = (TextView) findViewById(R.id.txttradername);
+        txtvirtualshare = (TextView) findViewById(R.id.sharepricetxt);
         livemarketlinearlayout = (LinearLayout) findViewById(R.id.livemarketLayout);
         portfoliolinearlayout = (LinearLayout) findViewById(R.id.portfolioLayout);
         tellafriendlinearlayout = (LinearLayout) findViewById(R.id.tellafriendLayout);
@@ -44,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawable_layout);
         final LinearLayout content = (LinearLayout) findViewById(R.id.content);
 
+        updatefields();
 
         livemarketlinearlayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +146,42 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.signOut) {
+            mAuth.signOut();
+            Intent homeintent = new Intent(HomeActivity.this, LoginActivity.class);
+            HomeActivity.this.startActivity(homeintent);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void updatefields(){
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    User _user = snapshot.getValue(User.class);
+                    NumberFormat formatter = new DecimalFormat("#,###");
+                    double vs = Double.parseDouble(_user.getVirtualshare());
+                    String vsformat = formatter.format(vs);
+                    txttradername.setText(_user.getTradername());
+                    txtvirtualshare.setText("Tshs. " + vsformat);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }
 

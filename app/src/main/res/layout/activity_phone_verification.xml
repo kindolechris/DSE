@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".activities.PhoneVerificationActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="50dp"
+        android:gravity="center"
+        android:paddingEnd="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline20"
+        app:layout_constraintVertical_bias="0.335">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="@color/colorWhite"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Enter verification code">
+        </TextView>
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:textColor="@color/colorWhite"
+            android:gravity="center"
+            android:fontFamily="@font/montserrat"
+            android:text="A text message with code was sent to your phone">
+        </TextView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout4"
+            style="@style/MyTextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/vericationtxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Verification code"
+                android:inputType="number"
+                android:maxLength="6"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/colorAccent"
+                android:textCursorDrawable="@drawable/cursor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"></LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnVerifyCode"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:fontFamily="@font/montserrat"
+            android:text="Verify"
+            android:textAllCaps="false"
+            android:textColor="#441E79"
+            android:textSize="20sp"
+            app:backgroundTint="#FAFAFD"
+            app:layout_constraintBottom_toTopOf="@+id/guideline16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline15"
+            app:rippleColor="@color/colorPrimary"></com.google.android.material.button.MaterialButton>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressLoader"
+        android:layout_width="30dp"
+        android:indeterminate="true"
+        android:visibility="visible"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.96"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.98"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2"
+        app:layout_constraintGuide_begin="133dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline23"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="722dp" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_asset_gradient"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/guideline20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.468"></LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

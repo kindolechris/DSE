@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "947913756717-ui9p55st9hh09fuu31p6d1i422ur5cl6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dsetanzania.dse",
+            "certificate_hash": "58a03e00c405a2fa26e5c4946cbb753ae623bb92"
+          }
+        },
+        {
           "client_id": "947913756717-jgr0nm1c9gb872ht3v4dif9kthbneurl.apps.googleusercontent.com",
           "client_type": 3
         }

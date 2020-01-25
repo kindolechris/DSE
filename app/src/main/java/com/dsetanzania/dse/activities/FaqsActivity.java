@@ -1,8 +1,10 @@
-package com.dsetanzania.dse;
+package com.dsetanzania.dse.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.dsetanzania.dse.R;
 
 public class FaqsActivity extends AppCompatActivity {
 
