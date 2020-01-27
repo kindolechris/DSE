@@ -106,21 +106,21 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 }
 
                 if(spinner.getSelectedItem() == null ){
-                    new MaterialAlertDialogBuilder(RegistrationActivity.this)
+                    new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
                             .setTitle("Problem!")
                             .setMessage("Please select university")
                             .setPositiveButton("Ok",null).show();
                     return;
                 }
                 if(! passoword.getText().toString().equals(confirmpassword.getText().toString())){
-                    new MaterialAlertDialogBuilder(RegistrationActivity.this)
+                    new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
                             .setTitle("Problem!")
                             .setMessage("Password do not match")
                             .setPositiveButton("Ok",null).show();
                     return;
                 }
 
-                _builder = new MaterialAlertDialogBuilder(RegistrationActivity.this)
+                _builder = new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
                         .setTitle("Phone number verification")
                         .setMessage("Will send a verification code to " + phoneNumber.getText().toString().trim())
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

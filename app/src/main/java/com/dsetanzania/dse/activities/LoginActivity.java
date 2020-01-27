@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.dsetanzania.dse.R;
@@ -32,11 +33,12 @@ public class LoginActivity extends AppCompatActivity {
 
     Button createNewAccounttxt;
     Button loginBtn;
-    TextInputEditText emailtxt;
+    EditText emailtxt;
     TextInputEditText passswordtxt;
     private FirebaseAuth mAuth;
     ProgressBar SignInLoader;
     private FirebaseUser firebaseUser;
+    MaterialAlertDialogBuilder builder;
     Sms sms;
 
 
@@ -60,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         createNewAccounttxt = (Button) findViewById(R.id.registerNewAccountTxt);
-        emailtxt = (TextInputEditText) findViewById(R.id.txtemailAddress);
+        emailtxt = (EditText) findViewById(R.id.txtemailAddress);
         passswordtxt = (TextInputEditText) findViewById(R.id.txtpasswordlogin);
         SignInLoader = (ProgressBar) findViewById(R.id.SignInLoader);
         loginBtn = (Button) findViewById(R.id.loginBtn);
@@ -87,9 +89,8 @@ public class LoginActivity extends AppCompatActivity {
                 });
                 nthread.start();*/
 
-
                 if(TextUtils.isEmpty(emailtxt.getText().toString()) || TextUtils.isEmpty(passswordtxt.getText().toString())){
-                    new MaterialAlertDialogBuilder(LoginActivity.this)
+                    new MaterialAlertDialogBuilder(LoginActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
                             .setTitle("Problem!")
                             .setMessage("All fields are required")
                             .setPositiveButton("Ok",null).show();
@@ -108,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         SignInLoader.setVisibility(View.INVISIBLE);
-                                        new MaterialAlertDialogBuilder(LoginActivity.this)
+                                        new MaterialAlertDialogBuilder(LoginActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
                                                 .setTitle("Problem!")
                                                 .setMessage("Authentication failed")
                                                 .setPositiveButton("Ok",null).show();

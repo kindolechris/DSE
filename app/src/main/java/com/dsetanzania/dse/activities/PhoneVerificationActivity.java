@@ -109,11 +109,10 @@ public class PhoneVerificationActivity extends AppCompatActivity {
                             editor.apply();
                             finish();*/
 
-
                         } else {
 
                             //verification unsuccessful.. display an error message
-
+                            Toast.makeText(PhoneVerificationActivity.this,"Somthing is wrong, we will fix it soon...",Toast.LENGTH_SHORT).show();
                             String message = "Somthing is wrong, we will fix it soon...";
 
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
@@ -178,7 +177,7 @@ public class PhoneVerificationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             userId = mAuth.getUid();
-                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                            DatabaseReference reference;
                             reference = FirebaseDatabase.getInstance().getReference("Users");
                             User _usermodel = new User(userId,firstname,lastname,tradername,email,yearOfStudy,university,coursename,"0"+ phoneNumber,"1000000");
                             reference.child(userId).setValue(_usermodel).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -189,10 +188,7 @@ public class PhoneVerificationActivity extends AppCompatActivity {
                             });
                         }
                         else{
-
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                //Toast.makeText(PhoneVerificationActivity.this,"Cant't register with this email.",Toast.LENGTH_SHORT).show();
-                            }
+                            Toast.makeText(PhoneVerificationActivity.this,"Cant't register with this email.",Toast.LENGTH_SHORT).show();
                             return;
 
                         }

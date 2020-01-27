@@ -19,36 +19,45 @@
             android:descendantFocusability="blocksDescendants"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline8">
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/registerNewAccountTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:theme="@style/Theme.MaterialComponents.NoActionBar"
                 android:textColor="@color/colorAccent"
                 android:textAllCaps="false"
                 app:backgroundTint="@android:color/transparent"
                 style="?android:attr/borderlessButtonStyle"
                 app:rippleColor="@android:color/transparent"
                 android:text="@string/signuptxt">
-            </Button>
+            </com.google.android.material.button.MaterialButton>
         </FrameLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="65dp"
+        android:paddingEnd="65dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline7">
         <com.google.android.material.button.MaterialButton
             android:id="@+id/loginBtn"
-            android:layout_width="150dp"
-            android:layout_height="60dp"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:fontFamily="@font/montserrat"
             android:text="Sign In"
+            app:rippleColor="@color/colorPrimary"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar"
             android:textAllCaps="false"
             android:textColor="#441E79"
             android:textSize="20sp"
-            app:backgroundTint="#FAFAFD"
-            app:layout_constraintBottom_toTopOf="@+id/guideline8"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline7"
-            app:rippleColor="@color/colorPrimary"></com.google.android.material.button.MaterialButton>
+            app:backgroundTint="#FAFAFD"></com.google.android.material.button.MaterialButton>
+
+    </LinearLayout>
 
         <TextView
             android:id="@+id/textView2"
@@ -73,19 +82,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView">
 
-                <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:textColorHint="@color/colorWhite">
+            <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txtemailAddress"
-                    style="@style/MyTextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Email"
-                    android:theme="@style/MyEditText"
                     android:inputType="textEmailAddress"
                     android:maxLength="20"
+                    android:fontFamily="@font/montserrat"
                     android:maxLines="1"
                     android:textCursorDrawable="@drawable/cursor"
                     android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.App.TextInputLayout"
                     android:textColor="@color/colorWhite" />
+            </com.google.android.material.textfield.TextInputLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -93,20 +108,25 @@
                         android:layout_marginTop="10dp">
                     </LinearLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/colorWhite">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txtpasswordlogin"
                     style="@style/MyTextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
-                    android:theme="@style/MyEditText"
                     android:textCursorDrawable="@drawable/cursor"
                     android:inputType="textPassword"
+                    android:fontFamily="@font/montserrat"
                     android:maxLength="15"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.App.TextInputLayout"
                     android:textColor="@color/colorWhite" />
-
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
