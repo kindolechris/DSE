@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.models.User;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -161,19 +162,18 @@ public class HomeActivity extends AppCompatActivity {
 
     public void updatefields(){
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        FirebaseUser fuser = mAuth.getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User _user = snapshot.getValue(User.class);
+                    User _user = dataSnapshot.getValue(User.class);
                     NumberFormat formatter = new DecimalFormat("#,###");
                     double vs = Double.parseDouble(_user.getVirtualshare());
                     String vsformat = formatter.format(vs);
                     txttradername.setText(_user.getTradername());
                     txtvirtualshare.setText("Tshs. " + vsformat);
-                }
             }
 
             @Override

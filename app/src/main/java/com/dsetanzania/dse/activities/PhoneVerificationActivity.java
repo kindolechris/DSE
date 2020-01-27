@@ -83,8 +83,9 @@ public class PhoneVerificationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 verifyVerificationCode(verificationtxtxfield.getText().toString().trim());
                 registerUser();
-                Intent verifycodeintent = new Intent(PhoneVerificationActivity.this, HomeActivity.class);
+                Intent verifycodeintent = new Intent(PhoneVerificationActivity.this, LoginActivity.class);
                 PhoneVerificationActivity.this.startActivity(verifycodeintent);
+                Toast.makeText(PhoneVerificationActivity.this,"You are successfully registerd",Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
