@@ -20,7 +20,8 @@ android {
     }
 
     repositories {
-        maven { url 'https://oss.sonatype.org/content/repositories/ksoap2-android-releases' }    }
+        maven { url 'https://oss.sonatype.org/content/repositories/ksoap2-android-releases' }
+    }
 }
 
 dependencies {
@@ -42,4 +43,6 @@ dependencies {
     implementation project(path: ':ksoap2-android-assembly-3.6.4-jar-with-dependencies')
     implementation project(path: ':ExKsoap2')
     implementation project(path: ':commons-io')
+    implementation "androidx.cardview:cardview:1.0.0"
+
 }

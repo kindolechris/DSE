@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,6 +32,9 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static final  String sharedPrefrences = "sharedpref";
+    public static final  String emailAddress = "Email";
+
     Button createNewAccounttxt;
     Button loginBtn;
     EditText emailtxt;
@@ -40,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     MaterialAlertDialogBuilder builder;
     Sms sms;
+    private String userEmail;
 
 
     @Override
@@ -52,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
 
+
         firebaseUser = mAuth.getCurrentUser();
 
         if(firebaseUser !=null){
@@ -61,11 +67,14 @@ public class LoginActivity extends AppCompatActivity {
         }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
+
         createNewAccounttxt = (Button) findViewById(R.id.registerNewAccountTxt);
         emailtxt = (EditText) findViewById(R.id.txtemailAddress);
         passswordtxt = (TextInputEditText) findViewById(R.id.txtpasswordlogin);
         SignInLoader = (ProgressBar) findViewById(R.id.SignInLoader);
         loginBtn = (Button) findViewById(R.id.loginBtn);
+
+        loadData();
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,8 +137,25 @@ public class LoginActivity extends AppCompatActivity {
                 LoginActivity.this.startActivity(myIntent);
             }
         });
-
-
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        saveLoginData();
+    }
+
+    public void saveLoginData(){
+        SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(emailAddress, emailtxt.getText().toString().trim());
+        editor.apply();
+    }
+
+    public  void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+        userEmail = sharedPreferences.getString(emailAddress,"");
+        emailtxt.setText(userEmail);
+    }
 }

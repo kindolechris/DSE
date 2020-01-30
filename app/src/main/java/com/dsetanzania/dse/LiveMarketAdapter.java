@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Vector;
@@ -18,6 +20,7 @@ import java.util.Vector;
 public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.ViewHolder>  {
 
     private OOUArrayOfSecurityLivePrice LivesecurityPrices;
+    final Vector<ViewHolder> securityPriceListViewHold = new Vector<>();
     Context mycontext;
     int _position;
     int selectedPosition=-1;
@@ -65,7 +68,6 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
         }
     }
 
-    final Vector<ViewHolder> serverListViewHold = new Vector<>();
 
     @NonNull
     @Override
@@ -73,9 +75,7 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.livemarketprices, parent, false);
 
-        final ViewHolder vHolder = new ViewHolder(view);
-
-        dialog = new Dialog(mycontext,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert);
+        dialog = new Dialog(mycontext,R.style.Theme_MaterialComponents_Dialog_MinWidth);
         dialog.setContentView(R.layout.custom_pop_up);
 
         txtcompanyname = (TextView)dialog.findViewById(R.id.txtcompanyname);
@@ -103,6 +103,7 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull LiveMarketAdapter.ViewHolder holder, final int position) {
+
 
         _position = position;
         NumberFormat formatter = new DecimalFormat("###.##");

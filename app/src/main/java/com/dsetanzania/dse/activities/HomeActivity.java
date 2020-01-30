@@ -2,7 +2,6 @@ package com.dsetanzania.dse.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
@@ -14,27 +13,21 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dsetanzania.dse.LiveMarketAdapter;
-import com.dsetanzania.dse.OOUArrayOfSecurityLivePrice;
-import com.dsetanzania.dse.OOUdefault_AtsWebFeedService;
+import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
+import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,20 +39,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpResponseException;
-import org.ksoap2.transport.HttpTransportSE;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -117,11 +101,11 @@ public class HomeActivity extends AppCompatActivity {
 
         updatefields();
 
-
         livemarketlinearlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(HomeActivity.this, LiveMarketActivity.class);
+                getSupportActionBar().show();
+                Intent myIntent = new Intent(HomeActivity.this, SimulatedTradeActivity.class);
                 HomeActivity.this.startActivity(myIntent);
             }
         });
@@ -129,6 +113,7 @@ public class HomeActivity extends AppCompatActivity {
         portfoliolinearlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getSupportActionBar().show();
                 Intent myIntent = new Intent(HomeActivity.this, PortfolioActivity.class);
                 HomeActivity.this.startActivity(myIntent);
             }
@@ -137,6 +122,7 @@ public class HomeActivity extends AppCompatActivity {
         faqslinearlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getSupportActionBar().show();
                 Intent myIntent = new Intent(HomeActivity.this, FaqsActivity.class);
                 HomeActivity.this.startActivity(myIntent);
             }
@@ -145,6 +131,7 @@ public class HomeActivity extends AppCompatActivity {
         aboutUstlinearlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getSupportActionBar().show();
                 Intent myIntent = new Intent(HomeActivity.this, AboutUsActivity.class);
                 HomeActivity.this.startActivity(myIntent);
             }

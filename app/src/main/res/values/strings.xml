@@ -73,6 +73,8 @@
         <item>ZANZIBAR UNIVERSITY</item>
         <item>OTHER NON-LISTED COLLEGE </item>
     </string-array>
+    <string name="title_activity_sell_share">SellShareActivity</string>
+    <string name="title_activity_buy_share">BuyShareActivity</string>
 
 
 </resources>
