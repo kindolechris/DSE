@@ -25,7 +25,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:theme="@style/Theme.MaterialComponents.NoActionBar"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhiteForText"
                 android:textAllCaps="false"
                 app:backgroundTint="@android:color/transparent"
                 style="?android:attr/borderlessButtonStyle"
@@ -53,7 +53,7 @@
             app:rippleColor="@color/colorPrimary"
             android:theme="@style/Theme.MaterialComponents.NoActionBar"
             android:textAllCaps="false"
-            android:textColor="#441E79"
+            android:textColor="@color/colorBlack"
             android:textSize="20sp"
             app:backgroundTint="#FAFAFD"></com.google.android.material.button.MaterialButton>
 
@@ -67,6 +67,7 @@
             android:text="@string/forgotpass"
             app:layout_constraintBottom_toTopOf="@+id/guideline7"
             app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/colorWhiteForText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline5"></TextView>
 
@@ -93,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
-                    android:maxLength="20"
+                    android:maxLength="40"
                     android:fontFamily="@font/montserrat"
                     android:maxLines="1"
                     android:textCursorDrawable="@drawable/cursor"
@@ -115,7 +116,7 @@
                 android:textColorHint="@color/colorWhite"
                 app:passwordToggleContentDescription="password"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/colorAccent">
+                app:passwordToggleTint="@color/colorWhiteForText">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txtpasswordlogin"
                     style="@style/MyTextInputLayout"
@@ -208,7 +209,7 @@
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@drawable/studentspicture"
+            android:background="@drawable/students_cover"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/guideline3"
             app:layout_constraintEnd_toEndOf="parent"

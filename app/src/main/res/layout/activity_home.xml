@@ -29,6 +29,7 @@
                 app:titleTextAppearance="@style/Toolbar.TitleText"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 >
+
             </androidx.appcompat.widget.Toolbar>
 
             <androidx.constraintlayout.widget.Guideline
@@ -129,7 +130,7 @@
 
                     <ProgressBar
                         android:layout_gravity="right"
-                        android:indeterminateTint="@color/colorPrimary"
+                        android:indeterminateDrawable="@drawable/progressbarcolor"
                         android:id="@+id/livemarketLoader"
                         android:gravity='right'
                         android:paddingEnd="10dp"
@@ -138,11 +139,17 @@
                         android:layout_height="30dp" />
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                   android:id="@+id/listoflivemarket"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent">
-               </androidx.recyclerview.widget.RecyclerView>
+               <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                   android:id="@+id/swiperefreshLayout"
+                   android:layout_width = "match_parent"
+                   android:layout_height = "match_parent">
+                   <androidx.recyclerview.widget.RecyclerView
+                       android:id="@+id/listoflivemarket"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent">
+                   </androidx.recyclerview.widget.RecyclerView>
+
+               </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             </LinearLayout>
 
@@ -180,15 +187,16 @@
             android:gravity="center"
             android:background="@color/colorPrimaryDark">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:text="Dse Tz"
                 android:fontFamily="@font/montserrat_bold"
                 android:paddingStart="10dp"
                 android:paddingBottom="12dp"
                 android:textSize="30dp"
                 android:gravity="bottom"
+                android:background="@drawable/logo_app_alt_down"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -199,182 +207,253 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.balysv.materialripple.MaterialRippleLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            app:mrl_rippleColor="@color/colorAccent"
-            app:mrl_rippleDuration="750"
-            app:mrl_rippleFadeDuration="75"
-            app:mrl_rippleDelayClick="true"
-            rv_centered="true">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <LinearLayout
-                android:id="@+id/livemarketLayout"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/colorAccent"
-                    android:background="@drawable/ic_coins_solid">
-                </ImageView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Simulation trade"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="left"
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Activities"
+                        android:gravity="bottom"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:layout_gravity="bottom"
+                        android:paddingStart="10dp"
+                        android:textSize="16dp"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    app:mrl_rippleColor="@color/colorAccent"
+                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true">
+                    <LinearLayout
+                        android:id="@+id/livemarketLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:tint="@color/colorAccent"
+                            android:background="@drawable/ic_coins_solid">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Simulation trade"
+                            android:gravity="bottom"
+                            android:fontFamily="@font/montserrat"
+                            android:layout_gravity="bottom"
+                            android:paddingStart="10dp"
+                            android:textSize="16dp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleColor="@color/colorAccent"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    android:layout_margin="3dp"
+                    rv_centered="true">
+                    <LinearLayout
+                        android:id="@+id/portfolioLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:tint="@color/colorAccent"
+                            android:background="@drawable/ic_briefcase_solid">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Portfolio"
+                            android:fontFamily="@font/montserrat"
+                            android:gravity="center"
+                            android:layout_gravity="bottom"
+                            android:paddingStart="10dp"
+                            android:textSize="16dp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    app:mrl_rippleColor="@color/colorAccent"
+                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true">
+                    <LinearLayout
+                        android:id="@+id/transactionLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:tint="@color/colorAccent"
+                            android:background="@drawable/ic_buy">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Transactions"
+                            android:gravity="center"
+                            android:fontFamily="@font/montserrat"
+                            android:layout_gravity="center"
+                            android:paddingStart="10dp"
+                            android:textSize="16dp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:gravity="bottom"
-                    android:fontFamily="@font/montserrat"
-                    android:layout_gravity="bottom"
-                    android:paddingStart="10dp"
-                    android:textSize="16dp"
-                    android:textColor="@android:color/white" />
+                    android:padding="12dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="In touch"
+                        android:gravity="bottom"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:layout_gravity="left"
+                        android:paddingStart="10dp"
+                        android:textSize="16dp"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    app:mrl_rippleColor="@color/colorAccent"
+                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true">
+                    <LinearLayout
+                        android:id="@+id/tellafriendLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:tint="@color/colorAccent"
+                            android:background="@drawable/ic_share">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Tell a friend"
+                            android:gravity="center"
+                            android:fontFamily="@font/montserrat"
+                            android:layout_gravity="bottom"
+                            android:paddingStart="10dp"
+                            android:textSize="16dp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    app:mrl_rippleColor="@color/colorAccent"
+                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true">
+                    <LinearLayout
+                        android:id="@+id/faqsLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:tint="@color/colorAccent"
+                            android:background="@drawable/ic_faqs">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="FAQ"
+                            android:fontFamily="@font/montserrat"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:paddingStart="10dp"
+                            android:textSize="16dp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    app:mrl_rippleColor="@color/colorAccent"
+                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true">
+                    <LinearLayout
+                        android:id="@+id/aboutusLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:tint="@color/colorAccent"
+                            android:background="@drawable/ic_info">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="About us"
+                            android:gravity="center"
+                            android:fontFamily="@font/montserrat"
+                            android:layout_gravity="center"
+                            android:paddingStart="10dp"
+                            android:textSize="16dp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
             </LinearLayout>
-        </com.balysv.materialripple.MaterialRippleLayout>
-
-        <com.balysv.materialripple.MaterialRippleLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            app:mrl_rippleDuration="750"
-            app:mrl_rippleColor="@color/colorAccent"
-            app:mrl_rippleFadeDuration="75"
-            app:mrl_rippleDelayClick="true"
-            android:layout_margin="3dp"
-            rv_centered="true">
-            <LinearLayout
-                android:id="@+id/portfolioLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/colorAccent"
-                    android:background="@drawable/ic_briefcase_solid">
-                </ImageView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Portfolio"
-                    android:fontFamily="@font/montserrat"
-                    android:gravity="center"
-                    android:layout_gravity="bottom"
-                    android:paddingStart="10dp"
-                    android:textSize="16dp"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-        </com.balysv.materialripple.MaterialRippleLayout>
-
-
-        <com.balysv.materialripple.MaterialRippleLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            app:mrl_rippleColor="@color/colorAccent"
-            app:mrl_rippleDuration="750"
-            app:mrl_rippleFadeDuration="75"
-            app:mrl_rippleDelayClick="true"
-            rv_centered="true">
-            <LinearLayout
-                android:id="@+id/tellafriendLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/colorAccent"
-                    android:background="@drawable/ic_share">
-                </ImageView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Tell a friend"
-                    android:gravity="center"
-                    android:fontFamily="@font/montserrat"
-                    android:layout_gravity="bottom"
-                    android:paddingStart="10dp"
-                    android:textSize="16dp"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-        </com.balysv.materialripple.MaterialRippleLayout>
-
-
-        <com.balysv.materialripple.MaterialRippleLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            app:mrl_rippleColor="@color/colorAccent"
-            app:mrl_rippleDuration="750"
-            app:mrl_rippleFadeDuration="75"
-            app:mrl_rippleDelayClick="true"
-            rv_centered="true">
-            <LinearLayout
-                android:id="@+id/faqsLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/colorAccent"
-                    android:background="@drawable/ic_faqs">
-                </ImageView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="FAQ"
-                    android:fontFamily="@font/montserrat"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:paddingStart="10dp"
-                    android:textSize="16dp"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-        </com.balysv.materialripple.MaterialRippleLayout>
-
-        <com.balysv.materialripple.MaterialRippleLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            app:mrl_rippleColor="@color/colorAccent"
-            app:mrl_rippleDuration="750"
-            app:mrl_rippleFadeDuration="75"
-            app:mrl_rippleDelayClick="true"
-            rv_centered="true">
-            <LinearLayout
-                android:id="@+id/aboutusLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/colorAccent"
-                    android:background="@drawable/ic_info">
-                </ImageView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="About us"
-                    android:gravity="center"
-                    android:fontFamily="@font/montserrat"
-                    android:layout_gravity="center"
-                    android:paddingStart="10dp"
-                    android:textSize="16dp"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-        </com.balysv.materialripple.MaterialRippleLayout>
+        </ScrollView>
     </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

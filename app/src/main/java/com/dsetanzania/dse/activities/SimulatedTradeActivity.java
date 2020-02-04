@@ -12,11 +12,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
+import com.dsetanzania.dse.helperClasses.livedata_classes.OOUSecurityLivePrice;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.SimulatedMarketAdapter;
+import com.dsetanzania.dse.models.MarketSimulator;
+
+import java.util.List;
 
 public class SimulatedTradeActivity extends AppCompatActivity {
 
@@ -85,17 +90,13 @@ public class SimulatedTradeActivity extends AppCompatActivity {
             try {
 
                 OOUdefault_AtsWebFeedService service = new OOUdefault_AtsWebFeedService("http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc");
-
                 OOUArrayOfSecurityLivePrice res = service.LiveMarketPrices();
-
+                OOUSecurityLivePrice oouSecurityLivePrice;
                 lvm = new SimulatedMarketAdapter(SimulatedTradeActivity.this,res);
 
 
-                String val = "";
-                for (int i=0; i<res.getPropertyCount(); i++) {
-                    val = res.get(i).MarketCap.toString();
-                    Log.i("", val);
-                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -107,6 +108,7 @@ public class SimulatedTradeActivity extends AppCompatActivity {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
 
+            //Toast.makeText(getApplicationContext(),"Size is : "+lvm.getItemCount(),Toast.LENGTH_LONG).show();
             livemarketpricerecyclerview.setHasFixedSize(true);
             livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             livemarketpricerecyclerview.setAdapter(lvm);

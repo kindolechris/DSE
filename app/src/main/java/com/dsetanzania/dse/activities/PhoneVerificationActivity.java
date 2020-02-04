@@ -51,7 +51,7 @@ public class PhoneVerificationActivity extends AppCompatActivity {
     Button verifybtn;
     ProgressBar progressBar;
 
-    @Override
+/*    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -104,11 +104,11 @@ public class PhoneVerificationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.INVISIBLE);
-                       /*     SharedPreferences settings = getSharedPreferences("prefs", 0);
+                       *//*     SharedPreferences settings = getSharedPreferences("prefs", 0);
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putBoolean("firstRun", false);
                             editor.apply();
-                            finish();*/
+                            finish();*//*
 
                         } else {
 
@@ -178,10 +178,10 @@ public class PhoneVerificationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             userId = mAuth.getUid();
-                            DatabaseReference reference;
-                            reference = FirebaseDatabase.getInstance().getReference("Users");
+                            DatabaseReference dbReference;
+                            dbReference = FirebaseDatabase.getInstance().getReference("Users");
                             User _usermodel = new User(userId,firstname,lastname,tradername,email,yearOfStudy,university,coursename,"0"+ phoneNumber,"1000000");
-                            reference.child(userId).setValue(_usermodel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            dbReference.child(userId).setValue(_usermodel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     signInwithEmailAndPassword();
@@ -200,6 +200,6 @@ public class PhoneVerificationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         return;
-    }
+    }*/
 
 }

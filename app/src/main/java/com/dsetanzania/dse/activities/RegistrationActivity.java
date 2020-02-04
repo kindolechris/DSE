@@ -18,11 +18,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.helperClasses.InternetcheckInterface;
+import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +51,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
     TextInputEditText phoneNumber;
     private FirebaseAuth mAuth;
     ProgressBar progressBar;
+    View parentLayout;
     String userId;
 
     @Override
@@ -57,6 +61,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_registration);
+        parentLayout = findViewById(android.R.id.content);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -66,8 +71,8 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
             spinner.setPositiveButton("Close");
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.university_list, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.array.university_list, R.layout.custom_spinner_item);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
@@ -87,7 +92,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
             public void onClick(View v) {
 
                 if(TextUtils.isEmpty(firstname.getText().toString().trim()) && TextUtils.isEmpty(lastname.getText().toString().trim()) && TextUtils.isEmpty(email.getText().toString().trim()) && TextUtils.isEmpty(tradername.getText().toString().trim()) && TextUtils.isEmpty(coursename.getText().toString().trim()) && TextUtils.isEmpty(yearOfStudy.getText().toString().trim()) && TextUtils.isEmpty(phoneNumber.getText().toString().trim()) && TextUtils.isEmpty(passoword.getText().toString().trim()) && TextUtils.isEmpty(confirmpassword.getText().toString().trim()) && spinner.getSelectedItem() == null){
-                    new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                    new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                             .setTitle("Problem!")
                             .setMessage("All fields must be entered")
                             .setPositiveButton("Ok",null).show();
@@ -133,22 +138,50 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 }
 
                 if(spinner.getSelectedItem() == null ){
-                    new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                    new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                             .setTitle("Alert!")
                             .setMessage("Please select university")
                             .setPositiveButton("Ok",null).show();
                     return;
                 }
                 if(! passoword.getText().toString().equals(confirmpassword.getText().toString())){
-                    new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                    new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                             .setTitle("Alert!")
                             .setMessage("The confirmed Password do not match")
                             .setPositiveButton("Ok",null).show();
                     return;
                 }
 
+
                 progressBar.setVisibility(View.VISIBLE);
-                checkEmailFirstIfExist();
+
+                checkInternet task = new checkInternet(getApplicationContext(), new InternetcheckInterface() {
+                    @Override
+                    public void checkMethod(String result) {
+
+                        if(result == "Access"){
+                            checkEmailFirstIfExist();
+                            progressBar.setVisibility(View.INVISIBLE);
+                 /*   Snackbar snackbar = Snackbar
+                            .make(parentLayout, "Internet is on", Snackbar.LENGTH_LONG);
+                    snackbar.show();*/
+                        }
+                        else if(result == "NoAccess"){
+                            Snackbar snackbar = Snackbar
+                                    .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                        else{
+                            Snackbar snackbar = Snackbar
+                                    .make(parentLayout, "Service unavailable", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+
+                task.execute();
 
 
                 //phone verification implementation
@@ -197,7 +230,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                             userId = mAuth.getUid();
                             DatabaseReference reference;
                             reference = FirebaseDatabase.getInstance().getReference("Users");
-                            User _usermodel = new User(userId,firstname.getText().toString().trim(),lastname.getText().toString().trim(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),phoneNumber.getText().toString().trim(),"3000000");
+                            User _usermodel = new User(userId,firstname.getText().toString().trim(),lastname.getText().toString().trim(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),phoneNumber.getText().toString().trim(),3000000,0);
                             reference.child(userId).setValue(_usermodel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -233,7 +266,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.INVISIBLE);
 
-                            _builder = new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                            _builder = new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                                     .setTitle("Welcome")
                                     .setMessage("You are successfully registered")
                                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -266,7 +299,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     registerUser();
 
                 }else {
-                    new MaterialAlertDialogBuilder(RegistrationActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                    new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                             .setTitle("Alert!")
                             .setMessage("Email already registered..")
                             .setPositiveButton("Ok",null).show();

@@ -10,13 +10,14 @@ package com.dsetanzania.dse.helperClasses.livedata_classes;
 
 
 
+import java.util.Date;
 import java.util.Hashtable;
 import org.ksoap2.serialization.*;
 import java.math.BigDecimal;
 
 public class OOUSecurityLivePrice extends AttributeContainer implements KvmSerializable
 {
-    
+
     public String Board;
     
     public BigDecimal Change;
@@ -44,7 +45,6 @@ public class OOUSecurityLivePrice extends AttributeContainer implements KvmSeria
     private transient Object __source;
     
 
-    
     
     public void loadFromSoap(Object paramObj, OOUExtendedSoapSerializationEnvelope __envelope)
     {
@@ -442,5 +442,9 @@ public class OOUSecurityLivePrice extends AttributeContainer implements KvmSeria
     {
     }
 
-    
+    public OOUSecurityLivePrice(){
+
+    }
+
+
 }

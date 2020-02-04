@@ -73,6 +73,33 @@
         <item>ZANZIBAR UNIVERSITY</item>
         <item>OTHER NON-LISTED COLLEGE </item>
     </string-array>
+
+
+    <string-array name="Faqs_heading">
+        <item>How to buy shares?</item>
+        <item>How to sell shares?</item>
+        <item>How shares are queued?</item>
+        <item>How many shares can i buy per day?</item>
+        <item>Can this app work without internet?</item>
+        <item>How to read from the live marketk stats?</item>
+        <item>Can i sell shares to my colleague?</item>
+        <item>How to win the game?</item>
+    </string-array>
+
+    <string name="copyright">DSE @ 2020</string>
+
+    <string-array name="Faqs_content">
+        <item>Brief description about the question</item>
+        <item>Brief description about the question</item>
+        <item>Brief description about the question</item>
+        <item>Brief description about the question</item>
+        <item>Brief description about the question</item>
+        <item>Brief description about the question</item>
+        <item>Brief description about the question</item>
+        <item>Brief description about the question</item>
+    </string-array>
+
+
     <string name="title_activity_sell_share">SellShareActivity</string>
     <string name="title_activity_buy_share">BuyShareActivity</string>
 

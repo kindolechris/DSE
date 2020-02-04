@@ -28,15 +28,15 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="110dp"
         android:layout_height="0dp"
+        android:background="@drawable/logo_app_alt_down"
         app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/layer2"
-        android:scaleType="fitXY"
-        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintHeight_percent="0.15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline">
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        app:layout_constraintVertical_bias="0.972">
 
     </ImageView>
 
@@ -59,7 +59,7 @@
             app:rippleColor="@color/colorPrimary"
             android:theme="@style/Theme.MaterialComponents.NoActionBar"
             android:textAllCaps="false"
-            android:textColor="#441E79"
+            android:textColor="@color/colorBlack"
             android:textSize="20sp"
             app:backgroundTint="#FAFAFD"></com.google.android.material.button.MaterialButton>
 
@@ -181,9 +181,11 @@
 
         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/spinner_search"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
             app:hintText="University"
+            style="@style/MySpinnerLook"
+            android:backgroundTint="@color/colorPrimary"
             tools:layout_editor_absoluteX="match_parent"
             tools:layout_editor_absoluteY="match_parent" />
         <LinearLayout
@@ -234,7 +236,7 @@
             android:layout_height="wrap_content"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:maxLength="20"
+            android:maxLength="40"
             android:maxLines="1"
             android:singleLine="true"
             android:fontFamily="@font/montserrat"

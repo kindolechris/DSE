@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/Userface"
+        android:id="@+id/notification"
         android:title="Notification"
         android:iconTint="@color/colorWhite"
-        android:icon="@drawable/ic_notification"
+        app:actionLayout="@layout/custom_notification_layout"
         app:showAsAction="always">
     </item>
 
     <item
-        android:id="@+id/notification"
+        android:id="@+id/Userface"
         android:title="Avator"
         android:iconTint="@color/colorWhite"
-        android:icon="@drawable/ic_account"
+        app:actionLayout="@layout/custom_avator_layout"
         app:showAsAction="always">
     </item>
 

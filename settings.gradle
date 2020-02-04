@@ -1,2 +1,2 @@
-include ':app', ':ksoap2-android-assembly-3.6.4-jar-with-dependencies', ':ExKsoap2', ':commons-io'
+include ':app', ':ExKsoap2', ':commons-io'
 rootProject.name='DSE'

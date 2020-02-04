@@ -1,15 +1,13 @@
 package com.dsetanzania.dse.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.Printer;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,14 +19,10 @@ import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.helperClasses.Sms;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -42,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     ProgressBar SignInLoader;
     private FirebaseUser firebaseUser;
-    MaterialAlertDialogBuilder builder;
     Sms sms;
     private String userEmail;
 
@@ -54,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
 
 
@@ -99,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                 nthread.start();*/
 
                 if(TextUtils.isEmpty(emailtxt.getText().toString()) || TextUtils.isEmpty(passswordtxt.getText().toString())){
-                    new MaterialAlertDialogBuilder(LoginActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                    new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
                             .setTitle("Problem!")
                             .setMessage("All fields are required")
                             .setPositiveButton("Ok",null).show();
@@ -118,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         SignInLoader.setVisibility(View.INVISIBLE);
-                                        new MaterialAlertDialogBuilder(LoginActivity.this,R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                                        new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
                                                 .setTitle("Problem!")
                                                 .setMessage("Authentication failed")
                                                 .setPositiveButton("Ok",null).show();
