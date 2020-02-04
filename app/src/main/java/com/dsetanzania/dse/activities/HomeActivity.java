@@ -498,8 +498,6 @@ public class HomeActivity extends AppCompatActivity {
             txttrandingstats.setText("Live trending stats");
             prgs.setVisibility(View.INVISIBLE);
 
-
-
         }
     }
 

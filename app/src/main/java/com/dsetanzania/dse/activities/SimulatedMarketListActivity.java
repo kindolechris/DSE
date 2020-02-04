@@ -2,6 +2,7 @@ package com.dsetanzania.dse.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,15 @@ public class SimulatedMarketListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__simulate__market);
 
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+            getSupportActionBar().setTitle("Admin");
+        }
+
         livemarketrecyclerview = (RecyclerView) findViewById(R.id.MarketsPriceListRecyclerView);
 
         getMarkets();
@@ -50,14 +60,13 @@ public class SimulatedMarketListActivity extends AppCompatActivity {
                     MarketSimulator _market = snapshot.getValue(MarketSimulator.class);
                     simulatedMarket.add(_market);
                 }
-                simulatedMarketAdapter = new SimulatedMarketToEditAdapter(getApplicationContext(), simulatedMarket);
+                simulatedMarketAdapter = new SimulatedMarketToEditAdapter(SimulatedMarketListActivity.this, simulatedMarket);
 
                 livemarketrecyclerview.setHasFixedSize(true);
                 livemarketrecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 livemarketrecyclerview.setAdapter(simulatedMarketAdapter);
                 livemarketrecyclerview.setLayoutManager(new LinearLayoutManager(SimulatedMarketListActivity.this));
-                SnapHelper snapHelper = new PagerSnapHelper();
-                snapHelper.attachToRecyclerView(livemarketrecyclerview);
+
             }
 
             @Override

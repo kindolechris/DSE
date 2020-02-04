@@ -1,5 +1,6 @@
 package com.dsetanzania.dse.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,18 +15,28 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.dsetanzania.dse.SimulatedMarketToEditAdapter;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUSecurityLivePrice;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.SimulatedMarketAdapter;
 import com.dsetanzania.dse.models.MarketSimulator;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SimulatedTradeActivity extends AppCompatActivity {
 
     RecyclerView livemarketpricerecyclerview;
+    ArrayList<MarketSimulator> simulatedMarket;
+    DatabaseReference reference;
+    SimulatedMarketAdapter simulatedMarketAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +97,14 @@ public class SimulatedTradeActivity extends AppCompatActivity {
         protected Object doInBackground(Object[] objects) {
             //testMedoth();
 
-
             try {
 
-                OOUdefault_AtsWebFeedService service = new OOUdefault_AtsWebFeedService("http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc");
+           /*     OOUdefault_AtsWebFeedService service = new OOUdefault_AtsWebFeedService("http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc");
                 OOUArrayOfSecurityLivePrice res = service.LiveMarketPrices();
-                OOUSecurityLivePrice oouSecurityLivePrice;
-                lvm = new SimulatedMarketAdapter(SimulatedTradeActivity.this,res);
+                lvm = new SimulatedMarketAdapter(SimulatedTradeActivity.this,res);*/
 
-
+                //lvm.pushMarkets();
+                getMarkets();
 
 
             } catch (Exception e) {
@@ -108,17 +118,47 @@ public class SimulatedTradeActivity extends AppCompatActivity {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
 
-            //Toast.makeText(getApplicationContext(),"Size is : "+lvm.getItemCount(),Toast.LENGTH_LONG).show();
+           /* //Toast.makeText(getApplicationContext(),"Size is : "+lvm.getItemCount(),Toast.LENGTH_LONG).show();
             livemarketpricerecyclerview.setHasFixedSize(true);
             livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             livemarketpricerecyclerview.setAdapter(lvm);
             livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(SimulatedTradeActivity.this, LinearLayoutManager.HORIZONTAL, false));
             SnapHelper snapHelper = new PagerSnapHelper();
-            snapHelper.attachToRecyclerView(livemarketpricerecyclerview);
+            snapHelper.attachToRecyclerView(livemarketpricerecyclerview);*/
             //txttrandingstats.setText("Live trending stats");
             //prgs.setVisibility(View.INVISIBLE);
             //getElementsFromSOAP(resultSOAP);
             //parseXML();
         }
+    }
+
+    private void  getMarkets(){
+        //serverpgsBar.setVisibility(View.VISIBLE);
+        simulatedMarket = new ArrayList<MarketSimulator>();
+        simulatedMarket.clear();
+        reference = FirebaseDatabase.getInstance().getReference();
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                simulatedMarket.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    MarketSimulator _market = snapshot.getValue(MarketSimulator.class);
+                    simulatedMarket.add(_market);
+                }
+                simulatedMarketAdapter = new SimulatedMarketAdapter(SimulatedTradeActivity.this, simulatedMarket);
+
+                livemarketpricerecyclerview.setHasFixedSize(true);
+                livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                livemarketpricerecyclerview.setAdapter(simulatedMarketAdapter);
+                livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(SimulatedTradeActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                SnapHelper snapHelper = new PagerSnapHelper();
+                snapHelper.attachToRecyclerView(livemarketpricerecyclerview);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

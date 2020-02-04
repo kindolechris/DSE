@@ -1,5 +1,6 @@
 package com.dsetanzania.dse;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -14,10 +15,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dsetanzania.dse.activities.BuyShareActivity;
 import com.dsetanzania.dse.activities.SellShareActivity;
 import com.dsetanzania.dse.models.MarketSimulator;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<SimulatedMarketToEditAdapter.ViewHolder>  {
 
@@ -27,6 +35,15 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
     int selectedPosition=-1;
     ItemClicked fragmentActivity;
     int position = 1;
+    Dialog dialog;
+    FirebaseAuth mAuth;
+    DatabaseReference reference;
+    TextInputEditText quantity;
+    TextInputEditText price;
+
+    TextView companyname;
+    Button updatebtn;
+
     public  interface  ItemClicked{
         void OnServerItemClicked(int index);
     }
@@ -43,16 +60,21 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
         TextView txtcompanyname;
         TextView txtMarketCap;
         TextView txtOpeningPrice;
-        Button sellbtn;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            dialog = new Dialog(mycontext,R.style.Mydialogtheme);
+            dialog.setContentView(R.layout.popup_edit_company_sales);
+
             txtcompanyname = (TextView)itemView.findViewById(R.id.txtcompany);
             txtMarketCap = (TextView)itemView.findViewById(R.id.txtmarketcap);
             txtOpeningPrice = (TextView)itemView.findViewById(R.id.txtopeningprice);
-            //sellbtn = (Button) itemView.findViewById(R.id.btnSell);
+
+            companyname = (TextView)dialog.findViewById(R.id.txtcompanynametoedit);
+            quantity = (TextInputEditText)dialog.findViewById(R.id.txtquantitytoedit);
+            price = (TextInputEditText)dialog.findViewById(R.id.txtpricetoedit);
+            updatebtn = (Button) dialog.findViewById(R.id.btnUpdate);
 
         }
     }
@@ -74,8 +96,28 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
         _position = position;
         holder.itemView.setTag(marketSimulator.get(position));
         holder.txtcompanyname.setText(marketSimulator.get(position).getCompany());
-        holder.txtOpeningPrice.setText("Opened at " + marketSimulator.get(position).getOpeningPrice().toString()  + " Price");
-        holder.txtMarketCap.setText(marketSimulator.get(position).getMarketCap().toString());
+        holder.txtOpeningPrice.setText("Opened at " + String.valueOf(marketSimulator.get(position).getOpeningPrice())  + " Price");
+        holder.txtMarketCap.setText(String.valueOf(marketSimulator.get(position).getMarketCap()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                companyname.setText(marketSimulator.get(position).getCompany());
+                dialog.show();
+            }
+        });
+
+        updatebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
+                Map<String, Object> map = new HashMap<>();
+                map.put("lastTradedQuantity",quantity.getText().toString());
+                map.put("openingPrice",price.getText().toString());
+                reference.updateChildren(map);
+
+            }
+        });
     }
 
     @Override

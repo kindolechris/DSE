@@ -82,7 +82,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="LTQ"
+                        android:text="Quantity"
                         android:layout_weight="1"
                         android:textSize="16dp"
                         android:fontFamily="@font/montserrat"
@@ -199,6 +199,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:orientation="vertical"
                     android:id="@+id/layoutclose"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -207,7 +208,7 @@
                     android:layout_marginTop="20dp">
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnbuy"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="15dp"
                         app:rippleColor="@color/colorAccent"
@@ -225,6 +226,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="15dp"
+                        android:visibility="gone"
                         android:theme="@style/Theme.MaterialComponents.NoActionBar"
                         app:rippleColor="@color/colorAccent"
                         android:backgroundTint="@color/colorRed"

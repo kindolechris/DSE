@@ -25,12 +25,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Vector;
 
 public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarketAdapter.ViewHolder>  {
 
-    private OOUArrayOfSecurityLivePrice LivesecurityPrices;
-    final Vector<ViewHolder> securityPriceListViewHold = new Vector<>();
+    List<MarketSimulator> marketSimulator;
     Context mycontext;
     int _position;
     int selectedPosition=-1;
@@ -40,8 +40,8 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
         void OnServerItemClicked(int index);
     }
 
-    public SimulatedMarketAdapter(Context context,OOUArrayOfSecurityLivePrice list) {
-        this.LivesecurityPrices = list;
+    public SimulatedMarketAdapter(Context context,List<MarketSimulator> list) {
+        this.marketSimulator = list;
         this.mycontext =  context;
 
     }
@@ -91,47 +91,37 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         _position = position;
         NumberFormat formatter = new DecimalFormat("###.##");
-        final String openingPrice = formatter.format(LivesecurityPrices.get(position).OpeningPrice);
-        final String companyname = (LivesecurityPrices.get(position).Company);
-        holder.itemView.setTag(LivesecurityPrices.get(position));
-        holder.txtcompanyname.setText(LivesecurityPrices.get(position).Company);
-        holder.txtprice.setText("Opened at " + openingPrice  + " Price");
-        holder.txtlasttradequantity.setText(LivesecurityPrices.get(position).LastTradedQuantity.toString());
-        holder.txtvolume.setText(LivesecurityPrices.get(position).Volume.toString());
-        String change = (LivesecurityPrices.get(position).Change.toString());
-        String Ldp = (LivesecurityPrices.get(position).LastDealPrice.toString());
+        holder.itemView.setTag(marketSimulator.get(position));
+        holder.txtcompanyname.setText(marketSimulator.get(position).getCompany());
+        holder.txtprice.setText("Opened at " + marketSimulator.get(position).getOpeningPrice().toString()  + " Price");
+        holder.txtlasttradequantity.setText(marketSimulator.get(position).getLastTradedQuantity().toString());
+        holder.txtvolume.setText(marketSimulator.get(position).getVolume().toString());
+        holder.txtchange.setText(marketSimulator.get(position).getChange().toString());
+        holder.txtlastdealvalue.setText(formatExponential(marketSimulator.get(position).getLastDealPrice().toString()));
 
-                if(change.contains("0E-9") || Ldp.contains("0E-9")){
-
-                    holder.txtchange.setText(formatExponential(change));
-                    holder.txtlastdealvalue.setText(formatExponential(Ldp));
-                }
-
-                holder.buybtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent myIntent = new Intent(mycontext, BuyShareActivity.class);
-                        myIntent.putExtra("OpeningPrice",openingPrice);
-                        myIntent.putExtra("Companyname",companyname);
-                        mycontext.startActivity(myIntent);
-                    }
-                });
-
-                holder.sellbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent myIntent = new Intent(mycontext, SellShareActivity.class);
-                        myIntent.putExtra("OpeningPrice",LivesecurityPrices.get(position).OpeningPrice);
-                        mycontext.startActivity(myIntent);
-                    }
-                });
-        //pushMarkets(_position);
-        //_position = position + 1;
+        holder.buybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(mycontext, BuyShareActivity.class);
+                myIntent.putExtra("OpeningPrice",marketSimulator.get(position).getOpeningPrice().toString());
+                myIntent.putExtra("Companyname",marketSimulator.get(position).getCompany());
+                mycontext.startActivity(myIntent);
             }
+        });
+
+        holder.sellbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(mycontext, SellShareActivity.class);
+                myIntent.putExtra("OpeningPrice",marketSimulator.get(position).getOpeningPrice().toString());
+                mycontext.startActivity(myIntent);
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
-        return LivesecurityPrices.size();
+        return marketSimulator.size();
     }
 
     public  String formatExponential(String value){
@@ -141,17 +131,17 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
         return f;
     }
 
-    public void pushMarkets(int index){
+ /*   public void pushMarkets(int index){
 
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
         String id = reference.push().getKey();
-        MarketSimulator livemarket = new MarketSimulator( LivesecurityPrices.get(index).Board,LivesecurityPrices.get(index).Change.doubleValue(),LivesecurityPrices.get(index).Close.doubleValue(),LivesecurityPrices.get(index).Company, LivesecurityPrices.get(index).High.doubleValue(),LivesecurityPrices.get(index).LastDealPrice.doubleValue(), LivesecurityPrices.get(index).LastTradedQuantity.longValue(),LivesecurityPrices.get(index).Low.doubleValue(), LivesecurityPrices.get(index).MarketCap.doubleValue(), LivesecurityPrices.get(index).OpeningPrice.doubleValue(), LivesecurityPrices.get(index).Volume);
+        MarketSimulator livemarket = new MarketSimulator( LivesecurityPrices.get(position).Board,LivesecurityPrices.get(position).Change.doubleValue(),LivesecurityPrices.get(position).Close.doubleValue(),LivesecurityPrices.get(position).Company, LivesecurityPrices.get(position).High.doubleValue(),LivesecurityPrices.get(position).LastDealPrice.doubleValue(), LivesecurityPrices.get(position).LastTradedQuantity.longValue(),LivesecurityPrices.get(position).Low.doubleValue(), LivesecurityPrices.get(position).MarketCap.doubleValue(), LivesecurityPrices.get(position).OpeningPrice.doubleValue(), LivesecurityPrices.get(position).Volume);
         reference.child(id).setValue(livemarket).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-               // Toast.makeText(mycontext,"Markets pushed.",Toast.LENGTH_LONG).show();
+                Toast.makeText(mycontext,"Markets pushed.",Toast.LENGTH_LONG).show();
             }
         });
-    }
+    }*/
 }
