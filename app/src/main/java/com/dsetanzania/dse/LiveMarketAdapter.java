@@ -109,9 +109,8 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull LiveMarketAdapter.ViewHolder holder, final int position) {
 
-
         _position = position;
-        NumberFormat formatter = new DecimalFormat("###.##");
+        NumberFormat formatter = new DecimalFormat("#,###");
         String openingPrice = formatter.format(LivesecurityPrices.get(position).OpeningPrice);
         holder.itemView.setTag(LivesecurityPrices.get(position));
         holder.company.setText(LivesecurityPrices.get(position).Company);
@@ -143,7 +142,7 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
                 }
                 NumberFormat formatter = new DecimalFormat("###.#####");
                 txtcompanyname.setText(LivesecurityPrices.get(position).Company);
-                txtlastdealvalue.setText(LivesecurityPrices.get(position).LastDealPrice.toString());
+                txtlastdealvalue.setText(String.valueOf(LivesecurityPrices.get(position).LastDealPrice.doubleValue()));
                 txtlasttradequantity.setText(LivesecurityPrices.get(position).LastTradedQuantity.toString());
                 txtvolume.setText(LivesecurityPrices.get(position).Volume.toString());
                 txtdate.setText(getDateTime().substring(0,10));

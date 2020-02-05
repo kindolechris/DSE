@@ -256,7 +256,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="Simulation trade"
+                            android:text="Simulated trading"
                             android:gravity="bottom"
                             android:fontFamily="@font/montserrat"
                             android:layout_gravity="bottom"
