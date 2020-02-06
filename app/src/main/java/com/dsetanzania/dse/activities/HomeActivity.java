@@ -145,7 +145,7 @@ public class HomeActivity extends AppCompatActivity {
         aboutUstlinearlayout = (LinearLayout) findViewById(R.id.aboutusLayout);
         prgs = (ProgressBar) findViewById(R.id.livemarketLoader);
         txttrandingstats = (TextView) findViewById(R.id.txttrendingTradestats);
-        txttrandingstats.setText("Retrieving live market..");
+        txttrandingstats.setText("Retrieving Real-time data..");
         parentLayout = findViewById(android.R.id.content);
 
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawable_layout);
@@ -441,7 +441,7 @@ public class HomeActivity extends AppCompatActivity {
                     NumberFormat formatter = new DecimalFormat("#,###");
                     String vsformat = formatter.format( _user.getVirtualmoney());
                     txttradername.setText(_user.getTradername());
-                    txtvirtualshare.setText("Tshs. " + vsformat);
+                    txtvirtualshare.setText("Tshs. " + vsformat + ".00");
             }
 
             @Override
@@ -495,7 +495,7 @@ public class HomeActivity extends AppCompatActivity {
             livemarketpricerecyclerview.setHasFixedSize(true);
             livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             livemarketpricerecyclerview.setAdapter(lvm);
-            txttrandingstats.setText("Live trending stats");
+            txttrandingstats.setText("Real-Time Market Prices");
             prgs.setVisibility(View.INVISIBLE);
 
         }

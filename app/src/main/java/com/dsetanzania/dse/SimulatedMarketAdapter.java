@@ -95,7 +95,7 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
         final String companyname = (LivesecurityPrices.get(position).Company);
         holder.itemView.setTag(LivesecurityPrices.get(position));
         holder.txtcompanyname.setText(LivesecurityPrices.get(position).Company);
-        holder.txtprice.setText("Opened at " + openingPrice  + " Price");
+        holder.txtprice.setText("Priced at " + openingPrice + " Tsh");
         holder.txtlasttradequantity.setText(LivesecurityPrices.get(position).LastTradedQuantity.toString());
         holder.txtvolume.setText(LivesecurityPrices.get(position).Volume.toString());
         String change = (LivesecurityPrices.get(position).Change.toString());

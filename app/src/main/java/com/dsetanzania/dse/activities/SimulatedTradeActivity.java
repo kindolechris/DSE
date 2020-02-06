@@ -52,7 +52,7 @@ public class SimulatedTradeActivity extends AppCompatActivity {
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Simulated trading");
+            getSupportActionBar().setTitle("Simulated Trading");
         }
 
         getlivedata();

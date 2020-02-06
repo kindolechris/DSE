@@ -7,7 +7,6 @@
         android:normalScreens="true"
         android:smallScreens="true"
         android:xlargeScreens="true" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -21,28 +20,47 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.SimulatedMarketListActivity"></activity>
+        <activity android:name=".activities.SimulatedMarketListActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activities.TransactionActivity"
+            android:screenOrientation="portrait"
             android:label="Transactions"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activities.BuyShareActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_buy_share"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.SellShareActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_sell_share"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.PhoneVerificationActivity" />
-        <activity android:name=".activities.AboutUsActivity" />
-        <activity android:name=".activities.FaqsActivity" />
-        <activity android:name=".activities.SimulatedTradeActivity" />
-        <activity android:name=".activities.PortfolioActivity" />
-        <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.RegistrationActivity" />
+        <activity
+            android:name=".activities.PortfolioActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_portfolio"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".activities.PhoneVerificationActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.AboutUsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.FaqsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SimulatedTradeActivity"
+            android:screenOrientation="portrait"  />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".activities.RegistrationActivity"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
