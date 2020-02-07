@@ -17,12 +17,21 @@ import android.widget.ProgressBar;
 
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.helperClasses.Sms;
+import com.dsetanzania.dse.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -38,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     Sms sms;
     private String userEmail;
+    private List<User> user;
 
 
     @Override
@@ -54,9 +64,8 @@ public class LoginActivity extends AppCompatActivity {
         firebaseUser = mAuth.getCurrentUser();
 
         if(firebaseUser !=null){
-            Intent loginintent = new Intent(LoginActivity.this, HomeActivity.class);
-            LoginActivity.this.startActivity(loginintent);
-            finish();
+
+            checkRole();
         }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
@@ -105,10 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        SignInLoader.setVisibility(View.INVISIBLE);
-                                        Intent verifycodeintent = new Intent(LoginActivity.this, HomeActivity.class);
-                                        LoginActivity.this.startActivity(verifycodeintent);
-                                        finish();
+                                        checkRole();
                                     } else {
                                         SignInLoader.setVisibility(View.INVISIBLE);
                                         new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
@@ -150,5 +156,36 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         userEmail = sharedPreferences.getString(emailAddress,"");
         emailtxt.setText(userEmail);
+    }
+
+    public  void checkRole(){
+        final FirebaseUser fuser = mAuth.getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("role");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                String role = dataSnapshot.getValue(String.class);
+                if(role.equals("admin")){
+                    SignInLoader.setVisibility(View.INVISIBLE);
+                    Intent verifycodeintent = new Intent(LoginActivity.this, SimulatedMarketListActivity.class);
+                    LoginActivity.this.startActivity(verifycodeintent);
+                    finish();
+                    return;
+                }
+                else {
+
+                    SignInLoader.setVisibility(View.INVISIBLE);
+                    Intent verifycodeintent = new Intent(LoginActivity.this, HomeActivity.class);
+                    LoginActivity.this.startActivity(verifycodeintent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

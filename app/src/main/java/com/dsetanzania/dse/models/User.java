@@ -2,6 +2,7 @@ package com.dsetanzania.dse.models;
 
 import android.content.DialogInterface;
 import android.util.Log;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -40,6 +41,16 @@ public class User{
     private String coursename;
     private String passoword;
     private String phoneNumber;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    private String role;
     private double virtualmoney;
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
@@ -135,7 +146,7 @@ public class User{
         this.virtualmoney = virtualmoney;
     }
 
-    public User(String userId,String firstname, String lastname, String tradername, String email, String yearOfStudy, String university, String coursename, String phoneNumber, double virtualshare,int stock) {
+    public User(String userId, String firstname, String lastname, String tradername, String email, String yearOfStudy, String university, String coursename, String phoneNumber, double virtualshare, int stock, String role) {
         this.userId = userId;
         this.virtualmoney = virtualshare;
         this.firstname = firstname;
@@ -145,9 +156,9 @@ public class User{
         this.yearOfStudy = yearOfStudy;
         this.university = university;
         this.coursename = coursename;
-        this.passoword = passoword;
         this.stock = stock;
         this.phoneNumber = phoneNumber;
+        this.role = role;
     }
 
 

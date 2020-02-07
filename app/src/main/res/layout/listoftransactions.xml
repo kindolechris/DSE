@@ -78,9 +78,11 @@
                     android:layout_height="wrap_content"
                     android:textSize="11sp"
                     android:text="01/02/2020"
+                    android:paddingEnd="10dp"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/colorBlack"
-                    android:fontFamily="@font/montserrat">
+                    android:textFontWeight="800"
+                    android:textColor="@color/colorSuccess"
+                    android:fontFamily="@font/fontawesome">
                 </TextView>
             </LinearLayout>
 

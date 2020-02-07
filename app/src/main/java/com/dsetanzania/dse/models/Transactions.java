@@ -49,7 +49,8 @@ public class Transactions  {
 
     public String getDate() {
 
-        return date.substring(0,10);
+        //return date.substring(0,10);
+        return date;
     }
 
     public void setDate(String date) {
