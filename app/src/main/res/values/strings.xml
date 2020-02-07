@@ -4,6 +4,7 @@
     <string name="signuptxt">New here? <u>Sign up instead</u></string>
     <string name="open_drawer">Open navigation drawer</string>
     <string name="close_drawer">Close navigation drawer</string>
+    <string name="yourBalanceTxt">Your Virtual Balance</string>
 
     <string-array name="university_list">
         <item>ARDHI UNIVERSITY</item>
@@ -102,6 +103,7 @@
 
     <string name="title_activity_sell_share">SellShareActivity</string>
     <string name="title_activity_buy_share">BuyShareActivity</string>
+    <string name="title_activity_portfolio">Portfolio</string>
 
 
 </resources>
