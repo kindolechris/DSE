@@ -2,6 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
+    <item
+        android:id="@+id/search"
+        android:title="Notification"
+        android:iconTint="@color/colorWhite"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView">
+    </item>
+
     <item
         android:id="@+id/notification"
         android:title="Notification"

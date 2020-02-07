@@ -6,7 +6,13 @@ public class MarketSimulator {
 
     private String Board;
 
-    private Double Change;
+    private String Change;
+
+    private String Close;
+
+    private String Company;
+
+    private String High;
 
     public String getBoard() {
         return Board;
@@ -16,19 +22,19 @@ public class MarketSimulator {
         Board = board;
     }
 
-    public Double getChange() {
+    public String getChange() {
         return Change;
     }
 
-    public void setChange(Double change) {
+    public void setChange(String change) {
         Change = change;
     }
 
-    public Double getClose() {
+    public String getClose() {
         return Close;
     }
 
-    public void setClose(Double close) {
+    public void setClose(String close) {
         Close = close;
     }
 
@@ -40,63 +46,63 @@ public class MarketSimulator {
         Company = company;
     }
 
-    public Double getHigh() {
+    public String getHigh() {
         return High;
     }
 
-    public void setHigh(Double high) {
+    public void setHigh(String high) {
         High = high;
     }
 
-    public Double getLastDealPrice() {
+    public String getLastDealPrice() {
         return LastDealPrice;
     }
 
-    public void setLastDealPrice(Double lastDealPrice) {
+    public void setLastDealPrice(String lastDealPrice) {
         LastDealPrice = lastDealPrice;
     }
 
-    public Long getLastTradedQuantity() {
+    public String getLastTradedQuantity() {
         return LastTradedQuantity;
     }
 
-    public void setLastTradedQuantity(Long lastTradedQuantity) {
+    public void setLastTradedQuantity(String lastTradedQuantity) {
         LastTradedQuantity = lastTradedQuantity;
     }
 
-    public Double getLow() {
+    public String getLow() {
         return Low;
     }
 
-    public void setLow(Double low) {
+    public void setLow(String low) {
         Low = low;
     }
 
-    public Double getMarketCap() {
+    public String getMarketCap() {
         return MarketCap;
     }
 
-    public void setMarketCap(Double marketCap) {
+    public void setMarketCap(String marketCap) {
         MarketCap = marketCap;
     }
 
-    public Double getOpeningPrice() {
+    public String getOpeningPrice() {
         return OpeningPrice;
     }
 
-    public void setOpeningPrice(Double openingPrice) {
+    public void setOpeningPrice(String openingPrice) {
         OpeningPrice = openingPrice;
     }
 
-    public Long getVolume() {
+    public String getVolume() {
         return Volume;
     }
 
-    public void setVolume(Long volume) {
+    public void setVolume(String volume) {
         Volume = volume;
     }
 
-    public MarketSimulator(String board, Double change, Double close, String company, Double high, Double lastDealPrice, Long lastTradedQuantity, Double low, Double marketCap, Double openingPrice, Long volume) {
+    public MarketSimulator(String board, String change, String close, String company, String high, String lastDealPrice, String lastTradedQuantity, String low, String marketCap, String openingPrice, String volume) {
         Board = board;
         Change = change;
         Close = close;
@@ -110,29 +116,24 @@ public class MarketSimulator {
         Volume = volume;
     }
 
+    private String LastDealPrice;
+
+    private String LastTradedQuantity;
+
+    private String Low;
+
+    private String MarketCap;
+
+    private String OpeningPrice;
+
+    private String Volume;
+
+
+
 
     public MarketSimulator() {
 
 
     }
-
-
-    private Double Close;
-
-    private String Company;
-
-    private Double High;
-
-    private Double LastDealPrice;
-
-    private Long LastTradedQuantity;
-
-    private Double Low;
-
-    private Double MarketCap;
-
-    private Double OpeningPrice;
-
-    private Long Volume;
 
 }

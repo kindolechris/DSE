@@ -99,12 +99,14 @@ public class SimulatedTradeActivity extends AppCompatActivity {
 
             try {
 
+/*
                OOUdefault_AtsWebFeedService service = new OOUdefault_AtsWebFeedService("http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc");
                 OOUArrayOfSecurityLivePrice res = service.LiveMarketPrices();
                 lvm = new SimulatedMarketAdapter(SimulatedTradeActivity.this,res);
+*/
 
                 //lvm.pushMarkets();
-                //getMarkets();
+                getMarkets();
 
 
             } catch (Exception e) {
@@ -119,12 +121,12 @@ public class SimulatedTradeActivity extends AppCompatActivity {
             super.onPostExecute(o);
 
              //Toast.makeText(getApplicationContext(),"Size is : "+lvm.getItemCount(),Toast.LENGTH_LONG).show();
-            livemarketpricerecyclerview.setHasFixedSize(true);
+   /*         livemarketpricerecyclerview.setHasFixedSize(true);
             livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             livemarketpricerecyclerview.setAdapter(lvm);
             livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(SimulatedTradeActivity.this, LinearLayoutManager.HORIZONTAL, false));
             SnapHelper snapHelper = new PagerSnapHelper();
-            snapHelper.attachToRecyclerView(livemarketpricerecyclerview);
+            snapHelper.attachToRecyclerView(livemarketpricerecyclerview);*/
             //txttrandingstats.setText("Live trending stats");
             //prgs.setVisibility(View.INVISIBLE);
             //getElementsFromSOAP(resultSOAP);
@@ -132,11 +134,11 @@ public class SimulatedTradeActivity extends AppCompatActivity {
         }
     }
 
-/*    private void  getMarkets(){
+    private void  getMarkets(){
         //serverpgsBar.setVisibility(View.VISIBLE);
         simulatedMarket = new ArrayList<MarketSimulator>();
         simulatedMarket.clear();
-        reference = FirebaseDatabase.getInstance().getReference();
+        reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -160,5 +162,5 @@ public class SimulatedTradeActivity extends AppCompatActivity {
 
             }
         });
-    }*/
+    }
 }
