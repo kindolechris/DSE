@@ -32,10 +32,9 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline">
             </TextView>
             <TextView
-                android:id="@+id/txtdate"
+                android:id="@+id/txtdateToedit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="27/01/2019"
                 android:layout_weight="1"
                 android:textColor="@color/colorBlack"
                 android:fontFamily="@font/montserrat"

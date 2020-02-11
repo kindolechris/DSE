@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ public class FaqsActivity extends AppCompatActivity {
     private int page;
     RecyclerView recyclerView;
     View view;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,10 @@ public class FaqsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_faqs);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolBarElevation(7);
 
         recyclerView = (RecyclerView) findViewById(R.id.faqsrecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -75,6 +79,14 @@ public class FaqsActivity extends AppCompatActivity {
         }
         return parentObject;
 
+    }
+
+    public void toolBarElevation(int size){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(size);
+        }else{
+            ///TODO for compatiability
+        }
     }
 
 

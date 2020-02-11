@@ -47,6 +47,7 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
         TextView txtsatus;
         TextView txtdate;
         TextView txtid;
+        TextView txttype;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -54,6 +55,7 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
             txtsatus = (TextView)itemView.findViewById(R.id.txtstatus);
             txtdate = (TextView)itemView.findViewById(R.id.txttransactiondate);
             txtid = (TextView)itemView.findViewById(R.id.txttransactionId);
+            txttype = (TextView)itemView.findViewById(R.id.txttype);
         }
     }
 
@@ -61,11 +63,18 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
     public void onBindViewHolder(@NonNull ListOfTransactionAdapter.ViewHolder holder, int position) {
 
         holder.itemView.setTag(transactions.get(position));
-        //TimeAgo timeAgo = new TimeAgo();
         String gettimeAgo = parseDate(transactions.get(position).getDate());
         holder.txtdate.setText(gettimeAgo);
         holder.txtid.setText(transactions.get(position).getId());
-        holder.txtsatus.setText(transactions.get(position).getStatus());
+        holder.txttype.setText(transactions.get(position).getType());
+        if(transactions.get(position).getStatus().equals("Successfully")){
+            holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorSuccess));
+            holder.txtsatus.setText(transactions.get(position).getStatus());
+
+        }else {
+            holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorRed));
+            holder.txtsatus.setText(transactions.get(position).getStatus());
+        }
 
     }
 

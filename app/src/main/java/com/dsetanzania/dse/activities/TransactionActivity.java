@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,7 @@ public class TransactionActivity extends AppCompatActivity {
     RecyclerView.Adapter listOfTransactionAdapter;
     private FirebaseAuth mAuth;
     LinearLayoutManager layoutManager;
+    Toolbar toolbar;
 
 
     @Override
@@ -42,7 +44,9 @@ public class TransactionActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolBarElevation(7);
+
         setSupportActionBar(toolbar);
         layoutManager = new LinearLayoutManager(getApplicationContext());
 
@@ -103,6 +107,15 @@ public class TransactionActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void toolBarElevation(int size){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(size);
+        }else{
+            ///TODO for compatiability
+        }
+    }
+
 
 
 }

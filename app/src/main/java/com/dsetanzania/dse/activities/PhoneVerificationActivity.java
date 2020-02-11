@@ -145,7 +145,7 @@ public class PhoneVerificationActivity extends AppCompatActivity {
 
             //sometime the code is not detected automatically
             //in this case the code will be null
-            //so user has to manually enter the code
+            //so thisUserClass has to manually enter the code
             if (code != null) {
                 verificationtxtxfield.setText(code);
                 //verifying the code
@@ -165,7 +165,7 @@ public class PhoneVerificationActivity extends AppCompatActivity {
         public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
             super.onCodeSent(s, forceResendingToken);
 
-            //storing the verification id that is sent to the user
+            //storing the verification id that is sent to the thisUserClass
             mVerificationId = s;
         }
     };

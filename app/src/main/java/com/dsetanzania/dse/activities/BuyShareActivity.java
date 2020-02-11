@@ -1,5 +1,6 @@
 package com.dsetanzania.dse.activities;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import com.dsetanzania.dse.models.Transactions;
@@ -30,6 +31,8 @@ import org.ksoap2.serialization.ValueWriter;
 
 import java.security.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,13 +55,15 @@ public class BuyShareActivity extends AppCompatActivity {
     TextInputEditText txtAmountofshares;
     TextView txtreferenceId;
     FirebaseUser fuser;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buy_share);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolBarElevation(7);
         mAuth = FirebaseAuth.getInstance();
         fuser = mAuth.getCurrentUser();
 
@@ -105,9 +110,9 @@ public class BuyShareActivity extends AppCompatActivity {
                 double doublepurserUserprice = Double.parseDouble(txtprice.getText().toString().trim());
 
                 String responce = user.buyshares(doublepurseropeningprice,doublepurserUserprice,Integer.parseInt(txtAmountofshares.getText().toString().trim()));
-                //String responce = user.buyshares(120,doublepurserUserprice,Integer.parseInt(txtAmountofshares.getText().toString().trim()));
+                //String responce = thisUserClass.buyshares(120,doublepurserUserprice,Integer.parseInt(txtAmountofshares.getText().toString().trim()));
                 if(responce == "successfully"){
-                    pushTransaction("successfuly");
+                    pushTransaction("Successfully");
                     txtreferenceId.setText("#DSE" + generateguid());
                     Toast.makeText(getApplicationContext(),"Transaction was successfuly",Toast.LENGTH_SHORT).show();
                 }
@@ -149,8 +154,9 @@ public class BuyShareActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+                NumberFormat formatter = new DecimalFormat("#,###");
                 txtholdings.setText(String.valueOf(user.getStock()));
-                txtAmount.setText(String.valueOf( user.getVirtualmoney()));
+                txtAmount.setText(formatter.format(user.getVirtualmoney()));
             }
 
             @Override
@@ -165,11 +171,11 @@ public class BuyShareActivity extends AppCompatActivity {
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()));
+        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id);
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(getApplicationContext(),"Transaction pushed.",Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"Transaction pushed.",Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -192,5 +198,14 @@ public class BuyShareActivity extends AppCompatActivity {
         String  ticketId = UUID.randomUUID().toString();
         return ticketId.substring(0,8);
     }
+
+    public void toolBarElevation(int size){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(size);
+        }else{
+            ///TODO for compatiability
+        }
+    }
+
 
 }

@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 String role = dataSnapshot.getValue(String.class);
-                if(role.equals("admin")){
+                if(role.equals("Admin")){
                     SignInLoader.setVisibility(View.INVISIBLE);
                     Intent verifycodeintent = new Intent(LoginActivity.this, SimulatedMarketListActivity.class);
                     LoginActivity.this.startActivity(verifycodeintent);

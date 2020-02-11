@@ -27,6 +27,14 @@
         <item name="android:textColor">@color/colorWhite</item>
     </style>
 
+    <style name="MySpinnerLookOnWhite"
+        parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:colorAccent">@color/colorBlack</item>
+        <item name="android:textColorSecondary">@color/colorBlack</item>
+    </style>
+
     <style name="Mybtntheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Style attributes -->
         <item name="colorControlNormal">#c5c5c5</item>
@@ -52,11 +60,12 @@
 
     <!-- This configures the styles for the title within the Toolbar  -->
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <!--        <item name="android:fontFamily">@font/faster_one</item>-->
+       <item name="android:textColor">@color/colorWhite</item>
+       <item name="android:textStyle">normal</item>
+       <item name="android:textSize">17dp</item>
     </style>
 
     <style name="NavigationViewTheme"></style>
-
 
     <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/colorWhite</item>
@@ -106,6 +115,23 @@
         <item name="android:colorPrimaryDark">@color/colorPrimary</item>
         <item name="android:fontFamily">@font/montserrat</item>        <!-- Customize your theme here. -->
 
+    </style>
+
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/colorWhite</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabPaddingStart">12dp</item>
+        <item name="tabPaddingEnd">12dp</item>
+        <item name="tabBackground">@color/colorPrimary</item>
+        <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@color/colorWhite</item>
+    </style>
+
+    <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorForTab</item>
+        <item name="textAllCaps">true</item>
     </style>
 
 

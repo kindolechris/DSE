@@ -46,59 +46,77 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.4"
+                app:layout_constraintGuide_percent="0.55"
                 app:layout_constraintGuide_begin="283dp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/image_bg"
+            android:gravity="left|bottom"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/guideline19"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintVertical_bias="0.0">
+
+           <LinearLayout
+               android:padding="20dp"
+               android:orientation="vertical"
+               android:layout_marginBottom="30dp"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+               <TextView
+                   android:id="@+id/textView3"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:fontFamily="@font/montserrat_bold"
+                   android:text="Welcome"
+                   android:textColor="@color/colorWhite"
+                   android:textSize="20dp" />
+
+               <TextView
+                   android:id="@+id/txttradername"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:fontFamily="@font/montserrat"
+                   android:textColor="@color/colorWhite"
+                   android:textSize="16dp" />
+
+               <TextView
+                   android:id="@+id/sharestxt"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:fontFamily="@font/montserrat"
+                   android:gravity="end"
+                   android:text="@string/yourBalanceTxt"
+                   android:textColor="@color/colorWhite"
+                   android:textSize="16dp" />
+
+               <TextView
+                   android:id="@+id/sharepricetxt"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:fontFamily="@font/montserrat"
+                   android:gravity="end"
+                   android:textColor="@color/colorWhite"
+                   android:textSize="16sp" />
+
+           </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:gravity="left|center"
-                app:layout_constraintBottom_toTopOf="@+id/guideline19"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/image_bg"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:text="Welcome"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20dp" />
-                <TextView
-                    android:id="@+id/txttradername"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="16dp" />
-
-                <TextView
-                    android:id="@+id/sharestxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat"
-                    android:gravity="end"
-                    android:text="@string/yourBalanceTxt"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="16dp" />
-                <TextView
-                    android:id="@+id/sharepricetxt"
-                    android:layout_width="match_parent"
-                    android:gravity="end"
-                    android:textColor="@color/colorWhite"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat"
-                    android:textSize="16sp" />
-
-
+                android:layout_height="50dp"
+                android:gravity="bottom"
+                android:background="@color/colorWhite">
             </LinearLayout>
 
-            <LinearLayout
+
+        </LinearLayout>
+
+        <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:paddingTop="10dp"
@@ -109,7 +127,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline21"
-                app:layout_constraintVertical_bias="0.098"
+                app:layout_constraintVertical_bias="0.0"
                 app:layout_constraintWidth_percent="0.93">
 
                 <LinearLayout
@@ -140,19 +158,19 @@
                         android:layout_height="30dp" />
                 </LinearLayout>
 
-               <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                   android:id="@+id/swiperefreshLayout"
-                   android:layout_width = "match_parent"
-                   android:layout_height = "match_parent">
-                   <androidx.recyclerview.widget.RecyclerView
-                       android:id="@+id/listoflivemarket"
-                       android:layout_width="match_parent"
-                       android:layout_height="match_parent">
-                   </androidx.recyclerview.widget.RecyclerView>
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swiperefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-               </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listoflivemarket"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
-            </LinearLayout>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline21"
@@ -219,8 +237,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="left"
-                    android:padding="12dp">
+                    android:padding="10dp"
+                    android:gravity="left">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -228,7 +246,7 @@
                         android:gravity="bottom"
                         android:fontFamily="@font/montserrat_bold"
                         android:layout_gravity="bottom"
-                        android:paddingStart="10dp"
+                        android:paddingStart="15dp"
                         android:textSize="16dp"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
@@ -258,8 +276,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:text="Simulated trading"
-                            android:gravity="bottom"
-                            android:fontFamily="@font/montserrat"
+                            android:gravity="center"
+                            android:fontFamily="@font/fontawesome"
                             android:layout_gravity="bottom"
                             android:paddingStart="10dp"
                             android:textSize="16dp"
@@ -292,7 +310,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:text="Portfolio"
-                            android:fontFamily="@font/montserrat"
+                            android:fontFamily="@font/fontawesome"
                             android:gravity="center"
                             android:layout_gravity="bottom"
                             android:paddingStart="10dp"
@@ -327,7 +345,7 @@
                             android:layout_height="match_parent"
                             android:text="Transactions"
                             android:gravity="center"
-                            android:fontFamily="@font/montserrat"
+                            android:fontFamily="@font/fontawesome"
                             android:layout_gravity="center"
                             android:paddingStart="10dp"
                             android:textSize="16dp"
@@ -378,7 +396,7 @@
                             android:layout_height="match_parent"
                             android:text="Tell a friend"
                             android:gravity="center"
-                            android:fontFamily="@font/montserrat"
+                            android:fontFamily="@font/fontawesome"
                             android:layout_gravity="bottom"
                             android:paddingStart="10dp"
                             android:textSize="16dp"
@@ -411,7 +429,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:text="FAQ"
-                            android:fontFamily="@font/montserrat"
+                            android:fontFamily="@font/fontawesome"
                             android:gravity="center"
                             android:layout_gravity="center"
                             android:paddingStart="10dp"
@@ -446,7 +464,7 @@
                             android:layout_height="match_parent"
                             android:text="About us"
                             android:gravity="center"
-                            android:fontFamily="@font/montserrat"
+                            android:fontFamily="@font/fontawesome"
                             android:layout_gravity="center"
                             android:paddingStart="10dp"
                             android:textSize="16dp"

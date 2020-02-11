@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,14 +21,17 @@ public class AboutUsActivity extends AppCompatActivity {
     LinearLayout txtwebsite;
     LinearLayout txtemail;
     LinearLayout txtterms;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolBarElevation(7);
 
         txtwebsite = (LinearLayout) findViewById(R.id.btnWebsiteLink);
         txtemail = (LinearLayout) findViewById(R.id.btnEmailLink);
@@ -83,5 +87,13 @@ public class AboutUsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void toolBarElevation(int size){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(size);
+        }else{
+            ///TODO for compatiability
+        }
     }
 }

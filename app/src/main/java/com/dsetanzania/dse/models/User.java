@@ -2,7 +2,9 @@ package com.dsetanzania.dse.models;
 
 import android.content.DialogInterface;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -10,6 +12,8 @@ import androidx.appcompat.app.AlertDialog;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.activities.RegistrationActivity;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUSecurityLivePrice;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +34,14 @@ import java.util.Map;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class User{
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     private String userId;
     private int stock;
     private String firstname;
@@ -41,6 +53,7 @@ public class User{
     private String coursename;
     private String passoword;
     private String phoneNumber;
+    Transactions _transaction;
 
     public String getRole() {
         return role;
@@ -56,6 +69,12 @@ public class User{
     private FirebaseAuth mAuth;
     double amountCalculated;
     double updatedbalance;
+
+
+    private String check;
+    public void setCheck(String check){
+        this.check = check;
+    }
 
     public int getStock() {
         return stock;
@@ -164,22 +183,22 @@ public class User{
 
     public  User(){
 
+
     }
 
 
-
-    public boolean sellshares(double amountToSell,double openingprice){
+    public void sellshares(final double amountToSell, final int sharesToSell,final String board){
 
         if(getStock()<0){
             System.out.println("You have no stock");
-            return false;
         }
 
-        System.out.println("All gooood");
-        double amountTodeduct = stock * openingprice;
-        virtualmoney = virtualmoney + amountTodeduct;
+        if(amountToSell > getVirtualmoney()){
+            System.out.println("You have less virtual balance");
 
-        return true;
+        }
+
+
     }
 
 
@@ -223,7 +242,11 @@ public class User{
             map.put("virtualmoney", updatedbalance);
             map.put("stock", updatedStock);
             reference.updateChildren(map);
-            Log.v("TAAAAG :", "Transaction successfully");
+            Log.v("TAAAAG :", "Purchase transaction successfully");
             return "successfully";
+    }
+
+    public void methodToProcess(String firebaseVariable){
+        check = firebaseVariable;
     }
 }

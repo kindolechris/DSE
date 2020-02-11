@@ -1,0 +1,16 @@
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    style="?attr/spinnerDropDownItemStyle"
+    android:singleLine="true"
+    android:layout_marginStart="20dp"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:fontFamily="@font/fontawesome"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/dropdownListPreferredItemHeight"
+    android:ellipsize="middle"
+    android:textSize="15sp"
+    android:textColor="@color/colorBlack"
+    android:background="@color/colorWhite"
+    android:textAlignment="center"/>

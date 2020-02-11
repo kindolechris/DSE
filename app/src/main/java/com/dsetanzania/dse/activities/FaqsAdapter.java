@@ -3,6 +3,7 @@ package com.dsetanzania.dse.activities;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,6 +84,7 @@ public class FaqsAdapter extends ExpandableRecyclerAdapter<FaqsParentViewHolder,
     });
 
     }
+
 
     @Override
     public void onBindChildViewHolder(FaqsChildViewHolder titleChildViewHolder, int i, Object o) {

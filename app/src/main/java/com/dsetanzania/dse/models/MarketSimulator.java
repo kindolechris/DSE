@@ -1,8 +1,16 @@
 package com.dsetanzania.dse.models;
 
-import java.math.BigDecimal;
-
 public class MarketSimulator {
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        this.Id = id;
+    }
+
+    private String Id;
 
     private String Board;
 

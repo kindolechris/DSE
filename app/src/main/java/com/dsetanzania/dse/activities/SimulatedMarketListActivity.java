@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +37,9 @@ public class SimulatedMarketListActivity extends AppCompatActivity {
     DatabaseReference reference;
     SimulatedMarketToEditAdapter simulatedMarketAdapter;
     FirebaseAuth mAuth;
+    Toolbar toolbar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +47,10 @@ public class SimulatedMarketListActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolBarElevation(7);
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setDisplayShowHomeEnabled(false);
@@ -54,6 +60,14 @@ public class SimulatedMarketListActivity extends AppCompatActivity {
         livemarketrecyclerview = (RecyclerView) findViewById(R.id.MarketsPriceListRecyclerView);
 
         getMarkets();
+    }
+
+    public void toolBarElevation(int size){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(size);
+        }else{
+            ///TODO for compatiability
+        }
     }
 
     private void  getMarkets(){

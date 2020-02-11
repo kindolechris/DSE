@@ -65,6 +65,7 @@
                             android:text="Qty">
                         </TextView>
                         <TextView
+                            android:id="@+id/closingTxt"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:gravity="end"

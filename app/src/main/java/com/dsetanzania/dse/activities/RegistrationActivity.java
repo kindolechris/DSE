@@ -264,7 +264,6 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            progressBar.setVisibility(View.INVISIBLE);
 
                             _builder = new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                                     .setTitle("Welcome")
@@ -297,6 +296,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
 
                 if(!check){
                     registerUser();
+                    //progressBar.setVisibility(View.INVISIBLE);
 
                 }else {
                     new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)

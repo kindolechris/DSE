@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -57,6 +59,7 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
         TextView marketcap;
         TextView OpeningPrice;
         LinearLayout parentlayout;
+        TextView txtClosing;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -68,6 +71,7 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
             company = itemView.findViewById(R.id.txtxompany);
             marketcap = itemView.findViewById(R.id.txtmarketcap);
             OpeningPrice = itemView.findViewById(R.id.txtopeningprice);
+            txtClosing = itemView.findViewById(R.id.closingTxt);
             //parentlayout = itemView.findViewById(R.id.serverlistLayout);
         }
     }
@@ -110,13 +114,15 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
     public void onBindViewHolder(@NonNull LiveMarketAdapter.ViewHolder holder, final int position) {
 
         _position = position;
-        NumberFormat formatter = new DecimalFormat("#,###");
+        final NumberFormat formatter = new DecimalFormat("#,###");
+        DecimalFormat format = new DecimalFormat("0.#");
         String openingPrice = formatter.format(LivesecurityPrices.get(position).OpeningPrice);
         holder.itemView.setTag(LivesecurityPrices.get(position));
         holder.company.setText(LivesecurityPrices.get(position).Company);
-        holder.marketcap.setText(LivesecurityPrices.get(position).MarketCap.toString());
+        holder.marketcap.setText("M.CAP " + formatValue((LivesecurityPrices.get(position).MarketCap).doubleValue()));
         holder.OpeningPrice.setText(openingPrice);
-
+        String high = formatter.format(LivesecurityPrices.get(position).High);
+        holder.txtClosing.setText("↑(" + high + ")");
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -124,32 +130,28 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
                 String change = (LivesecurityPrices.get(position).Change.toString());
                 String high = (LivesecurityPrices.get(position).Change.toString());
                 String low = (LivesecurityPrices.get(position).Change.toString());
-                String Ldp = (LivesecurityPrices.get(position).LastDealPrice.toString());
+                String Ldp = formatter.format(LivesecurityPrices.get(position).LastDealPrice);
                 if(change.contains("0E-9") || high.contains("0E-9") || low.contains("0E-9") || Ldp.contains("0E-9")){
                     double _c = Double.parseDouble(change);
                     double _h = Double.parseDouble(high);
                     double _l = Double.parseDouble(low);
-                    double _ldp = Double.parseDouble(Ldp);
-                    NumberFormat formatter = new DecimalFormat("###.#####");
+                    NumberFormat formatter = new DecimalFormat("#,###");
                     String f = formatter.format(_c);
                     String h = formatter.format(_h);
                     String l = formatter.format(_l);
-                    String newldp = formatter.format(_ldp);
                     txtchange.setText(f);
                     txthigh.setText(h);
                     txtlow.setText(l);
-                    txtlastdealvalue.setText(newldp);
                 }
-                NumberFormat formatter = new DecimalFormat("###.#####");
                 txtcompanyname.setText(LivesecurityPrices.get(position).Company);
-                txtlastdealvalue.setText(String.valueOf(LivesecurityPrices.get(position).LastDealPrice.doubleValue()));
+                txtlastdealvalue.setText(Ldp);
+                //txtlastdealvalue.setText(String.valueOf(LivesecurityPrices.get(position).LastDealPrice.doubleValue()));
                 txtlasttradequantity.setText(LivesecurityPrices.get(position).LastTradedQuantity.toString());
                 txtvolume.setText(LivesecurityPrices.get(position).Volume.toString());
                 txtdate.setText(getDateTime().substring(0,10));
                 //txtchange.setText(LivesecurityPrices.get(position).Change.toString());
                 dialog.show();
                 //notifyDataSetChanged();
-
             }
         });
 
@@ -167,5 +169,40 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
         return dateFormat.format(date);
     }
 
+
+    public String truncateNumber(float floatNumber) {
+        long million = 1000000L;
+        long billion = 1000000000L;
+        long trillion = 1000000000000L;
+        long number = Math.round(floatNumber);
+        if ((number >= million) && (number < billion)) {
+            float fraction = calculateFraction(number, million);
+            return Float.toString(fraction) + "M";
+        } else if ((number >= billion) && (number < trillion)) {
+            float fraction = calculateFraction(number, billion);
+            return Float.toString(fraction) + "B";
+        }
+        return Long.toString(number);
+    }
+
+    public float calculateFraction(long number, long divisor) {
+        long truncate = (number * 10L + (divisor / 2L)) / divisor;
+        float fraction = (float) truncate * 0.10F;
+        return fraction;
+    }
+
+
+    public static String formatValue(double value) {
+        int power;
+        String suffix = " kmbt";
+        String formattedNumber = "";
+
+        NumberFormat formatter = new DecimalFormat("#,###.#");
+        power = (int)StrictMath.log10(value);
+        value = value/(Math.pow(10,(power/3)*3));
+        formattedNumber=formatter.format(value);
+        formattedNumber = formattedNumber + suffix.charAt(power/3);
+        return formattedNumber.length()>4 ?  formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
+    }
 
 }

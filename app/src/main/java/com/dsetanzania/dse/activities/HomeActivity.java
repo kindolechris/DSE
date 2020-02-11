@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -123,9 +124,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_home);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshLayout);
 
@@ -242,6 +241,7 @@ public class HomeActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolBarElevation(7);
         toolbar.post(new Runnable() {
             @Override
             public void run() {
@@ -479,7 +479,7 @@ public class HomeActivity extends AppCompatActivity {
                 String val = "";
                 for (int i = 0; i < res.getPropertyCount(); i++) {
                     val = res.get(i).MarketCap.toString();
-                    Log.i("", val);
+                    Log.i("Dataaaaaa", val);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -544,6 +544,15 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void toolBarElevation(int size){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(size);
+        }else{
+            ///TODO for compatiability
+        }
+    }
+
 
 }
 

@@ -4,6 +4,7 @@
 <!--    <color name="colorPrimary">#270460</color>-->
     <color name="colorPrimaryDark">#0281B1</color>
     <color name="colorBlack">#757474</color>
+    <color name="colorForTab">#B5FFFFFF</color>
     <color name="colorBlackBlack">#1D1D1D</color>
     <color name="colorAccent">#F7F7F7</color>
     <color name="colorWhite">#FFFFFF</color>

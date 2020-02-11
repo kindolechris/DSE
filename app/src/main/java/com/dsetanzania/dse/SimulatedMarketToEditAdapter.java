@@ -3,6 +3,7 @@ package com.dsetanzania.dse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,22 +11,32 @@ import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.activities.BuyShareActivity;
 import com.dsetanzania.dse.activities.SellShareActivity;
+import com.dsetanzania.dse.activities.SimulatedMarketListActivity;
 import com.dsetanzania.dse.models.MarketSimulator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +55,8 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
     DatabaseReference reference;
     TextInputEditText quantity;
     TextInputEditText price;
+    TextView date;
+    private int id;
 
 
     TextView companyname;
@@ -117,6 +130,7 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
 
 
             companyname = (TextView)dialog.findViewById(R.id.txtcompanynametoedit);
+            date = (TextView)dialog.findViewById(R.id.txtdateToedit);
             quantity = (TextInputEditText)dialog.findViewById(R.id.txtquantitytoedit);
             price = (TextInputEditText)dialog.findViewById(R.id.txtpricetoedit);
             updatebtn = (Button) dialog.findViewById(R.id.btnUpdate);
@@ -148,21 +162,43 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                id = position;
                 companyname.setText(marketSimulator.get(position).getCompany());
                 txtBoard.setText(marketSimulator.get(position).getBoard());
+                date.setText(getdate());
                 dialog.show();
             }
         });
 
+
         updatebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
-                Map<String, Object> map = new HashMap<>();
-                map.put("lastTradedQuantity",quantity.getText().toString());
-                map.put("openingPrice",price.getText().toString());
-                reference.updateChildren(map);
 
+                reference = FirebaseDatabase.getInstance().getReference("MarketSimulator").child(marketSimulator.get(id).getId());
+                Map<String, Object> map = new HashMap<>();
+                map.put("openingPrice", price.getText().toString().trim());
+                map.put("lastTradedQuantity", quantity.getText().toString().trim());
+
+                reference.updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>()
+                {
+                    @Override
+                    public void onSuccess(Void aVoid)
+                    {
+                        Toast.makeText(mycontext,"Updated",Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e)
+                    {
+                        Toast.makeText(mycontext,"Not updated",Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                });
+
+                //Toast.makeText(mycontext,"Updated"+ marketSimulator.get(id).getId(),Toast.LENGTH_SHORT).show();
+
+                //setkeys();
             }
         });
     }
@@ -192,4 +228,38 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
             }
         });
     }*/
+
+    public static String getdate(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
+    private void  setkeys(){
+
+        reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String childKey = snapshot.getKey();
+                    snapshot.getRef().child("Id").setValue(childKey);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

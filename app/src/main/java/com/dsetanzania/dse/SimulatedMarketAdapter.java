@@ -25,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -56,6 +58,7 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
         TextView txtvolume;
         TextView txtchange;
         TextView txtprice;
+        TextView txtdate;
         Button buybtn;
         Button sellbtn;
 
@@ -68,14 +71,15 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
             txtvolume = (TextView)itemView.findViewById(R.id.txtvolume);
             txtchange = (TextView)itemView.findViewById(R.id.txtchange);
             txtlastdealvalue = (TextView)itemView.findViewById(R.id.txtlastdealvalue);
+            txtdate = (TextView)itemView.findViewById(R.id.txtdateval);
             txtprice = (TextView)itemView.findViewById(R.id.openingPrice);
             buybtn = (Button) itemView.findViewById(R.id.btnbuy);
             sellbtn = (Button) itemView.findViewById(R.id.btnSell);
+
             //LinearLayout closeModal = dialog.findViewById(R.id.layoutclose);
 
         }
     }
-
 
     @NonNull
     @Override
@@ -99,6 +103,7 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
         holder.txtlastdealvalue.setText(formatter.format(Double.parseDouble(marketcksimulator.get(position).getLastDealPrice())));
         holder.txtvolume.setText(formatter.format(Double.parseDouble(marketcksimulator.get(position).getVolume())));
         holder.txtchange.setText(formatter.format(Double.parseDouble((marketcksimulator.get(position).getChange()))));
+        holder.txtdate.setText(getdate().substring(0,10));
 
         holder.buybtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,4 +155,18 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
             });
         }
     }*/
+
+    public static String getdate(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
 }
