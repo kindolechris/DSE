@@ -105,6 +105,7 @@ public class HomeActivity extends AppCompatActivity {
     SwipeRefreshLayout mEmptyViewContainer;
     View parentLayout;
     TextView smsCountTxt;
+    TextView margeetxt;
     DatabaseReference dbReference;
     StorageReference storegaReference;
     FirebaseUser fuser;
@@ -134,6 +135,7 @@ public class HomeActivity extends AppCompatActivity {
         fuser = mAuth.getCurrentUser();
 
         txttradername = (TextView) findViewById(R.id.txttradername);
+        margeetxt = (TextView) findViewById(R.id.marquutxtbottom);
         txtvirtualshare = (TextView) findViewById(R.id.sharepricetxt);
         livemarketlinearlayout = (LinearLayout) findViewById(R.id.livemarketLayout);
         portfoliolinearlayout = (LinearLayout) findViewById(R.id.portfolioLayout);
@@ -149,6 +151,8 @@ public class HomeActivity extends AppCompatActivity {
 
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawable_layout);
         final LinearLayout content = (LinearLayout) findViewById(R.id.content);
+
+        margeetxt.setSelected(true);
 
         getlivedata();
 

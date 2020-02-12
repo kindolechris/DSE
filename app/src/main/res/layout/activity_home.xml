@@ -117,59 +117,80 @@
         </LinearLayout>
 
         <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:paddingTop="10dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:background="@drawable/homecontentcardholder"
-                app:layout_constraintBottom_toTopOf="@+id/guideline22"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/guideline21"
-                app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintWidth_percent="0.93">
+            android:id="@+id/linearLayout3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/homecontentcardholder"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline22"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline21"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintWidth_percent="0.93">
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/txttrendingTradestats"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat"
-                        android:gravity="center"
-                        android:layout_weight="1"
-                        android:layout_marginBottom="10dp"
-                        android:text="Live Trading Stats"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16dp" />
+                <TextView
+                    android:id="@+id/txttrendingTradestats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/montserrat"
+                    android:gravity="center"
+                    android:text="Live Trading Stats"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16dp" />
 
-                    <ProgressBar
-                        android:layout_gravity="right"
-                        android:indeterminateDrawable="@drawable/progressbarcolor"
-                        android:id="@+id/livemarketLoader"
-                        android:gravity='right'
-                        android:paddingEnd="10dp"
-                        style="?android:attr/progressBarStyle"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp" />
-                </LinearLayout>
+                <ProgressBar
+                    android:id="@+id/livemarketLoader"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right"
+                    android:gravity='right'
+                    android:indeterminateDrawable="@drawable/progressbarcolor"
+                    android:paddingEnd="10dp" />
+            </LinearLayout>
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/swiperefreshLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listoflivemarket"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <TextView
+                android:id="@+id/marquutxtbottom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/fontawesome"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:gravity="center"
+                android:textColor="@color/colorWhite"
+                android:text="Powered by Dar-es-salaam stock exchange team"
+                android:textSize="19sp" />
         </LinearLayout>
 
             <androidx.constraintlayout.widget.Guideline
@@ -244,9 +265,10 @@
                         android:layout_height="match_parent"
                         android:text="Activities"
                         android:gravity="bottom"
-                        android:fontFamily="@font/montserrat_bold"
+                        android:fontFamily="@font/fontawesome"
                         android:layout_gravity="bottom"
                         android:paddingStart="15dp"
+                        android:textStyle="bold"
                         android:textSize="16dp"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
@@ -363,10 +385,11 @@
                         android:layout_height="match_parent"
                         android:text="In touch"
                         android:gravity="bottom"
-                        android:fontFamily="@font/montserrat_bold"
+                        android:fontFamily="@font/fontawesome"
                         android:layout_gravity="left"
                         android:paddingStart="10dp"
                         android:textSize="16dp"
+                        android:textStyle="bold"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
                 <com.balysv.materialripple.MaterialRippleLayout

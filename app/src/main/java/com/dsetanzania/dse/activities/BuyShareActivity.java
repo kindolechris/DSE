@@ -34,6 +34,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +57,11 @@ public class BuyShareActivity extends AppCompatActivity {
     TextView txtreferenceId;
     FirebaseUser fuser;
     Toolbar toolbar;
+    ArrayList<Transactions> transactionArray;
+    User otheruserclass;
+    Transactions _transaction;
+    ArrayList<User> otherUserArray;
+    int status = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +73,7 @@ public class BuyShareActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         fuser = mAuth.getCurrentUser();
 
-        titletext = (TextView) findViewById(R.id.titlebuyshares);
+        //titletext = (TextView) findViewById(R.id.titlebuyshares);
         txtprice = (TextInputEditText) findViewById(R.id.txtprice);
         txtAmountofshares = (TextInputEditText) findViewById(R.id.txtquantity);
         txtreferenceId = (TextView) findViewById(R.id.txtreferenceId);
@@ -76,14 +82,6 @@ public class BuyShareActivity extends AppCompatActivity {
         txtholdings = (TextView) findViewById(R.id.txtholdings);
         txtAmount = (TextView) findViewById(R.id.txtstockbalance);
 
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Buy shares");
-        }
-
-        user = new User();
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             openingprice = extras.getString("OpeningPrice");
@@ -91,17 +89,24 @@ public class BuyShareActivity extends AppCompatActivity {
             //Toast.makeText(this,"price is" + openingprice,Toast.LENGTH_LONG).show();
         }
 
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle("Buy from " + companyname);
+        }
+
+        user = new User();
+        otheruserclass = new User();
+        _transaction = new Transactions();
+
 
         buybtn = (Button) findViewById(R.id.btnBuyshares);
-        titletext.setText("Buy from " + companyname);
+        //titletext.setText("Buy from " + companyname);
         getUserInfo();
-
-
-
+        getTransactionsAndOtherUser();
         buybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(TextUtils.isEmpty(txtAmountofshares.getText().toString().trim()) || TextUtils.isEmpty(txtprice.getText().toString().trim())){
                     Toast.makeText(getApplicationContext(),"Please place your quantity or price to buy",Toast.LENGTH_SHORT).show();
                     return;
@@ -114,25 +119,77 @@ public class BuyShareActivity extends AppCompatActivity {
                 if(responce == "successfully"){
                     pushTransaction("Successfully");
                     txtreferenceId.setText("#DSE" + generateguid());
-                    Toast.makeText(getApplicationContext(),"Transaction was successfuly",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Purchase transaction was successfuly",Toast.LENGTH_SHORT).show();
                 }
                 else if(responce == "zero") {
-                    Toast.makeText(getApplicationContext(),"You have zero balance",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"You have zero virtual balance",Toast.LENGTH_SHORT).show();
                 }
                 else if(responce == "queued") {
-                    pushTransaction("Queued");
-                    txtreferenceId.setText("#DSE" + generateguid());
-                    Toast.makeText(getApplicationContext(),"Transaction queued",Toast.LENGTH_SHORT).show();
+
+
+                        for(final Transactions trns : transactionArray){
+                            for (User usr : otherUserArray){
+
+                                if(usr.getUserId().equals(trns.getUserId()) && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(companyname) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
+
+                                    reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getUserId());
+                                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                            Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
+                                            int stock = dataSnapshot.child("stock").getValue(Integer.class);
+                                            Map<String, Object> _Umap = new HashMap<>();
+                                            _Umap.put("virtualmoney",  vm + trns.getPrice());
+                                            _Umap.put("stock",  stock - trns.getShareAmount());
+                                            dataSnapshot.getRef().updateChildren(_Umap);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                    reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("status", "Successfully");
+                                    reference.updateChildren(map);
+                                    Toast.makeText(BuyShareActivity.this,"Purchase transaction from third part was Successfully",Toast.LENGTH_SHORT).show();
+                                    pushTransaction("Successfully");
+                                    txtreferenceId.setText("#DSE" + generateguid());
+                                    status = 3;
+                                    break;
+                                }
+                                else {
+                                    status = 2;
+                                }
+
+                            }
+
+                            if(status == 3){
+                                break;
+                            }
+                        }
+
+                        if(status == 2){
+                            pushTransaction("Queued");
+                            txtreferenceId.setText("#DSE" + generateguid());
+                            Toast.makeText(BuyShareActivity.this,"Transaction was queued",Toast.LENGTH_SHORT).show();
+                        }
+
                 }
                 else if(responce == "notsatisify") {
-                    Toast.makeText(getApplicationContext(),"Transaction less than 15% gap",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Purchase transaction less than 15% gap",Toast.LENGTH_SHORT).show();
                 }
                 else if(responce == "greaterthan") {
-                    Toast.makeText(getApplicationContext(),"Transaction greater than 15% price gap",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Purchase transaction greater than 15% price gap",Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(getApplicationContext(),"Transaction went wrong",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Purchase transaction went wrong",Toast.LENGTH_SHORT).show();
                 }
+
+                getTransactionsAndOtherUser();
             }
         });
     }
@@ -207,5 +264,43 @@ public class BuyShareActivity extends AppCompatActivity {
         }
     }
 
+    public void getTransactionsAndOtherUser(){
+
+        transactionArray = new ArrayList<Transactions>();
+        reference = FirebaseDatabase.getInstance().getReference("Transactions");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    _transaction = snapshot.getValue(Transactions.class);
+                    transactionArray.add(_transaction);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        otherUserArray = new ArrayList<User>();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    otheruserclass = snapshot.getValue(User.class);
+                    otherUserArray.add(otheruserclass);
+                }
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }

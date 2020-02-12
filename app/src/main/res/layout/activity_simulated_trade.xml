@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorWhite"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -13,6 +14,7 @@
         android:background="@color/colorPrimary"
         app:layout_constraintTop_toTopOf="parent"
         android:fitsSystemWindows="true"
+        android:elevation="0dp"
         android:theme="@style/ToolbarTheme"
         app:titleTextAppearance="@style/Toolbar.TitleText"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -24,7 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/MyCustomTabLayout"
-        android:elevation="5dp"/>
+        android:background="@color/colorPrimary"
+        android:elevation="7dp"/>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_Pager"

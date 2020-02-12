@@ -49,7 +49,6 @@ public class SellSharesFragment extends Fragment {
     Spinner boardSpinner;
     DatabaseReference reference;
     User thisUserClass;
-    Transactions _transaction;
     TextView txtvirtualbalance;
     TextView txtstock;
     TextView txtrefId;
@@ -65,7 +64,9 @@ public class SellSharesFragment extends Fragment {
      int stock;
     ArrayList<Transactions> transactionArray;
     User otheruserclass;
+    Transactions _transaction;
     ArrayList<User> otherUserArray;
+    int status = 1;
 
     // newInstance constructor for creating fragment with arguments
     public static SellSharesFragment newInstance(int page, String title) {
@@ -126,39 +127,54 @@ public class SellSharesFragment extends Fragment {
                     }
 
 
+                    /////////////////
 
-                    if(otheruserclass.getUserId().equals(_transaction.getUserId()) && _transaction.getShareAmount() == Double.parseDouble(txtprice.getText().toString().trim()) && _transaction.getBoard().equals(boardSpinner.getSelectedItem().toString()) && _transaction.getType().equals("Purchase") && _transaction.getStatus().equals("Queued")){
-                        String keyother = otheruserclass.getUserId();
-                        String transuserid = _transaction.getUserId();
-                        reference = FirebaseDatabase.getInstance().getReference("Users").child(otheruserclass.getUserId());
-                        reference.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(final Transactions trns : transactionArray){
+                        for (User usr : otherUserArray){
 
-                                Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
-                                int stock = dataSnapshot.child("stock").getValue(Integer.class);
-                                Map<String, Object> _Umap = new HashMap<>();
-                                _Umap.put("virtualmoney",  vm - _transaction.getPrice());
-                                _Umap.put("stock",  stock + _transaction.getShareAmount());
-                                dataSnapshot.getRef().updateChildren(_Umap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            if(usr.getUserId().equals(trns.getUserId()) && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(boardSpinner.getSelectedItem().toString()) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
+
+                                reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getUserId());
+                                reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(getContext(),"Properties updated",Toast.LENGTH_SHORT).show();
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
+                                        int stock = dataSnapshot.child("stock").getValue(Integer.class);
+                                        Map<String, Object> _Umap = new HashMap<>();
+                                        _Umap.put("virtualmoney",  vm - trns.getPrice());
+                                        _Umap.put("stock",  stock + trns.getShareAmount());
+                                        dataSnapshot.getRef().updateChildren(_Umap);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                                     }
                                 });
+
+                                reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("status", "Successfully");
+                                reference.updateChildren(map);
+                                Toast.makeText(getContext(),"Sales transaction was Successfully",Toast.LENGTH_SHORT).show();
+                                pushTransaction("Successfully");
+                                txtrefId.setText("#DSE" + generateguid().substring(0,8));
+                                status = 3;
+                                break;
+                            }
+                            else {
+                                status = 2;
                             }
 
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                    else {
-
+                        if(status == 3){
+                            break;
+                        }
                     }
 
+                    getTransactionsAndOtherUser();
                 }
             });
 
@@ -226,7 +242,7 @@ public class SellSharesFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     _transaction = snapshot.getValue(Transactions.class);
-                    //transactionArray.add(_transaction);
+                     transactionArray.add(_transaction);
                 }
             }
 
@@ -244,7 +260,7 @@ public class SellSharesFragment extends Fragment {
 
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     otheruserclass = snapshot.getValue(User.class);
-                    //otherUserArray.add(thisUserClass);
+                    otherUserArray.add(otheruserclass);
                 }
             }
 
@@ -329,6 +345,7 @@ public class SellSharesFragment extends Fragment {
                     }
                 });
     }*/
+
 
 
 }
