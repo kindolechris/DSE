@@ -52,12 +52,10 @@ public class SimulatedTradeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_simulated_trade);
 
-
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        toolBarElevation(0);
+        getSupportActionBar().setElevation(0);
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

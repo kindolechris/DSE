@@ -41,13 +41,13 @@
                 app:layout_constraintGuide_percent="0.075"
                 app:layout_constraintGuide_begin="272dp" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline19"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.55"
-                app:layout_constraintGuide_begin="283dp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="332dp"
+            app:layout_constraintGuide_percent="0.55" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -124,11 +124,10 @@
             android:gravity="center"
             android:orientation="vertical"
             android:paddingTop="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline22"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline21"
-            app:layout_constraintVertical_bias="0.0"
             app:layout_constraintWidth_percent="0.93">
 
             <LinearLayout
@@ -174,22 +173,24 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent">
+
             <TextView
                 android:id="@+id/marquutxtbottom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ellipsize="marquee"
                 android:fontFamily="@font/fontawesome"
+                android:gravity="center"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:gravity="center"
-                android:textColor="@color/colorWhite"
-                android:text="Powered by Dar-es-salaam stock exchange team"
+                android:text="   Powered by Dar-es-salaam stock exchange team    "
+                android:textColor="@color/colorFortextOnblueBg3"
                 android:textSize="19sp" />
         </LinearLayout>
 
@@ -228,10 +229,9 @@
             android:background="@color/colorPrimaryDark">
 
             <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:text="Dse Tz"
-                android:fontFamily="@font/montserrat_bold"
                 android:paddingStart="10dp"
                 android:paddingBottom="12dp"
                 android:textSize="30dp"
@@ -242,8 +242,70 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.50"
+                app:layout_constraintVertical_bias="0.35"
                 android:textColor="@android:color/white" />
+
+         <!--   <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.95">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Virtual balance :"
+                    android:fontFamily="@font/montserrat"
+                    android:paddingStart="20dp"
+                    android:textSize="14dp"
+                    android:textColor="#7fc7f4">
+                </TextView>
+                <TextView
+                    android:id="@+id/virtualbalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:textSize="14dp"
+                    android:fontFamily="@font/montserrat"
+                    android:paddingStart="5dp"
+                    android:textColor="#7fc7f4">
+                </TextView>
+            </LinearLayout>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.94">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stock balance :"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:paddingStart="20dp"
+                    android:textSize="15dp"
+                    android:textColor="@color/colorFortextOnblueBg">
+                </TextView>
+                <TextView
+                    android:id="@+id/stocklbalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="14dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:paddingStart="5dp"
+                    android:textColor="@color/colorFortextOnblueBg">
+                </TextView>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

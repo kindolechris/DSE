@@ -31,7 +31,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,15 +93,13 @@ public class SellSharesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-        if(view == null){
             view = inflater.inflate(R.layout.fragment_sales, container, false);
             boardSpinner = (Spinner) view.findViewById(R.id.spinnerBoard);
             mAuth = FirebaseAuth.getInstance();
             txtstock = (TextView) view.findViewById(R.id.txtstock);
             txtvirtualbalance = (TextView) view.findViewById(R.id.txtvirtualbalance);
             txtrefId = (TextView) view.findViewById(R.id.txtreferenceId);
-            txtrefId.setText("#DSE" + generateguid().substring(0,8));
+            txtrefId.setText("#DSE" + generateguid());
             txtprice = view.findViewById(R.id.txtprice);
             txtquantity = view.findViewById(R.id.txtquantity);
             btnsell = (Button) view.findViewById(R.id.btnSell);
@@ -126,13 +126,20 @@ public class SellSharesFragment extends Fragment {
 
                     }
 
+                    if(transactionArray.isEmpty()){
+                        pushTransaction("Queued","","","");
+                        txtrefId.setText("#DSE" + generateguid());
+                        Toast.makeText(getContext(),"Sales transaction was queued",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     /////////////////
+
 
                     for(final Transactions trns : transactionArray){
                         for (User usr : otherUserArray){
 
-                            if(usr.getUserId().equals(trns.getUserId()) && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(boardSpinner.getSelectedItem().toString()) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
+                            if(usr.getUserId().equals(trns.getUserId()) && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(boardSpinner.getSelectedItem().toString()) && trns.getType().equals("Purchase") && trns.getStatus().equals("Queued")){
 
                                 reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getUserId());
                                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -142,9 +149,36 @@ public class SellSharesFragment extends Fragment {
                                         Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
                                         int stock = dataSnapshot.child("stock").getValue(Integer.class);
                                         Map<String, Object> _Umap = new HashMap<>();
-                                        _Umap.put("virtualmoney",  vm - trns.getPrice());
+                                        _Umap.put("virtualmoney",  vm - (trns.getPrice() * trns.getShareAmount()));
                                         _Umap.put("stock",  stock + trns.getShareAmount());
                                         dataSnapshot.getRef().updateChildren(_Umap);
+                                    }
+
+
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+                                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
+                                        int stock = dataSnapshot.child("stock").getValue(Integer.class);
+                                        String tradername = dataSnapshot.child("tradername").getValue(String.class);
+                                        String university = dataSnapshot.child("university").getValue(String.class);
+                                        Map<String, Object> _Umap = new HashMap<>();
+                                        _Umap.put("virtualmoney",  vm + (Double.parseDouble(txtprice.getText().toString().trim()) * Integer.parseInt(txtquantity.getText().toString().trim())));
+                                        _Umap.put("stock",  stock - Integer.parseInt(txtquantity.getText().toString().trim()));
+                                        dataSnapshot.getRef().updateChildren(_Umap);
+
+                                        Toast.makeText(getContext(),"Sales transaction was Successfully",Toast.LENGTH_SHORT).show();
+                                        pushTransaction("Successfully",tradername,getdate(),university);
+                                        txtrefId.setText("#DSE" + generateguid());
                                     }
 
                                     @Override
@@ -156,10 +190,10 @@ public class SellSharesFragment extends Fragment {
                                 reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
                                 Map<String, Object> map = new HashMap<>();
                                 map.put("status", "Successfully");
+                                map.put("boughtOrSoldBy", thisUserClass.getTradername());
+                                map.put("transactionSuccessfulldate",getdate());
+                                map.put("universictyfrom",thisUserClass.getUniversity());
                                 reference.updateChildren(map);
-                                Toast.makeText(getContext(),"Sales transaction was Successfully",Toast.LENGTH_SHORT).show();
-                                pushTransaction("Successfully");
-                                txtrefId.setText("#DSE" + generateguid().substring(0,8));
                                 status = 3;
                                 break;
                             }
@@ -173,6 +207,12 @@ public class SellSharesFragment extends Fragment {
                             break;
                         }
                     }
+                    if(status == 2){
+                        pushTransaction("Queued","","","");
+                        txtrefId.setText("#DSE" + generateguid());
+                        Toast.makeText(getContext(),"Sales transaction was queued",Toast.LENGTH_SHORT).show();
+                    }
+
 
                     getTransactionsAndOtherUser();
                 }
@@ -182,7 +222,6 @@ public class SellSharesFragment extends Fragment {
             getBoard();
             getUserInfo();
 
-        }
 
 
         return view;
@@ -275,17 +314,17 @@ public class SellSharesFragment extends Fragment {
 
     private String generateguid(){
         String  ticketId = UUID.randomUUID().toString();
-        return ticketId.substring(0,8);
+        return ticketId.substring(0,3);
     }
 
-    public void pushTransaction(String status){
+    public void pushTransaction(String status,String boughtby,String date,String university){
 
         String companyname = boardSpinner.getSelectedItem().toString();
 
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtquantity.getText().toString().trim()),"Sales",id);
+        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtquantity.getText().toString().trim()),"Sales",id,boughtby,date,university);
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -304,6 +343,19 @@ public class SellSharesFragment extends Fragment {
         map.put("virtualmoney", updatedbalance);
         map.put("stock", updatedStock);
         reference.updateChildren(map);
+    }
+    public static String getdate(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
     }
 
    /* public void updateForOther(){

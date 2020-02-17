@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.bignerdranch.expandablerecyclerview.Model.ParentObject;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.SimulatedMarketAdapter;
+import com.dsetanzania.dse.helperClasses.SnappingRecyclerView;
 import com.dsetanzania.dse.models.MarketSimulator;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,7 +35,7 @@ public class BuySharesFragment extends Fragment {
     // Store instance variables
     private String title;
     private int page;
-    RecyclerView recyclerView;
+    //SnappingRecyclerView livemarketpricerecyclerview;
     RecyclerView livemarketpricerecyclerview;
     ArrayList<MarketSimulator> simulatedMarket;
     DatabaseReference reference;
@@ -89,11 +90,9 @@ public class BuySharesFragment extends Fragment {
                     simulatedMarket.add(_market);
                 }
                 simulatedMarketAdapter = new SimulatedMarketAdapter(getContext(), simulatedMarket);
-
                 livemarketpricerecyclerview.setHasFixedSize(true);
-                livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
-                livemarketpricerecyclerview.setAdapter(simulatedMarketAdapter);
                 livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                livemarketpricerecyclerview.setAdapter(simulatedMarketAdapter);
                 SnapHelper snapHelper = new PagerSnapHelper();
                 snapHelper.attachToRecyclerView(livemarketpricerecyclerview);
             }

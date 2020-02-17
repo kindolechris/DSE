@@ -43,7 +43,34 @@ public class Transactions  {
     private int shareAmount;
     private String board;
 
+    public String getUniversictyfrom() {
+        return universictyfrom;
+    }
 
+    public void setUniversictyfrom(String universictyfrom) {
+        this.universictyfrom = universictyfrom;
+    }
+
+    private String universictyfrom;
+
+    public String getTransactionSuccessfulldate() {
+        return transactionSuccessfulldate;
+    }
+
+    public void setTransactionSuccessfulldate(String transactionSuccessfulldate) {
+        this.transactionSuccessfulldate = transactionSuccessfulldate;
+    }
+
+    public String getBoughtOrSoldBy() {
+        return boughtOrSoldBy;
+    }
+
+    public void setBoughtOrSoldBy(String boughtOrSoldBy) {
+        this.boughtOrSoldBy = boughtOrSoldBy;
+    }
+
+    private String transactionSuccessfulldate;
+    private String boughtOrSoldBy;
 
     public String getType() {
         return type;
@@ -106,7 +133,7 @@ public class Transactions  {
         this.status = status;
     }
 
-    public Transactions(String id, String userId, String status,String date,String board,double price,int shareAmount,String type,String transId) {
+    public Transactions(String id, String userId, String status,String date,String board,double price,int shareAmount,String type,String transId,String boughtOrSoldBy,String transactionSuccessfulldate,String universictyfrom) {
 
         this.board = board;
         this.price = price;
@@ -117,6 +144,9 @@ public class Transactions  {
         this.status = status;
         this.type = type;
         this.transId = transId;
+        this.boughtOrSoldBy = boughtOrSoldBy;
+        this.transactionSuccessfulldate = transactionSuccessfulldate;
+        this.universictyfrom = universictyfrom;
     }
 
 

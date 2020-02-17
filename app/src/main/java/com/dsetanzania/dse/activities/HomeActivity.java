@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -88,6 +89,8 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout transactionlinearlayout;
     LinearLayout aboutUstlinearlayout;
     TextView txttradername;
+    TextView txtvirtualbalance;
+    TextView txtstockbalance;
     TextView txttrandingstats;
     TextView txtdate;
     ProgressBar prgs;
@@ -127,6 +130,16 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+
+        Fade fade = new Fade();
+        View decor = getWindow().getDecorView();
+        fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
+        fade.excludeTarget(android.R.id.statusBarBackground, true);
+        fade.excludeTarget(android.R.id.navigationBarBackground, true);
+
+        getWindow().setEnterTransition(fade);
+        getWindow().setExitTransition(fade);
+
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshLayout);
 
 
@@ -135,6 +148,8 @@ public class HomeActivity extends AppCompatActivity {
         fuser = mAuth.getCurrentUser();
 
         txttradername = (TextView) findViewById(R.id.txttradername);
+        //txtvirtualbalance = (TextView) findViewById(R.id.virtualbalance);
+        txtstockbalance = (TextView) findViewById(R.id.stocklbalance);
         margeetxt = (TextView) findViewById(R.id.marquutxtbottom);
         txtvirtualshare = (TextView) findViewById(R.id.sharepricetxt);
         livemarketlinearlayout = (LinearLayout) findViewById(R.id.livemarketLayout);
@@ -445,7 +460,9 @@ public class HomeActivity extends AppCompatActivity {
                     NumberFormat formatter = new DecimalFormat("#,###");
                     String vsformat = formatter.format( _user.getVirtualmoney());
                     txttradername.setText(_user.getTradername());
-                    txtvirtualshare.setText("Tshs. " + vsformat + ".00");
+                    txtvirtualshare.setText("Tshs. " + vsformat);
+                    //txtvirtualbalance.setText("Tshs. " + vsformat);
+                    txtstockbalance.setText(String.valueOf(_user.getStock()));
             }
 
             @Override

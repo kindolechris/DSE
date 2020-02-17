@@ -117,7 +117,7 @@ public class BuyShareActivity extends AppCompatActivity {
                 String responce = user.buyshares(doublepurseropeningprice,doublepurserUserprice,Integer.parseInt(txtAmountofshares.getText().toString().trim()));
                 //String responce = thisUserClass.buyshares(120,doublepurserUserprice,Integer.parseInt(txtAmountofshares.getText().toString().trim()));
                 if(responce == "successfully"){
-                    pushTransaction("Successfully");
+                    pushTransaction("Successfully","","","");
                     txtreferenceId.setText("#DSE" + generateguid());
                     Toast.makeText(getApplicationContext(),"Purchase transaction was successfuly",Toast.LENGTH_SHORT).show();
                 }
@@ -126,11 +126,17 @@ public class BuyShareActivity extends AppCompatActivity {
                 }
                 else if(responce == "queued") {
 
+                    if(transactionArray.isEmpty()){
+                        pushTransaction("Queued","","","");
+                        txtreferenceId.setText("#DSE" + generateguid());
+                        Toast.makeText(BuyShareActivity.this,"Purchase transaction was queued",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                         for(final Transactions trns : transactionArray){
                             for (User usr : otherUserArray){
 
-                                if(usr.getUserId().equals(trns.getUserId()) && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(companyname) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
+                                if(usr.getUserId().equals(trns.getUserId())  && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(companyname) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
 
                                     reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getUserId());
                                     reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -139,9 +145,33 @@ public class BuyShareActivity extends AppCompatActivity {
 
                                             Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
                                             int stock = dataSnapshot.child("stock").getValue(Integer.class);
+                                            String tradername = dataSnapshot.child("tradername").getValue(String.class);
+                                            String university = dataSnapshot.child("university").getValue(String.class);
                                             Map<String, Object> _Umap = new HashMap<>();
-                                            _Umap.put("virtualmoney",  vm + trns.getPrice());
+                                            _Umap.put("virtualmoney",  vm + (trns.getPrice() * trns.getShareAmount()));
                                             _Umap.put("stock",  stock - trns.getShareAmount());
+                                            dataSnapshot.getRef().updateChildren(_Umap);
+                                            Toast.makeText(BuyShareActivity.this,"Purchase transaction from third part was Successfully",Toast.LENGTH_SHORT).show();
+                                            pushTransaction("Successfully",tradername,getdate(),university);
+                                            txtreferenceId.setText("#DSE" + generateguid());
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+
+                                    reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+                                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                            Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
+                                            int stock = dataSnapshot.child("stock").getValue(Integer.class);
+                                            Map<String, Object> _Umap = new HashMap<>();
+                                            _Umap.put("virtualmoney",  vm - (Double.parseDouble(txtprice.getText().toString().trim()) * Integer.parseInt(txtAmountofshares.getText().toString().trim())));
+                                            _Umap.put("stock",  stock + Integer.parseInt(txtAmountofshares.getText().toString().trim()));
                                             dataSnapshot.getRef().updateChildren(_Umap);
                                         }
 
@@ -154,10 +184,11 @@ public class BuyShareActivity extends AppCompatActivity {
                                     reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
                                     Map<String, Object> map = new HashMap<>();
                                     map.put("status", "Successfully");
+                                    map.put("boughtOrSoldBy", user.getTradername());
+                                    map.put("transactionSuccessfulldate",getdate());
+                                    map.put("universictyfrom",user.getUniversity());
                                     reference.updateChildren(map);
-                                    Toast.makeText(BuyShareActivity.this,"Purchase transaction from third part was Successfully",Toast.LENGTH_SHORT).show();
-                                    pushTransaction("Successfully");
-                                    txtreferenceId.setText("#DSE" + generateguid());
+
                                     status = 3;
                                     break;
                                 }
@@ -173,9 +204,10 @@ public class BuyShareActivity extends AppCompatActivity {
                         }
 
                         if(status == 2){
-                            pushTransaction("Queued");
+                            pushTransaction("Queued","","","");
                             txtreferenceId.setText("#DSE" + generateguid());
-                            Toast.makeText(BuyShareActivity.this,"Transaction was queued",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BuyShareActivity.this,"Purchase transaction was queued",Toast.LENGTH_SHORT).show();
+                            return;
                         }
 
                 }
@@ -223,12 +255,12 @@ public class BuyShareActivity extends AppCompatActivity {
         });
     }
 
-    public void pushTransaction(String status){
+    public void pushTransaction(String status,String soldby,String date,String university){
 
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id);
+        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id,soldby,date,university);
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -253,7 +285,7 @@ public class BuyShareActivity extends AppCompatActivity {
 
     private String generateguid(){
         String  ticketId = UUID.randomUUID().toString();
-        return ticketId.substring(0,8);
+        return ticketId.substring(0,3);
     }
 
     public void toolBarElevation(int size){
@@ -302,5 +334,20 @@ public class BuyShareActivity extends AppCompatActivity {
             }
         });
     }
+
+    public static String getdate(){
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+            return currentDateTime;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
 
 }

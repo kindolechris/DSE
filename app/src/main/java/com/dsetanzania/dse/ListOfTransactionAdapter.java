@@ -1,11 +1,15 @@
 package com.dsetanzania.dse;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +18,8 @@ import com.dsetanzania.dse.helperClasses.TimeAgo;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 import com.dsetanzania.dse.models.Transactions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,6 +31,15 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
 
     private List<Transactions> transactions;
     Context context;
+    Dialog dialog;
+
+    int index;
+    TextView txtdatesoldorpurchased;
+    TextView personwhosoldorpurchased;
+    TextView univercitytype;
+    TextView transactiontype;
+    TextView notransactiontxt;
+    LinearLayout transactionlayout;
 
     public ListOfTransactionAdapter(Context context, List<Transactions> transactions) {
         this.transactions = transactions;
@@ -35,6 +50,24 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
     @Override
     public ListOfTransactionAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listoftransactions, parent, false);
+
+        dialog = new Dialog(context,R.style.Mydialogtheme);
+        dialog.setContentView(R.layout.custom_pop_up_info);
+        LinearLayout closeModal = dialog.findViewById(R.id.layoutclose);
+
+        txtdatesoldorpurchased = (TextView) dialog.findViewById(R.id.dateoftransactiontxt);
+        personwhosoldorpurchased = (TextView) dialog.findViewById(R.id.personwhoboughtorsold);
+        univercitytype = (TextView) dialog.findViewById(R.id.universitynametxt);
+        transactiontype = (TextView) dialog.findViewById(R.id.transactiontypetxt);
+        notransactiontxt = (TextView) dialog.findViewById(R.id.notransactiontxt);
+        transactionlayout = (LinearLayout) dialog.findViewById(R.id.transactionInfoLayout);
+
+        closeModal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
 
         ListOfTransactionAdapter.ViewHolder viewHolder = new ListOfTransactionAdapter.ViewHolder(view);
 
@@ -51,22 +84,49 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             txtsatus = (TextView)itemView.findViewById(R.id.txtstatus);
             txtdate = (TextView)itemView.findViewById(R.id.txttransactiondate);
             txtid = (TextView)itemView.findViewById(R.id.txttransactionId);
             txttype = (TextView)itemView.findViewById(R.id.txttype);
+
+
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ListOfTransactionAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListOfTransactionAdapter.ViewHolder holder, final int position) {
 
         holder.itemView.setTag(transactions.get(position));
         String gettimeAgo = parseDate(transactions.get(position).getDate());
         holder.txtdate.setText(gettimeAgo);
         holder.txtid.setText(transactions.get(position).getId());
         holder.txttype.setText(transactions.get(position).getType());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(transactions.get(position).getStatus().equals("Successfully")){
+                    transactionlayout.setVisibility(View.VISIBLE);
+                    notransactiontxt.setVisibility(View.INVISIBLE);
+                    txtdatesoldorpurchased.setText(transactions.get(position).getTransactionSuccessfulldate());
+                    personwhosoldorpurchased.setText(getCapsSentences(transactions.get(position).getBoughtOrSoldBy()));
+                    univercitytype.setText(transactions.get(position).getUniversictyfrom());
+
+                    if(transactions.get(position).getType().equals("Sales")){
+                        transactiontype.setText("Was bought by : ");
+                    }else {
+                        transactiontype.setText("Was sold by : ");
+                    }
+                }else {
+                    transactionlayout.setVisibility(View.INVISIBLE);
+                    notransactiontxt.setVisibility(View.VISIBLE);
+                }
+                dialog.show();
+
+            }
+        });
+
         if(transactions.get(position).getStatus().equals("Successfully")){
             holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorSuccess));
             holder.txtsatus.setText(transactions.get(position).getStatus());
@@ -74,6 +134,8 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
         }else {
             holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorRed));
             holder.txtsatus.setText(transactions.get(position).getStatus());
+            transactionlayout.setVisibility(View.INVISIBLE);
+            notransactiontxt.setVisibility(View.VISIBLE);
         }
 
     }
@@ -204,5 +266,20 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
             e.printStackTrace();
         }
         return result;
+    }
+
+    private String getCapsSentences(String tagName) {
+        String[] splits = tagName.toLowerCase().split(" ");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < splits.length; i++) {
+            String eachWord = splits[i];
+            if (i > 0 && eachWord.length() > 0) {
+                sb.append(" ");
+            }
+            String cap = eachWord.substring(0, 1).toUpperCase()
+                    + eachWord.substring(1);
+            sb.append(cap);
+        }
+        return sb.toString();
     }
 }

@@ -9,6 +9,7 @@
         <item name="android:textColorSecondary">@color/colorWhite</item>
         <item name="android:alertDialogTheme">@style/AppTheme.SpinnerDialog</item>
         <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:windowContentTransitions">true</item>
 
     </style>
 

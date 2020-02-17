@@ -6,6 +6,9 @@
     <color name="colorBlack">#757474</color>
     <color name="colorForTab">#B5FFFFFF</color>
     <color name="colorBlackBlack">#1D1D1D</color>
+    <color name="colorFortextOnblueBg">#7fc7f4</color>
+    <color name="colorFortextOnblueBg2">#BEDDF5</color>
+    <color name="colorFortextOnblueBg3">#CCE0F3</color>
     <color name="colorAccent">#F7F7F7</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorgrey">#E0E0E0</color>
