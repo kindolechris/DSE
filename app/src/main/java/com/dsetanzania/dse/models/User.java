@@ -55,6 +55,16 @@ public class User{
     private String phoneNumber;
     Transactions _transaction;
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    private String gender;
+
     public String getRole() {
         return role;
     }
@@ -165,11 +175,12 @@ public class User{
         this.virtualmoney = virtualmoney;
     }
 
-    public User(String userId, String firstname, String lastname, String tradername, String email, String yearOfStudy, String university, String coursename, String phoneNumber, double virtualshare, int stock, String role) {
+    public User(String userId, String firstname, String lastname, String gender, String tradername, String email, String yearOfStudy, String university, String coursename, String phoneNumber, double virtualshare, int stock, String role) {
         this.userId = userId;
         this.virtualmoney = virtualshare;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.gender = gender;
         this.tradername = tradername;
         this.email = email;
         this.yearOfStudy = yearOfStudy;

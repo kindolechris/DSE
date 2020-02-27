@@ -119,6 +119,8 @@ public class SellSharesFragment extends Fragment {
 
                     if(thisUserClass.getStock()<=0){
                         System.out.println("You have no stock");
+                        Toast.makeText(getContext(),"You have less stock please buy first in order to sell",Toast.LENGTH_SHORT).show();
+                        return;
                     }
 
                     if(Double.parseDouble(txtprice.getText().toString().trim()) > thisUserClass.getVirtualmoney()){
@@ -141,6 +143,12 @@ public class SellSharesFragment extends Fragment {
 
                             if(usr.getUserId().equals(trns.getUserId()) && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(boardSpinner.getSelectedItem().toString()) && trns.getType().equals("Purchase") && trns.getStatus().equals("Queued")){
 
+                                if(trns.getUserId().equals(fuser.getUid())){
+                                    pushTransaction("Queued","","","");
+                                    txtrefId.setText("#DSE" + generateguid());
+                                    Toast.makeText(getContext(),"Sales transaction was queued",Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
                                 reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getUserId());
                                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -148,10 +156,22 @@ public class SellSharesFragment extends Fragment {
 
                                         Double vm = dataSnapshot.child("virtualmoney").getValue(Double.class);
                                         int stock = dataSnapshot.child("stock").getValue(Integer.class);
+                                        String username = dataSnapshot.child("tradername").getValue(String.class);
+                                        String university = dataSnapshot.child("university").getValue(String.class);
+
                                         Map<String, Object> _Umap = new HashMap<>();
                                         _Umap.put("virtualmoney",  vm - (trns.getPrice() * trns.getShareAmount()));
                                         _Umap.put("stock",  stock + trns.getShareAmount());
                                         dataSnapshot.getRef().updateChildren(_Umap);
+
+                                        pushTransaction("Successfully",username,getdate(),university);
+                                        reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("status", "Successfully");
+                                        map.put("boughtOrSoldBy", thisUserClass.getTradername());
+                                        map.put("transactionSuccessfulldate",getdate());
+                                        map.put("universictyfrom",thisUserClass.getUniversity());
+                                        reference.updateChildren(map);
                                     }
 
 
@@ -175,9 +195,7 @@ public class SellSharesFragment extends Fragment {
                                         _Umap.put("virtualmoney",  vm + (Double.parseDouble(txtprice.getText().toString().trim()) * Integer.parseInt(txtquantity.getText().toString().trim())));
                                         _Umap.put("stock",  stock - Integer.parseInt(txtquantity.getText().toString().trim()));
                                         dataSnapshot.getRef().updateChildren(_Umap);
-
                                         Toast.makeText(getContext(),"Sales transaction was Successfully",Toast.LENGTH_SHORT).show();
-                                        pushTransaction("Successfully",tradername,getdate(),university);
                                         txtrefId.setText("#DSE" + generateguid());
                                     }
 
@@ -187,13 +205,6 @@ public class SellSharesFragment extends Fragment {
                                     }
                                 });
 
-                                reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("status", "Successfully");
-                                map.put("boughtOrSoldBy", thisUserClass.getTradername());
-                                map.put("transactionSuccessfulldate",getdate());
-                                map.put("universictyfrom",thisUserClass.getUniversity());
-                                reference.updateChildren(map);
                                 status = 3;
                                 break;
                             }
@@ -324,7 +335,7 @@ public class SellSharesFragment extends Fragment {
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtquantity.getText().toString().trim()),"Sales",id,boughtby,date,university);
+        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtquantity.getText().toString().trim()),"Sales",id,boughtby,date,university,"thidParty");
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

@@ -117,7 +117,7 @@ public class BuyShareActivity extends AppCompatActivity {
                 String responce = user.buyshares(doublepurseropeningprice,doublepurserUserprice,Integer.parseInt(txtAmountofshares.getText().toString().trim()));
                 //String responce = thisUserClass.buyshares(120,doublepurserUserprice,Integer.parseInt(txtAmountofshares.getText().toString().trim()));
                 if(responce == "successfully"){
-                    pushTransaction("Successfully","","","");
+                    pushTransaction("Successfully","","","","fromCompany");
                     txtreferenceId.setText("#DSE" + generateguid());
                     Toast.makeText(getApplicationContext(),"Purchase transaction was successfuly",Toast.LENGTH_SHORT).show();
                 }
@@ -127,7 +127,7 @@ public class BuyShareActivity extends AppCompatActivity {
                 else if(responce == "queued") {
 
                     if(transactionArray.isEmpty()){
-                        pushTransaction("Queued","","","");
+                        pushTransaction("Queued","","","","thirdParty");
                         txtreferenceId.setText("#DSE" + generateguid());
                         Toast.makeText(BuyShareActivity.this,"Purchase transaction was queued",Toast.LENGTH_SHORT).show();
                         return;
@@ -138,6 +138,12 @@ public class BuyShareActivity extends AppCompatActivity {
 
                                 if(usr.getUserId().equals(trns.getUserId())  && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(companyname) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
 
+                                    if(trns.getUserId().equals(fuser.getUid())){
+                                        pushTransaction("Queued","","","","thirdParty");
+                                        txtreferenceId.setText("#DSE" + generateguid());
+                                        Toast.makeText(BuyShareActivity.this,"Purchase transaction was queued",Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                     reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getUserId());
                                     reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -152,8 +158,16 @@ public class BuyShareActivity extends AppCompatActivity {
                                             _Umap.put("stock",  stock - trns.getShareAmount());
                                             dataSnapshot.getRef().updateChildren(_Umap);
                                             Toast.makeText(BuyShareActivity.this,"Purchase transaction from third part was Successfully",Toast.LENGTH_SHORT).show();
-                                            pushTransaction("Successfully",tradername,getdate(),university);
+                                            pushTransaction("Successfully",tradername,getdate(),university,"thirdParty");
                                             txtreferenceId.setText("#DSE" + generateguid());
+
+                                            reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("status", "Successfully");
+                                            map.put("boughtOrSoldBy", user.getTradername());
+                                            map.put("transactionSuccessfulldate",getdate());
+                                            map.put("universictyfrom",user.getUniversity());
+                                            reference.updateChildren(map);
                                         }
 
                                         @Override
@@ -181,14 +195,6 @@ public class BuyShareActivity extends AppCompatActivity {
                                         }
                                     });
 
-                                    reference = FirebaseDatabase.getInstance().getReference("Transactions").child(trns.getTransId());
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("status", "Successfully");
-                                    map.put("boughtOrSoldBy", user.getTradername());
-                                    map.put("transactionSuccessfulldate",getdate());
-                                    map.put("universictyfrom",user.getUniversity());
-                                    reference.updateChildren(map);
-
                                     status = 3;
                                     break;
                                 }
@@ -204,7 +210,7 @@ public class BuyShareActivity extends AppCompatActivity {
                         }
 
                         if(status == 2){
-                            pushTransaction("Queued","","","");
+                            pushTransaction("Queued","","","","thirdParty");
                             txtreferenceId.setText("#DSE" + generateguid());
                             Toast.makeText(BuyShareActivity.this,"Purchase transaction was queued",Toast.LENGTH_SHORT).show();
                             return;
@@ -255,12 +261,12 @@ public class BuyShareActivity extends AppCompatActivity {
         });
     }
 
-    public void pushTransaction(String status,String soldby,String date,String university){
+    public void pushTransaction(String status,String soldby,String date,String university,String transactionParty){
 
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id,soldby,date,university);
+        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id,soldby,date,university,transactionParty);
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

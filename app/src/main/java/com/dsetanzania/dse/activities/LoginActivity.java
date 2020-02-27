@@ -72,10 +72,10 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseUser = mAuth.getCurrentUser();
 
-      /*  if(firebaseUser !=null){
+        if(firebaseUser !=null){
 
             checkRole();
-        }*/
+        }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
 

@@ -2,43 +2,36 @@ package com.dsetanzania.dse;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dsetanzania.dse.helperClasses.TimeAgo;
-import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 import com.dsetanzania.dse.models.Transactions;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransactionAdapter.ViewHolder> {
 
     private List<Transactions> transactions;
     Context context;
-    Dialog dialog;
+    Dialog dialog1,dialog2,dialog3;
 
     int index;
     TextView txtdatesoldorpurchased;
     TextView personwhosoldorpurchased;
     TextView univercitytype;
     TextView transactiontype;
-    TextView notransactiontxt;
+    TextView textdescription1;
+    TextView textdescription2;
     LinearLayout transactionlayout;
 
     public ListOfTransactionAdapter(Context context, List<Transactions> transactions) {
@@ -51,23 +44,47 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
     public ListOfTransactionAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listoftransactions, parent, false);
 
-        dialog = new Dialog(context,R.style.Mydialogtheme);
-        dialog.setContentView(R.layout.custom_pop_up_info);
-        LinearLayout closeModal = dialog.findViewById(R.id.layoutclose);
+        dialog1 = new Dialog(context,R.style.Mydialogtheme);
+        dialog1.setContentView(R.layout.custom_pop_up_info1);
 
-        txtdatesoldorpurchased = (TextView) dialog.findViewById(R.id.dateoftransactiontxt);
-        personwhosoldorpurchased = (TextView) dialog.findViewById(R.id.personwhoboughtorsold);
-        univercitytype = (TextView) dialog.findViewById(R.id.universitynametxt);
-        transactiontype = (TextView) dialog.findViewById(R.id.transactiontypetxt);
-        notransactiontxt = (TextView) dialog.findViewById(R.id.notransactiontxt);
-        transactionlayout = (LinearLayout) dialog.findViewById(R.id.transactionInfoLayout);
+        dialog2 = new Dialog(context,R.style.Mydialogtheme);
+        dialog2.setContentView(R.layout.custom_pop_up_info2);
 
-        closeModal.setOnClickListener(new View.OnClickListener() {
+        dialog3 = new Dialog(context,R.style.Mydialogtheme);
+        dialog3.setContentView(R.layout.custom_pop_up_info3);
+
+        LinearLayout closeModal1 = dialog1.findViewById(R.id.layoutclose);
+        LinearLayout closeModal2 = dialog2.findViewById(R.id.layoutclose);
+        LinearLayout closeModal3 = dialog3.findViewById(R.id.layoutclose);
+
+        txtdatesoldorpurchased = (TextView) dialog1.findViewById(R.id.dateoftransactiontxt);
+        personwhosoldorpurchased = (TextView) dialog1.findViewById(R.id.personwhoboughtorsold);
+        univercitytype = (TextView) dialog1.findViewById(R.id.universitynametxt);
+        transactiontype = (TextView) dialog1.findViewById(R.id.transactiontypetxt);
+        textdescription1 = (TextView) dialog2.findViewById(R.id.notransactiontxt);
+        textdescription2 = (TextView) dialog3.findViewById(R.id.notransactiontxt);
+        transactionlayout = (LinearLayout) dialog1.findViewById(R.id.transactionInfoLayout);
+
+        closeModal1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.cancel();
+                dialog1.cancel();
             }
         });
+        closeModal2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog2.cancel();
+            }
+        });
+
+        closeModal3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog3.cancel();
+            }
+        });
+
 
         ListOfTransactionAdapter.ViewHolder viewHolder = new ListOfTransactionAdapter.ViewHolder(view);
 
@@ -106,9 +123,7 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
             @Override
             public void onClick(View v)
             {
-                if(transactions.get(position).getStatus().equals("Successfully")){
-                    transactionlayout.setVisibility(View.VISIBLE);
-                    notransactiontxt.setVisibility(View.INVISIBLE);
+                if(transactions.get(position).getStatus().equals("Successfully") && (!transactions.get(position).getTransactionParty().equals("fromCompany"))){
                     txtdatesoldorpurchased.setText(transactions.get(position).getTransactionSuccessfulldate());
                     personwhosoldorpurchased.setText(getCapsSentences(transactions.get(position).getBoughtOrSoldBy()));
                     univercitytype.setText(transactions.get(position).getUniversictyfrom());
@@ -118,12 +133,15 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
                     }else {
                         transactiontype.setText("Was sold by : ");
                     }
-                }else {
-                    transactionlayout.setVisibility(View.INVISIBLE);
-                    notransactiontxt.setVisibility(View.VISIBLE);
-                }
-                dialog.show();
+                    dialog1.show();
 
+                } else if(transactions.get(position).getStatus().equals("Queued")){
+                    textdescription1.setText("Awaiting transaction");
+                    dialog2.show();
+                } else if ((transactions.get(position).getStatus().equals("Successfully") && (transactions.get(position).getTransactionParty().equals("fromCompany")) && transactions.get(position).getType().equals("Purchase"))){
+                    textdescription2.setText("Bought from " + transactions.get(position).getBoard() + " on\n\n" + transactions.get(position).getDate().substring(0,10));
+                    dialog3.show();
+                }
             }
         });
 
@@ -134,8 +152,6 @@ public class ListOfTransactionAdapter  extends RecyclerView.Adapter<ListOfTransa
         }else {
             holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorRed));
             holder.txtsatus.setText(transactions.get(position).getStatus());
-            transactionlayout.setVisibility(View.INVISIBLE);
-            notransactiontxt.setVisibility(View.VISIBLE);
         }
 
     }

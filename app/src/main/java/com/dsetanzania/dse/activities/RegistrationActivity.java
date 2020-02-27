@@ -15,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.dsetanzania.dse.R;
@@ -53,6 +55,8 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
     ProgressBar progressBar;
     View parentLayout;
     String userId;
+    RadioGroup radiogroupGender;
+    RadioButton radiobtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,9 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+
+
+        radiogroupGender = (RadioGroup) findViewById(R.id.radioGender);
         firstname = (TextInputEditText) findViewById(R.id.txtfirstname);
         lastname = (TextInputEditText) findViewById(R.id.txtlastname);
         tradername = (TextInputEditText) findViewById(R.id.txttradername);
@@ -86,6 +93,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         passoword = (TextInputEditText) findViewById(R.id.txtpassword);
         confirmpassword = (TextInputEditText) findViewById(R.id.txtconfirmpass);
         registerbtn = (Button) findViewById(R.id.btnregister);
+
 
         registerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +169,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
 
                         if(result == "Access"){
                             checkEmailFirstIfExist();
-                            progressBar.setVisibility(View.INVISIBLE);
+                            //progressBar.setVisibility(View.INVISIBLE);
                  /*   Snackbar snackbar = Snackbar
                             .make(parentLayout, "Internet is on", Snackbar.LENGTH_LONG);
                     snackbar.show();*/
@@ -228,9 +236,11 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             userId = mAuth.getUid();
+                            int radioId = radiogroupGender.getCheckedRadioButtonId();
+                            radiobtn = findViewById(radioId);
                             DatabaseReference reference;
                             reference = FirebaseDatabase.getInstance().getReference("Users");
-                            User _usermodel = new User(userId,firstname.getText().toString().trim(),lastname.getText().toString().trim(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),phoneNumber.getText().toString().trim(),3000000,0,"Student");
+                            User _usermodel = new User(userId,firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),phoneNumber.getText().toString().trim(),3000000,0,"Student");
                             reference.child(userId).setValue(_usermodel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -264,7 +274,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-
+                            progressBar.setVisibility(View.INVISIBLE);
                             _builder = new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                                     .setTitle("Welcome")
                                     .setMessage("You are successfully registered")
@@ -309,5 +319,11 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 }
             }
         });
+    }
+    public  void checkbtn(View view){
+        int radioId = radiogroupGender.getCheckedRadioButtonId();
+        radiobtn = findViewById(radioId);
+
+        //Toast.makeText(RegistrationActivity.this,"Selected : " + radiobtn.getText().toString(),Toast.LENGTH_SHORT).show();
     }
 }

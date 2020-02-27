@@ -11,24 +11,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -38,8 +34,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.dsetanzania.dse.ListOfTransactionAdapter;
 import com.dsetanzania.dse.LiveMarketAdapter;
 import com.dsetanzania.dse.helperClasses.InternetcheckInterface;
 import com.dsetanzania.dse.helperClasses.UserImageUpdloads;
@@ -69,12 +63,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ksoap2.serialization.SoapObject;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -93,6 +83,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView txtstockbalance;
     TextView txttrandingstats;
     TextView txtdate;
+    TextView queuestext;
     ProgressBar prgs;
     TextView txtvirtualshare;
     EditText editText;
@@ -107,7 +98,7 @@ public class HomeActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     SwipeRefreshLayout mEmptyViewContainer;
     View parentLayout;
-    TextView smsCountTxt;
+    TextView QueuesCountTxt;
     TextView margeetxt;
     DatabaseReference dbReference;
     StorageReference storegaReference;
@@ -115,8 +106,9 @@ public class HomeActivity extends AppCompatActivity {
     Uri selectedImagURL;
     private StorageTask mUploadTask;
     private TextView emptyView;
-    int pendingQueueCount = 0;
     de.hdodenhof.circleimageview.CircleImageView imageView;
+    Dialog dialog;
+    LinearLayout closeLayout;
 
 
     private static int PICK_IMAGE_REQUEST = 1;
@@ -142,6 +134,12 @@ public class HomeActivity extends AppCompatActivity {
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshLayout);
 
+        dialog = new Dialog(HomeActivity.this,R.style.Mydialogtheme);
+        dialog.setContentView(R.layout.custom_pop_up_for_queued_orders);
+
+        queuestext = (TextView) dialog.findViewById(R.id.quedtransactiontxt);
+
+        closeLayout  =(LinearLayout) dialog.findViewById(R.id.layoutclose);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -306,9 +304,9 @@ public class HomeActivity extends AppCompatActivity {
         View notificationIcon = MenuItemCompat.getActionView(NotificationItem);
         View userAvatorIcon = MenuItemCompat.getActionView(UserAvator);
 
-        smsCountTxt = (TextView) notificationIcon.findViewById(R.id.notification_badge);
+        QueuesCountTxt = (TextView) notificationIcon.findViewById(R.id.notification_badge);
 
-        setupBadge();
+        QueuesCountTxt.setText(String.valueOf(0));
 
         userAvatorIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -326,32 +324,7 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
-    private void setupBadge() {
 
-        smsCountTxt.setText(String.valueOf(0));
-        /*final FirebaseUser fuser = mAuth.getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Transaction");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Transactions _transactions = snapshot.getValue(Transactions.class);
-                    if(_transactions.getUserId().equals(fuser.getUid())){
-
-                        pendingQueueCount = pendingQueueCount + 1;
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -370,6 +343,10 @@ public class HomeActivity extends AppCompatActivity {
 
             startActivityForResult(i, PICK_IMAGE_REQUEST);
 
+        }
+        else{
+            queuestext.setText("You have " + QueuesCountTxt.getText().toString() + " pending \nqueue order(s)");
+            dialog.show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -574,6 +551,34 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+   /* private void  getTransactionsQueues(){
+
+        final FirebaseUser fuser = mAuth.getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Transactions");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Transactions _transaction = snapshot.getValue(Transactions.class);
+                    if(_transaction.getUserId().equals(fuser.getUid()) && _transaction.getStatus().equals("Queued")){
+                        int pendingQueueCount = 0;
+                        pendingQueueCount = pendingQueueCount + 1;
+                        QueuesCountTxt.setText(String.valueOf(pendingQueueCount));
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }*/
+
+    public void closeModal(View view){
+        dialog.dismiss();
+    }
 
 }
 

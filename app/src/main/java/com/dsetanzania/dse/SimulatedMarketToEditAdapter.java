@@ -3,6 +3,7 @@ package com.dsetanzania.dse;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,10 +155,11 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         _position = position;
+        final NumberFormat formatter = new DecimalFormat("#,###");
         holder.itemView.setTag(marketSimulator.get(position));
         holder.txtcompanyname.setText(marketSimulator.get(position).getCompany());
-        holder.txtOpeningPrice.setText("Opened at " + String.valueOf(marketSimulator.get(position).getOpeningPrice())  + " Price");
-        holder.txtMarketCap.setText(String.valueOf(marketSimulator.get(position).getMarketCap()));
+        holder.txtOpeningPrice.setText("Opened at " + formatter.format(Double.valueOf(marketSimulator.get(position).getOpeningPrice()))  + " Price");
+        holder.txtMarketCap.setText(formatValue(Double.valueOf(marketSimulator.get(position).getMarketCap())));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,6 +177,10 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
             @Override
             public void onClick(View v) {
 
+                if(TextUtils.isEmpty(price.getText().toString().trim()) || TextUtils.isEmpty(quantity.getText().toString().trim() )){
+                    Toast.makeText(mycontext,"Enter some values to update",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 reference = FirebaseDatabase.getInstance().getReference("MarketSimulator").child(marketSimulator.get(id).getId());
                 Map<String, Object> map = new HashMap<>();
                 map.put("openingPrice", price.getText().toString().trim());
@@ -261,5 +267,18 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
 
             }
         });
+    }
+
+    public static String formatValue(double value) {
+        int power;
+        String suffix = " kmbt";
+        String formattedNumber = "";
+
+        NumberFormat formatter = new DecimalFormat("#,###.#");
+        power = (int)StrictMath.log10(value);
+        value = value/(Math.pow(10,(power/3)*3));
+        formattedNumber=formatter.format(value);
+        formattedNumber = formattedNumber + suffix.charAt(power/3);
+        return formattedNumber.length()>4 ?  formattedNumber.replaceAll("\\.[0-9]+", "") : formattedNumber;
     }
 }
