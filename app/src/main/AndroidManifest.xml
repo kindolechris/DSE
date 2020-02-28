@@ -21,7 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.LoginActivity"></activity>
+        <activity android:name=".activities.LoginActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan">
+        </activity>
         <activity
             android:name=".activities.SimulatedMarketListActivity"
             android:screenOrientation="portrait" />
@@ -66,10 +68,10 @@
         <activity
             android:name=".activities.StartUpActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/MyCustomTheme"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
