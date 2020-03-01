@@ -1,10 +1,24 @@
+
+body{
+  font-family: 'Poppins',  ;
+}
+
+
+
+
+
+
+
+
 header.masthead {
     margin-bottom: 50px;
     background: no-repeat center center;
     background-color: #868e96;
     background-attachment: scroll;
     position: relative;
-    background-size: cover
+    background-size: cover;
+    
+
 }
 
 header.masthead .overlay {
@@ -51,7 +65,7 @@ header.masthead .site-heading .subheading {
     line-height: 1.1;
     display: block;
     margin: 10px 0 0;
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif
+    font-family: 'poppins', ;
 }
 
 @media only screen and (min-width:768px) {
@@ -83,7 +97,7 @@ header.masthead .post-heading .meta {
     font-size: 20px;
     font-weight: 300;
     font-style: italic;
-    font-family: Lora, 'Times New Roman', serif
+      font-family: 'poppins', ;
 }
 
 header.masthead .post-heading .meta a {
@@ -164,13 +178,13 @@ header.masthead .post-heading .meta a {
     border-radius: 0;
     background: 0 0;
     box-shadow: none !important;
-    font-family: Lora, 'Times New Roman', serif
+      font-family: 'poppins', ;
 }
 
 .floating-label-form-group input::-webkit-input-placeholder,
 .floating-label-form-group textarea::-webkit-input-placeholder {
     color: #868e96;
-    font-family: Lora, 'Times New Roman', serif
+        font-family: 'poppins', ;
 }
 
 .floating-label-form-group label {
@@ -226,7 +240,7 @@ footer .copyright {
     letter-spacing: 1px;
     text-transform: uppercase;
     border-radius: 0;
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif
+      font-family: 'poppins', ;
 }
 
 .btn-primary {
@@ -268,7 +282,7 @@ code,
 kbd,
 pre,
 samp {
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-family: 'poppins', ;
     font-size: 1em
 }
 
@@ -459,7 +473,7 @@ h4,
 h5,
 h6 {
     margin-bottom: .5rem;
-    font-family: "Merriweather Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      font-family: 'poppins', ;
     font-weight: 500;
     line-height: 1.2
 }
@@ -6215,7 +6229,7 @@ a.close.disabled {
     z-index: 1070;
     display: block;
     margin: 0;
-    font-family: Merriweather, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        font-family: 'poppins', ;
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
@@ -6340,7 +6354,7 @@ a.close.disabled {
     z-index: 1060;
     display: block;
     max-width: 276px;
-    font-family: Merriweather, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: 'poppins', ;
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
@@ -10378,7 +10392,7 @@ button.bg-dark:hover {
 }
 
 .text-monospace {
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important
+        font-family: 'poppins', ;
 }
 
 .text-justify {
@@ -10744,7 +10758,7 @@ hr.light {
 }
 
 .btn {
-    font-family: "Merriweather Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"
+      font-family: 'poppins', ;
 }
 
 .btn-xl {
@@ -10767,14 +10781,14 @@ hr.light {
 }
 
 #mainNav .navbar-brand {
-    font-family: "Merriweather Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      font-family: 'poppins', ;
     font-weight: 700;
     color: #212529
 }
 
 #mainNav .navbar-nav .nav-item .nav-link {
     color: #6c757d;
-    font-family: "Merriweather Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        font-family: 'poppins', ;
     font-weight: 700;
     font-size: .9rem;
     padding: .75rem 0
@@ -10902,7 +10916,7 @@ header.masthead h1 {
 }
 
 #portfolio .container-fluid .portfolio-box .portfolio-box-caption .project-category {
-    font-family: "Merriweather Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      font-family: 'poppins', ;
     font-size: .85rem;
     font-weight: 600;
     text-transform: uppercase

@@ -2,7 +2,8 @@
 
 @section('content')
   <!-- Page Header -->
-  <header class="masthead" style="background-image: url('{{ asset('images/11.png') }}')">
+
+<header class="masthead" style="background-image: url('{{ asset('images/11.png') }}')">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
@@ -15,31 +16,70 @@
       </div>
     </div>
   </header>
-  <div class="jumbotron">
-  <h1 class="display-4">Hello, world!</h1>
-  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-  <hr class="my-4">
-  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-  </p>
-</div>
-<div class="jumbotron">
-  <h1 class="display-4">Hello, world!</h1>
-  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-  <hr class="my-4">
-  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-  </p>
-</div>
-<div class="jumbotron">
-  <h1 class="display-4">Hello, world!</h1>
-  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-  <hr class="my-4">
-  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-  </p>
-</div>
+  <section class="container" style="margin-top:-500px, position:absolute,">
+    <div class="bg-white box-shadow py-5 px-4 px-sm-5">
+
+      <div class="row">
+
+        <div class="col-md-12 col-lg-12">
+          <h5 class="text-center mb-4">Hello Everyone</h5>
+
+
+
+
+        </div>
+      </div>
+  <div class="container">
+<div class="row">
+                <div class="col-md-12 col-lg-4">
+
+                  <div class="card mb-3" style="width: 18rem;">
+                    <img class="card-img-top" src="https://i.picsum.photos/id/1037/5760/3840.jpg" alt="Card image cap">
+                    <div class="card-body">
+                      <h5 class="card-title">Card title</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+
+
+                </div>
+                <div class="col-md-12 col-lg-4">
+
+                  <div class="card mb-3" style="width: 18rem;">
+                    <img class="card-img-top" src="https://i.picsum.photos/id/1043/5184/3456.jpg" alt="Card image cap">
+                    <div class="card-body">
+                      <h5 class="card-title">Card title</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+
+
+                </div>
+                <div class="col-md-12 col-lg-4">
+
+                  <div class="card mb-3" style="width: 18rem;">
+                    <img class="card-img-top" src="https://i.picsum.photos/id/1043/5184/3456.jpg" alt="Card image cap">
+                    <div class="card-body">
+                      <h5 class="card-title">Card title</h5>
+                      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                  </div>
+
+
+                </div>
+
+
+
+
+    </div>
+  </div>
+  </div>
+  </section>
+
+
+
+
 @endsection
