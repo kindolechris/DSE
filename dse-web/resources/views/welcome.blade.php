@@ -13,10 +13,10 @@
     </div>
   </header>
   <div class="container-fluid">
+    <section>
+
+    </section>
     <div class="round-box bg-white box-shadow py-5 px-4 px-sm-5">
-
-
-
         <div class="row">
 
           <div class="col-md-12 col-lg-12">
@@ -27,6 +27,7 @@
           </div>
         </div>
     <div class="container-fluid">
+
   <div class="row">
                   <div class="col-md-12  col-lg-4">
 
@@ -40,8 +41,6 @@
                         </div>
                       </div>
                     </div>
-
-
                   </div>
                   <div class="col-md-12 col-lg-4">
 
@@ -55,8 +54,6 @@
                         </div>
                       </div>
                     </div>
-
-
                   </div>
                   <div class="col-md-12 col-lg-4">
 
@@ -75,20 +72,16 @@
                   </div>
 
     </div>
-    </div>
-    </div>
-  </div>
-
-  <div class= "container position-relative">
     <div class="row">
-    <div class="col-md-12 col-lg-6">
-      <img class="img-responsive"src="{{asset('images/phone.png')}}">
+      <div class="col-md-12 col-lg-6">
+        <img class="img-responsive"src="{{asset('images/phone.png')}}">
+      </div>
+      <div class="col-md-12 col-lg-6">
+        <h3 class="text-center">Go Mobile With Our App</h3>
+      </div>
+    
     </div>
-    <div class="col-md-12 col-lg-6">
-      <h3 class="text-center">Go Mobile With Our App</h3>
     </div>
-  </div>
-
-
+    </div>
   </div>
   @endsection
