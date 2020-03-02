@@ -13,16 +13,16 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav m-auto">
                     <li class="nav-item">
-                                <a class="nav-link" href=""><h4 style="font-family:'Gotham Rounded Medium'">{{ __('Home') }}</h4></a>
+                                <a class="nav-link text-xl" href="">{{ __('Home') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href=""><h4 style="font-family:'Gotham Rounded Medium'">{{ __('About') }}</h4></a>
+                                <a class="nav-link" href="">{{ __('About') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href=""><h4 style="font-family:'Gotham Rounded Medium'">{{ __('News') }}</h4></a>
+                                <a class="nav-link" href="">{{ __('News') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href=""><h4 style="font-family:'Gotham Rounded Medium'">{{ __('Contact') }}</h4></a>
+                                <a class="nav-link" href="">{{ __('Contact') }}</a>
                             </li>
 
                     </ul>
@@ -32,11 +32,11 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}"><h4 style="font-family:'Gotham Rounded Medium'">{{ __('Login') }}</h4></a>
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}"><h4 style="font-family:'Gotham Rounded Medium'">{{ __('Register') }}</h4></a>
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else

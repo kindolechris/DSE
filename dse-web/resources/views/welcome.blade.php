@@ -20,11 +20,10 @@
         <div class="row">
   
           <div class="col-md-12 col-lg-12">
-            <h5 class="text-center mb-4">Hello Everyone</h5>
-  
-  
-  
-  
+            <h5 class="text-center mb-2 font-weight-bold" style="font-family:'poppins'">Welcome to DSE scholarship investment challenge</h5>
+            <p class="text-center mb-4 font-weight-normal" style="font-family:'poppins'">
+              Here's what you need to know to get started.
+            </p>
           </div>
         </div>
     <div class="container-fluid">
