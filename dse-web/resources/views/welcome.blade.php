@@ -15,10 +15,10 @@
   <div class="container-fluid">
     <div class="round-box bg-white box-shadow py-5 px-4 px-sm-5">
 
-      <div>
+
 
         <div class="row">
-  
+
           <div class="col-md-12 col-lg-12">
             <h5 class="text-center mb-2 font-weight-bold" style="font-family:'poppins'">Welcome to DSE scholarship investment challenge</h5>
             <p class="text-center mb-4 font-weight-normal" style="font-family:'poppins'">
@@ -29,7 +29,7 @@
     <div class="container-fluid">
   <div class="row">
                   <div class="col-md-12  col-lg-4">
-  
+
                     <div class="card mb-3 border-none shadow">
                       <img class="card-img-top" src="{{asset('images/invest.png')}}" style="height:220px" alt="Card image cap">
                       <div class="card-body">
@@ -40,11 +40,11 @@
                         </div>
                       </div>
                     </div>
-  
-  
+
+
                   </div>
                   <div class="col-md-12 col-lg-4">
-  
+
                     <div class="card mb-3 border-none shadow">
                       <img class="card-img-top " src="{{asset('images/portfolio.png')}}" style="height:220px" alt="Card image cap">
                       <div class="card-body">
@@ -55,11 +55,11 @@
                         </div>
                       </div>
                     </div>
-  
-  
+
+
                   </div>
                   <div class="col-md-12 col-lg-4">
-  
+
                     <div class="card mb-3 border-none shadow">
                       <img class="card-img-top" src="{{asset('images/grow.png')}}" style="height:220px" alt="Card image cap">
                       <div class="card-body">
@@ -70,12 +70,25 @@
                         </div>
                       </div>
                     </div>
-  
-  
+
+
                   </div>
-      </div>
+
     </div>
     </div>
     </div>
+  </div>
+
+  <div class= "container position-relative">
+    <div class="row">
+    <div class="col-md-12 col-lg-6">
+      <img class="img-responsive"src="{{asset('images/phone.png')}}">
+    </div>
+    <div class="col-md-12 col-lg-6">
+      <h3 class="text-center">Go Mobile With Our App</h3>
+    </div>
+  </div>
+
+
   </div>
   @endsection
