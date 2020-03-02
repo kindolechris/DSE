@@ -27,11 +27,11 @@
   
           </div>
         </div>
-    <div class="container">
+    <div class="container-fluid">
   <div class="row">
-                  <div class="col-md-12 col-lg-4">
+                  <div class="col-md-12  col-lg-4">
   
-                    <div class="card mb-3 mr-3 border-none shadow" style="width: 30rem;">
+                    <div class="card mb-3 border-none shadow">
                       <img class="card-img-top" src="{{asset('images/invest.png')}}" style="height:220px" alt="Card image cap">
                       <div class="card-body">
                         <h5 class="card-title text-center">Invest</h5>
@@ -44,9 +44,9 @@
   
   
                   </div>
-                  <div class="col-md-12  col-lg-">
+                  <div class="col-md-12 col-lg-4">
   
-                    <div class="card mb-3 border-none shadow" style="width: 30rem;">
+                    <div class="card mb-3 border-none shadow">
                       <img class="card-img-top " src="{{asset('images/portfolio.png')}}" style="height:220px" alt="Card image cap">
                       <div class="card-body">
                         <h5 class="card-title text-center">Grow Portfolio</h5>
@@ -61,7 +61,7 @@
                   </div>
                   <div class="col-md-12 col-lg-4">
   
-                    <div class="card mb-3 mr-3 border-none shadow" style="width: 30rem;">
+                    <div class="card mb-3 border-none shadow">
                       <img class="card-img-top" src="{{asset('images/grow.png')}}" style="height:220px" alt="Card image cap">
                       <div class="card-body">
                         <h5 class="card-title text-center">Make Profits</h5>
@@ -74,10 +74,6 @@
   
   
                   </div>
-  
-  
-  
-  
       </div>
     </div>
     </div>

@@ -15,6 +15,8 @@ header.masthead {
 
 }
 
+
+
 .nav-item a:hover {
     color: rgb(14, 14, 14);
 }
@@ -4849,6 +4851,7 @@ input[type=submit].btn-block {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    padding:30px;
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
