@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('index');
+Route::get('/login', 'HomeController@login')->name('login');
+Route::get('/register', 'HomeController@register')->name('register');
+Route::get('/test','FirebaseController@test');
+Route::get('/createUser','FirebaseController@createUser');

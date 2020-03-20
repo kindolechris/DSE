@@ -176,7 +176,7 @@
             android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/colorPrimary"
+            android:background="#2d2d2d"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
@@ -189,9 +189,9 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="   Powered by Dar-es-salaam stock exchange team    "
-                android:textColor="@color/colorFortextOnblueBg3"
-                android:textSize="19sp" />
+                android:text=""
+                android:textColor="@color/colorSuccess"
+                android:textSize="16sp" />
         </LinearLayout>
 
             <androidx.constraintlayout.widget.Guideline
@@ -242,7 +242,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.35"
+                app:layout_constraintVertical_bias="0.3"
                 android:textColor="@android:color/white" />
 
          <!--   <LinearLayout
@@ -285,7 +285,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.94">
+                app:layout_constraintVertical_bias="0.95">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -297,6 +297,36 @@
                 </TextView>
                 <TextView
                     android:id="@+id/stocklbalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="14dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:paddingStart="5dp"
+                    android:textColor="@color/colorFortextOnblueBg">
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.80">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bond balance :"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:paddingStart="20dp"
+                    android:textSize="15dp"
+                    android:textColor="@color/colorFortextOnblueBg">
+                </TextView>
+                <TextView
+                    android:id="@+id/bondsbalance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"

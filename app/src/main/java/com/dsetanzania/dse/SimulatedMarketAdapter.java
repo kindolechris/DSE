@@ -7,22 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.dsetanzania.dse.activities.BuyShareActivity;
 import com.dsetanzania.dse.activities.SellShareActivity;
-import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
-import com.dsetanzania.dse.helperClasses.livedata_classes.OOUSecurityLivePrice;
 import com.dsetanzania.dse.models.MarketSimulator;
-import com.dsetanzania.dse.models.Transactions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;

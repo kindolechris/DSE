@@ -33,7 +33,17 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".activities.SimulatedBondsActivity"
+            android:label="SimulatedBondsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".activities.BuyShareActivity"
+            android:label="@string/title_activity_buy_share"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.BuyBondsActivity"
             android:label="@string/title_activity_buy_share"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -57,7 +67,7 @@
             android:name=".activities.FaqsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.SimulatedTradeActivity"
+            android:name=".activities.SimulatedEquityActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.HomeActivity"

@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation = "7dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:titleTextColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            android:fitsSystemWindows="true"
+            app:elevation="0dp"
+            android:theme="@style/ToolbarTheme"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+
+            />
+        <com.google.android.material.tabs.TabLayout
+            app:tabBackground="?attr/colorPrimary"
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/MyCustomTabLayout" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/bondsviewpager"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

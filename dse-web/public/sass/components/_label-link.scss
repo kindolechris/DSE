@@ -1,0 +1,21 @@
+.label {
+    &,
+    &:link,
+    &:visited {
+        margin-left: 1.6rem;
+        text-decoration: none !important;
+        font-size: 1.5rem !important;
+        cursor: pointer;
+        color: $color-primary !important;
+    }
+    
+    &:hover {
+        box-shadow: 0 1rem 2rem rgba($color-black,.2);
+        color : $color-primary-dark !important;
+        background-color: transparent !important;
+        text-decoration: underline !important;
+        border: none;
+    }
+        
+}
+

@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -41,7 +42,7 @@ import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.Transactions;
+import com.dsetanzania.dse.models.NewsFeeds;
 import com.dsetanzania.dse.models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -65,8 +66,14 @@ import org.ksoap2.serialization.SoapObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -77,10 +84,12 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout tellafriendlinearlayout;
     LinearLayout faqslinearlayout;
     LinearLayout transactionlinearlayout;
+    LinearLayout layoutcloseChoice;
     LinearLayout aboutUstlinearlayout;
     TextView txttradername;
     TextView txtvirtualbalance;
     TextView txtstockbalance;
+    TextView txtbondbalance;
     TextView txttrandingstats;
     TextView txtdate;
     TextView queuestext;
@@ -107,10 +116,13 @@ public class HomeActivity extends AppCompatActivity {
     private StorageTask mUploadTask;
     private TextView emptyView;
     de.hdodenhof.circleimageview.CircleImageView imageView;
-    Dialog dialog;
+    Dialog dialog,dialogChoice;
     LinearLayout closeLayout;
+    Button equitybtn;
+    Button bondbtn;
+    String realtimedata;
 
-
+    public static Retrofit retrofit = null;
     private static int PICK_IMAGE_REQUEST = 1;
     private static String SOAP_ACTION = "http://tempuri.org/AtsWebFeedService/LiveMarketPrices";
     private static String NAMESPACE = "http://tempuri.org/";
@@ -122,6 +134,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+        margeetxt = (TextView) findViewById(R.id.marquutxtbottom);
+
 
         Fade fade = new Fade();
         View decor = getWindow().getDecorView();
@@ -148,7 +162,7 @@ public class HomeActivity extends AppCompatActivity {
         txttradername = (TextView) findViewById(R.id.txttradername);
         //txtvirtualbalance = (TextView) findViewById(R.id.virtualbalance);
         txtstockbalance = (TextView) findViewById(R.id.stocklbalance);
-        margeetxt = (TextView) findViewById(R.id.marquutxtbottom);
+        txtbondbalance = (TextView) findViewById(R.id.bondsbalance);
         txtvirtualshare = (TextView) findViewById(R.id.sharepricetxt);
         livemarketlinearlayout = (LinearLayout) findViewById(R.id.livemarketLayout);
         portfoliolinearlayout = (LinearLayout) findViewById(R.id.portfolioLayout);
@@ -164,6 +178,38 @@ public class HomeActivity extends AppCompatActivity {
 
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawable_layout);
         final LinearLayout content = (LinearLayout) findViewById(R.id.content);
+
+        dialogChoice = new Dialog(HomeActivity.this,R.style.Mydialogtheme);
+        dialogChoice.setContentView(R.layout.custom_pop_up_choice);
+        equitybtn = (Button)dialogChoice.findViewById(R.id.btnEquity);
+        bondbtn = (Button)dialogChoice.findViewById(R.id.btnBonds);
+
+        equitybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(HomeActivity.this, SimulatedEquityActivity.class);
+                HomeActivity.this.startActivity(myIntent);
+                dialogChoice.dismiss();
+            }
+        });
+
+        layoutcloseChoice  =(LinearLayout) dialogChoice.findViewById(R.id.layoutcloseChoice);
+
+        layoutcloseChoice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogChoice.dismiss();
+            }
+        });
+
+        bondbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(HomeActivity.this, SimulatedBondsActivity.class);
+                HomeActivity.this.startActivity(myIntent);
+                dialogChoice.dismiss();
+            }
+        });
 
         margeetxt.setSelected(true);
 
@@ -201,8 +247,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getSupportActionBar().show();
-                Intent myIntent = new Intent(HomeActivity.this, SimulatedTradeActivity.class);
-                HomeActivity.this.startActivity(myIntent);
+                //drawerLayout.closeDrawers();
+                dialogChoice.show();
             }
         });
 
@@ -440,6 +486,7 @@ public class HomeActivity extends AppCompatActivity {
                     txtvirtualshare.setText("Tshs. " + vsformat);
                     //txtvirtualbalance.setText("Tshs. " + vsformat);
                     txtstockbalance.setText(String.valueOf(_user.getStock()));
+                    txtbondbalance.setText(String.valueOf(_user.getBonds()));
             }
 
             @Override
@@ -461,6 +508,7 @@ public class HomeActivity extends AppCompatActivity {
     class GetLiveMarketTask extends AsyncTask {
 
         LiveMarketAdapter lvm;
+        OOUArrayOfSecurityLivePrice res;
 
         @Override
         protected Object doInBackground(Object[] objects) {
@@ -469,16 +517,12 @@ public class HomeActivity extends AppCompatActivity {
 
                 OOUdefault_AtsWebFeedService service = new OOUdefault_AtsWebFeedService("http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc");
 
-                OOUArrayOfSecurityLivePrice res = service.LiveMarketPrices();
+             res  = service.LiveMarketPrices();
 
                 lvm = new LiveMarketAdapter(HomeActivity.this, res);
 
 
-                String val = "";
-                for (int i = 0; i < res.getPropertyCount(); i++) {
-                    val = res.get(i).MarketCap.toString();
-                    Log.i("Dataaaaaa", val);
-                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -495,6 +539,22 @@ public class HomeActivity extends AppCompatActivity {
             livemarketpricerecyclerview.setAdapter(lvm);
             txttrandingstats.setText("Real-Time Market Prices");
             prgs.setVisibility(View.INVISIBLE);
+
+            try {
+                realtimedata = "";
+
+                NumberFormat formatter = new DecimalFormat("#,###");
+                for (int i = 0; i < res.getPropertyCount(); i++) {
+                    realtimedata = res.get(i).MarketCap.toString();
+                    Log.i("Dataaaaaa", realtimedata);
+                    margeetxt.append(" " + (res.get(i).Company) + " " + (formatter.format((res.get(i).OpeningPrice)))+ "  ");
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.i("TAAAAAG","No dataaa");
+                return;
+            }
 
         }
     }
@@ -576,9 +636,13 @@ public class HomeActivity extends AppCompatActivity {
         });
     }*/
 
+    private String getColoredSpanned(String text, String color) {
+        String input = "<font color=" + color + ">" + text + "</font>";
+        return input;
+    }
+
     public void closeModal(View view){
         dialog.dismiss();
     }
-
 }
 

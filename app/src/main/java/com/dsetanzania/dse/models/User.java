@@ -1,37 +1,14 @@
 package com.dsetanzania.dse.models;
 
-import android.content.DialogInterface;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.SearchView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-
-import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.activities.RegistrationActivity;
-import com.dsetanzania.dse.helperClasses.livedata_classes.OOUSecurityLivePrice;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class User{
     public String getUserId() {
@@ -44,6 +21,7 @@ public class User{
 
     private String userId;
     private int stock;
+    private int bonds;
     private String firstname;
     private String lastname;
     private  String tradername;
@@ -53,7 +31,9 @@ public class User{
     private String coursename;
     private String passoword;
     private String phoneNumber;
-    Transactions _transaction;
+
+    private String check;
+    SharesTransaction _transaction;
 
     public String getGender() {
         return gender;
@@ -80,8 +60,14 @@ public class User{
     double amountCalculated;
     double updatedbalance;
 
+    public int getBonds() {
+        return bonds;
+    }
 
-    private String check;
+    public void setBonds(int bonds) {
+        this.bonds = bonds;
+    }
+
     public void setCheck(String check){
         this.check = check;
     }
@@ -175,7 +161,7 @@ public class User{
         this.virtualmoney = virtualmoney;
     }
 
-    public User(String userId, String firstname, String lastname, String gender, String tradername, String email, String yearOfStudy, String university, String coursename, String phoneNumber, double virtualshare, int stock, String role) {
+    public User(String userId, String firstname, String lastname, String gender, String tradername, String email, String yearOfStudy, String university, String coursename, String phoneNumber, double virtualshare, int stock, String role,int bonds) {
         this.userId = userId;
         this.virtualmoney = virtualshare;
         this.firstname = firstname;
@@ -189,6 +175,7 @@ public class User{
         this.stock = stock;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.bonds = bonds;
     }
 
 
@@ -196,7 +183,6 @@ public class User{
 
 
     }
-
 
     public void sellshares(final double amountToSell, final int sharesToSell,final String board){
 

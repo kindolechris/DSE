@@ -240,7 +240,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                             radiobtn = findViewById(radioId);
                             DatabaseReference reference;
                             reference = FirebaseDatabase.getInstance().getReference("Users");
-                            User _usermodel = new User(userId,firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),phoneNumber.getText().toString().trim(),3000000,0,"Student");
+                            User _usermodel = new User(userId,firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),phoneNumber.getText().toString().trim(),3000000,0,"Student",0);
                             reference.child(userId).setValue(_usermodel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

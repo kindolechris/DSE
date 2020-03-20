@@ -3,16 +3,14 @@ package com.dsetanzania.dse.activities;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.dsetanzania.dse.models.Transactions;
+import com.dsetanzania.dse.models.SharesTransaction;
 import com.dsetanzania.dse.models.User;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,17 +25,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import org.ksoap2.serialization.ValueWriter;
 
-import java.security.Timestamp;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,9 +51,9 @@ public class BuyShareActivity extends AppCompatActivity {
     TextView txtreferenceId;
     FirebaseUser fuser;
     Toolbar toolbar;
-    ArrayList<Transactions> transactionArray;
+    ArrayList<SharesTransaction> transactionArray;
     User otheruserclass;
-    Transactions _transaction;
+    SharesTransaction _transaction;
     ArrayList<User> otherUserArray;
     int status = 1;
 
@@ -97,7 +91,7 @@ public class BuyShareActivity extends AppCompatActivity {
 
         user = new User();
         otheruserclass = new User();
-        _transaction = new Transactions();
+        _transaction = new SharesTransaction();
 
 
         buybtn = (Button) findViewById(R.id.btnBuyshares);
@@ -133,7 +127,7 @@ public class BuyShareActivity extends AppCompatActivity {
                         return;
                     }
 
-                        for(final Transactions trns : transactionArray){
+                        for(final SharesTransaction trns : transactionArray){
                             for (User usr : otherUserArray){
 
                                 if(usr.getUserId().equals(trns.getUserId())  && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(companyname) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
@@ -266,7 +260,7 @@ public class BuyShareActivity extends AppCompatActivity {
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id,soldby,date,university,transactionParty);
+        SharesTransaction tickets = new SharesTransaction("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id,soldby,date,university,transactionParty);
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -304,13 +298,13 @@ public class BuyShareActivity extends AppCompatActivity {
 
     public void getTransactionsAndOtherUser(){
 
-        transactionArray = new ArrayList<Transactions>();
+        transactionArray = new ArrayList<SharesTransaction>();
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    _transaction = snapshot.getValue(Transactions.class);
+                    _transaction = snapshot.getValue(SharesTransaction.class);
                     transactionArray.add(_transaction);
                 }
             }

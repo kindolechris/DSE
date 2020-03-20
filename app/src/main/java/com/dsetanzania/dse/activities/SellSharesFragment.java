@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.Transactions;
+import com.dsetanzania.dse.models.SharesTransaction;
 import com.dsetanzania.dse.models.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -64,9 +64,9 @@ public class SellSharesFragment extends Fragment {
     double updatedStock;
      Double virtualmoney;
      int stock;
-    ArrayList<Transactions> transactionArray;
+    ArrayList<SharesTransaction> transactionArray;
     User otheruserclass;
-    Transactions _transaction;
+    SharesTransaction _transaction;
     ArrayList<User> otherUserArray;
     int status = 1;
 
@@ -106,7 +106,7 @@ public class SellSharesFragment extends Fragment {
 
             thisUserClass = new User();
             otheruserclass = new User();
-            _transaction = new Transactions();
+            _transaction = new SharesTransaction();
 
 
             btnsell.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +138,7 @@ public class SellSharesFragment extends Fragment {
                     /////////////////
 
 
-                    for(final Transactions trns : transactionArray){
+                    for(final SharesTransaction trns : transactionArray){
                         for (User usr : otherUserArray){
 
                             if(usr.getUserId().equals(trns.getUserId()) && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(boardSpinner.getSelectedItem().toString()) && trns.getType().equals("Purchase") && trns.getStatus().equals("Queued")){
@@ -285,13 +285,13 @@ public class SellSharesFragment extends Fragment {
 
     public void getTransactionsAndOtherUser(){
 
-        transactionArray = new ArrayList<Transactions>();
+        transactionArray = new ArrayList<SharesTransaction>();
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    _transaction = snapshot.getValue(Transactions.class);
+                    _transaction = snapshot.getValue(SharesTransaction.class);
                      transactionArray.add(_transaction);
                 }
             }
@@ -335,7 +335,7 @@ public class SellSharesFragment extends Fragment {
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        Transactions tickets = new Transactions("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtquantity.getText().toString().trim()),"Sales",id,boughtby,date,university,"thidParty");
+        SharesTransaction tickets = new SharesTransaction("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtquantity.getText().toString().trim()),"Sales",id,boughtby,date,university,"thidParty");
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
