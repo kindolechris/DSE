@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBondsTable extends Migration
+class CreateBondsTransactionTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateBondsTable extends Migration
      */
     public function up()
     {
-
-        Schema::create('bonds', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('bonds_transaction', function (Blueprint $table) {
+            $table->id();
             $table->integer('bondnumber');
-            $table->string('issuer');
-            $table->double('price');
-            $table->integer('duration');
+            $table->integer('atPrice');
+            $table->integer('units');
+            $table->double('consideration');
+            $table->string('type');
+            $table->integer('userId');
+            $table->string('status');
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateBondsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bonds');
+        Schema::dropIfExists('bonds_transaction');
     }
 }

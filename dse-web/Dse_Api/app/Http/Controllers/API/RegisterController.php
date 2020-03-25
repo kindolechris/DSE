@@ -1,22 +1,22 @@
 <?php
 
-   
+
 
 namespace App\Http\Controllers\API;
 
-   
+
 
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\API\BaseController as BaseController;
 
-use App\User;
+use App\Models\User;
 
 use Illuminate\Support\Facades\Auth;
 
 use Validator;
 
-   
+
 
 class RegisterController extends BaseController
 
@@ -53,20 +53,19 @@ class RegisterController extends BaseController
             'stock' => 'required',
             'virtualmoney' => 'required',
             'role' => 'required',
-            
             'c_password' => 'required|same:password',
 
         ]);
 
-   
+
 
         if($validator->fails()){
 
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
 
         }
 
-   
+
 
         $input = $request->all();
 
@@ -78,13 +77,13 @@ class RegisterController extends BaseController
 
         $success['name'] =  $user->name;
 
-   
+
 
         return $this->sendResponse($success, 'User register successfully.');
 
     }
 
-   
+
 
     /**
 
@@ -100,25 +99,25 @@ class RegisterController extends BaseController
 
     {
 
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
 
-            $user = Auth::user(); 
+            $user = Auth::user();
 
-            $success['token'] =  $user->createToken('MyApp')-> accessToken; 
+            $success['token'] =  $user->createToken('MyApp')-> accessToken;
 
             $success['name'] =  $user->name;
 
-   
+
 
             return $this->sendResponse($success, 'User login successfully.');
 
-        } 
+        }
 
-        else{ 
+        else{
 
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
 
-        } 
+        }
 
     }
 

@@ -1,11 +1,12 @@
 <?php
 
-namespace App;
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 
-class Share extends Model
+class Bond extends Model
 
 {
 
@@ -20,7 +21,7 @@ class Share extends Model
      */
 
     protected $fillable = [
-        //'name', 'price','consideration'
+        'bondnumber','issuer', 'price','duration'
 
     ];
 

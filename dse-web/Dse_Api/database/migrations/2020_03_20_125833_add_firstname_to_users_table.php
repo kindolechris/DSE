@@ -23,9 +23,9 @@ class AddFirstnameToUsersTable extends Migration
             $table->string('university')->after('phonenumber');
             $table->string('yearOfStudy')->after('university');
             $table->string('coursename')->after('yearOfStudy');
-            $table->string('bonds')->after('email');
-            $table->string('stock')->after('bonds');
-            $table->string('virtualmoney')->after('stock');
+            $table->integer('bonds')->after('email');
+            $table->integer('stock')->after('bonds');
+            $table->double('virtualmoney')->after('stock');
             $table->string('role')->after('virtualmoney');
         });
     }

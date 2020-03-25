@@ -19,9 +19,18 @@ Route::post('register', 'API\RegisterController@register');
 
 Route::post('login', 'API\RegisterController@login');
 
+/*
+Route::get('bonds', 'API\BondsController@bonds');
+Route::get('showBond/{id}', 'API\BondsController@showBond');
+Route::post('addBond', 'API\BondsController@addBond');
+Route::put('updateBond/{id}', 'API\BondsController@updateBond');
+*/
 
 Route::middleware('auth:api')->group( function () {
 
-    Route::resource('bonds', 'API\BondsController');
 
+    Route::apiResource('bond','API\BondsController');
+    Route::apiResource('bondtransaction','API\BondTransactionController');
 });
+
+
