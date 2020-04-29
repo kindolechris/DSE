@@ -7,12 +7,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.User;
+import com.dsetanzania.dse.models.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,9 +18,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class PortfolioActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -32,7 +27,7 @@ public class PortfolioActivity extends AppCompatActivity {
     TextView txtuniversity;
     //TextView txtshares;
     DatabaseReference reference;
-    User user;
+    UserModel user;
     FirebaseUser fuser;
     FirebaseAuth auth;
 
@@ -41,7 +36,7 @@ public class PortfolioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portfolio);
 
-        user = new User();
+        //user = new User();
         txtusername  = (TextView) findViewById(R.id.txtusername);
         txtbonds  = (TextView) findViewById(R.id.bondtxt);
         txtshares  = (TextView) findViewById(R.id.sharestxt);
@@ -89,7 +84,7 @@ public class PortfolioActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(UserModel.class);
                 txtusername.setText(user.getFirstname() + " " + user.getLastname());
                 txtshares.setText(String.valueOf(user.getStock()));
                 txtbonds.setText(String.valueOf(user.getBonds()));

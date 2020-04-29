@@ -21,9 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.LoginActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan">
-        </activity>
+        <activity android:name=".activities.LeaderBoardActivity"></activity>
+        <activity
+            android:name=".activities.LoginActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"></activity>
         <activity
             android:name=".activities.SimulatedMarketListActivity"
             android:screenOrientation="portrait" />
@@ -38,7 +39,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.BuyShareActivity"
+            android:name=".activities.BuyOrSaleBoardShareActivity"
             android:label="@string/title_activity_buy_share"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -82,6 +83,7 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

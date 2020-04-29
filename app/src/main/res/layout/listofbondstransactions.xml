@@ -33,7 +33,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/ic_buy"
+                    android:background="@drawable/ic_bond"
                     android:backgroundTint="@color/colorBlack">
                 </ImageView>
             </LinearLayout>

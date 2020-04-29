@@ -10,75 +10,58 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.dsetanzania.dse.LiveMarketAdapter;
-import com.dsetanzania.dse.helperClasses.InternetcheckInterface;
+import com.dsetanzania.dse.adapters.LiveMarketAdapter;
+import com.dsetanzania.dse.api.RetrofitClient;
+import com.dsetanzania.dse.helperClasses.SychronizeLiveDataTimer;
+import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 import com.dsetanzania.dse.helperClasses.UserImageUpdloads;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.NewsFeeds;
-import com.dsetanzania.dse.models.User;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.dsetanzania.dse.models.UserModel;
+import com.dsetanzania.dse.models.UserDataResponseModel;
+import com.dsetanzania.dse.storage.SharedPrefManager;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.ksoap2.serialization.SoapObject;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    RelativeLayout notificationCount1;
     LinearLayout livemarketlinearlayout;
     LinearLayout portfoliolinearlayout;
     LinearLayout tellafriendlinearlayout;
@@ -87,25 +70,15 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout layoutcloseChoice;
     LinearLayout aboutUstlinearlayout;
     TextView txttradername;
-    TextView txtvirtualbalance;
     TextView txtstockbalance;
     TextView txtbondbalance;
     TextView txttrandingstats;
-    TextView txtdate;
     TextView queuestext;
     ProgressBar prgs;
     TextView txtvirtualshare;
-    EditText editText;
-    private FirebaseAuth mAuth;
-    String response;
+    private String _token;
     RecyclerView livemarketpricerecyclerview;
-    private Bundle bundleResult=new Bundle();
-    private JSONObject JSONObj;
-    private JSONArray JSONArr;
-    private SoapObject resultSOAP;
-    ArrayAdapter<String> adapter;
     SwipeRefreshLayout swipeRefreshLayout;
-    SwipeRefreshLayout mEmptyViewContainer;
     View parentLayout;
     TextView QueuesCountTxt;
     TextView margeetxt;
@@ -113,15 +86,17 @@ public class HomeActivity extends AppCompatActivity {
     StorageReference storegaReference;
     FirebaseUser fuser;
     Uri selectedImagURL;
-    private StorageTask mUploadTask;
-    private TextView emptyView;
     de.hdodenhof.circleimageview.CircleImageView imageView;
     Dialog dialog,dialogChoice;
     LinearLayout closeLayout;
     Button equitybtn;
     Button bondbtn;
     String realtimedata;
-
+    UserModel user;
+    NumberFormat formatter;
+    SychronizeLiveDataTimer sycnc;
+    UserDataResponseModel userdata;
+    private SharedPrefManager sharedPrefManager;
     public static Retrofit retrofit = null;
     private static int PICK_IMAGE_REQUEST = 1;
     private static String SOAP_ACTION = "http://tempuri.org/AtsWebFeedService/LiveMarketPrices";
@@ -136,7 +111,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         margeetxt = (TextView) findViewById(R.id.marquutxtbottom);
 
-
         Fade fade = new Fade();
         View decor = getWindow().getDecorView();
         fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
@@ -145,6 +119,9 @@ public class HomeActivity extends AppCompatActivity {
 
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
+
+        formatter = new DecimalFormat("#,###");
+        user = SharedPrefManager.getInstance(this).getUser();
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshLayout);
 
@@ -155,12 +132,7 @@ public class HomeActivity extends AppCompatActivity {
 
         closeLayout  =(LinearLayout) dialog.findViewById(R.id.layoutclose);
 
-        mAuth = FirebaseAuth.getInstance();
-
-        fuser = mAuth.getCurrentUser();
-
         txttradername = (TextView) findViewById(R.id.txttradername);
-        //txtvirtualbalance = (TextView) findViewById(R.id.virtualbalance);
         txtstockbalance = (TextView) findViewById(R.id.stocklbalance);
         txtbondbalance = (TextView) findViewById(R.id.bondsbalance);
         txtvirtualshare = (TextView) findViewById(R.id.sharepricetxt);
@@ -215,9 +187,24 @@ public class HomeActivity extends AppCompatActivity {
 
         getlivedata();
 
-        updatefields();
 
-        getProfileImage();
+        Log.v("tokensssssssssssssss",user.getToken());
+
+        sycnc = new SychronizeLiveDataTimer(HomeActivity.this);
+
+         new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new TimerTask() {
+                    @Override
+                    public void run() {
+                        updateFieldsOnChange();
+                    }
+                });
+            }
+        }, 0, 20);
+
+
 
         checkInternet task = new checkInternet(getApplicationContext(), new InternetcheckInterface() {
             @Override
@@ -300,7 +287,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -338,11 +324,33 @@ public class HomeActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!SharedPrefManager.getInstance(this).isLoggedIn()){
+            Intent NextActivity = new Intent(HomeActivity.this, HomeActivity.class);
+            NextActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            HomeActivity.this.startActivity(NextActivity);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sycnc.stopTimer();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        sycnc = new SychronizeLiveDataTimer(HomeActivity.this);
+        sycnc.startTimer(100);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.avator_menu, menu);
-
 
         final MenuItem NotificationItem = menu.findItem(R.id.notification);
         final MenuItem UserAvator = menu.findItem(R.id.Userface);
@@ -370,25 +378,24 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.signOut) {
-            mAuth.signOut();
+            sycnc.stopTimer();
             Intent homeintent = new Intent(HomeActivity.this, LoginActivity.class);
+            homeintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             HomeActivity.this.startActivity(homeintent);
+            sharedPrefManager = new SharedPrefManager(HomeActivity.this);
+            sharedPrefManager.clear();
             finish();
         }
         else if(id== R.id.Userface){
             Intent i = new Intent(
                     Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
             startActivityForResult(i, PICK_IMAGE_REQUEST);
-
         }
         else{
             queuestext.setText("You have " + QueuesCountTxt.getText().toString() + " pending \nqueue order(s)");
@@ -435,75 +442,11 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void  getProfileImage(){
-
-        final FirebaseUser fuser = mAuth.getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("UserImageUpdloads");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    UserImageUpdloads _image = snapshot.getValue(UserImageUpdloads.class);
-                    if(_image.getUserId().equals(fuser.getUid())){
-
-                        //imageView = (CircleImageView) findViewById(R.id.profile_image);
-                        //Glide.with(getApplicationContext()).load(_image.getImageUrl()).into(imageView);
-                        //Picasso.get().load(_image.getImageUrl()).placeholder(R.drawable.ic_account).resize(100,100).centerCrop().into(imageView);
-                        //imageView.setBorderWidth(2);
-                        //imageView.setBorderColor(getResources().getColor(R.color.colorWhite));
-                        Log.v("ImageURL","Url is" + _image.getImageUrl());
-                    }
-                    else {
-                        Log.v("ImageURL","Is not available" + _image.getImageUrl());
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
-    public void updatefields(){
-
-        dbReference = FirebaseDatabase.getInstance().getReference();
-
-        DatabaseReference usersRef = dbReference.child("Users").child(fuser.getUid());
-
-        usersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    User _user = dataSnapshot.getValue(User.class);
-                    NumberFormat formatter = new DecimalFormat("#,###");
-                    String vsformat = formatter.format( _user.getVirtualmoney());
-                    txttradername.setText(_user.getTradername());
-                    txtvirtualshare.setText("Tshs. " + vsformat);
-                    //txtvirtualbalance.setText("Tshs. " + vsformat);
-                    txtstockbalance.setText(String.valueOf(_user.getStock()));
-                    txtbondbalance.setText(String.valueOf(_user.getBonds()));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
 
     public void getlivedata(){
         GetLiveMarketTask gt = new GetLiveMarketTask();
         gt.execute();
     }
-
-
 
     class GetLiveMarketTask extends AsyncTask {
 
@@ -559,50 +502,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
-
-    private void uploadFile() {
-        dbReference = FirebaseDatabase.getInstance().getReference("UserImageUpdloads");
-        storegaReference = FirebaseStorage.getInstance().getReference("UserImageUpdloads");
-        if (selectedImagURL != null) {
-            StorageReference fileReference = storegaReference.child(System.currentTimeMillis()
-                    + "." + getFileExtension(selectedImagURL));
-
-            mUploadTask = fileReference.putFile(selectedImagURL)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //mProgressBar.setProgress(0);
-                                }
-                            }, 500);
-
-                            Toast.makeText(HomeActivity.this, "Upload successful", Toast.LENGTH_LONG).show();
-                            UserImageUpdloads upload = new UserImageUpdloads(fuser.getUid(),
-                                    taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
-                            String uploadId = dbReference.push().getKey();
-                            dbReference.child(uploadId).setValue(upload);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(HomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     public void toolBarElevation(int size){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(size);
@@ -611,30 +510,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-   /* private void  getTransactionsQueues(){
-
-        final FirebaseUser fuser = mAuth.getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Transactions");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Transactions _transaction = snapshot.getValue(Transactions.class);
-                    if(_transaction.getUserId().equals(fuser.getUid()) && _transaction.getStatus().equals("Queued")){
-                        int pendingQueueCount = 0;
-                        pendingQueueCount = pendingQueueCount + 1;
-                        QueuesCountTxt.setText(String.valueOf(pendingQueueCount));
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }*/
 
     private String getColoredSpanned(String text, String color) {
         String input = "<font color=" + color + ">" + text + "</font>";
@@ -643,6 +518,15 @@ public class HomeActivity extends AppCompatActivity {
 
     public void closeModal(View view){
         dialog.dismiss();
+    }
+
+
+
+    public void updateFieldsOnChange(){
+        txttradername.setText(sycnc.userdata.getUsers().getTradername());
+        txtstockbalance.setText(String.valueOf(sycnc.userdata.getUsers().getStock()));
+        txtbondbalance.setText(String.valueOf(sycnc.userdata.getUsers().getBonds()));
+        txtvirtualshare.setText(formatter.format(sycnc.userdata.getUsers().getVirtualmoney()));
     }
 }
 

@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.dsetanzania.dse.SimulatedEquityTabdapter;
+import com.dsetanzania.dse.adapters.SimulatedEquityTabdapter;
 import com.dsetanzania.dse.R;
 import com.google.android.material.tabs.TabLayout;
 

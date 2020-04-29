@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    tools:context=".activities.BuyShareActivity">
+    tools:context=".activities.BuyOrSaleBoardShareActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -222,14 +222,26 @@
                 android:layout_height="wrap_content">
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnbuybonds"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="60dp"
                     android:textSize="15dp"
                     app:rippleColor="@color/colorAccent"
                     android:theme="@style/Theme.MaterialComponents.NoActionBar"
                     android:textColor="@color/colorWhite"
+                    android:layout_marginEnd="15dp"
                     android:backgroundTint="@color/colorPrimary"
                     android:text="Buy" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnsellbonds"
+                    android:layout_width="100dp"
+                    android:layout_height="60dp"
+                    android:textSize="15dp"
+                    app:rippleColor="@color/colorAccent"
+                    android:theme="@style/Theme.MaterialComponents.NoActionBar"
+                    android:textColor="@color/colorWhite"
+                    android:backgroundTint="@color/colorRed"
+                    android:text="Sell" />
             </LinearLayout>
 
         </LinearLayout>

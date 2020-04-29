@@ -1,10 +1,10 @@
 package com.dsetanzania.dse.helperClasses;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

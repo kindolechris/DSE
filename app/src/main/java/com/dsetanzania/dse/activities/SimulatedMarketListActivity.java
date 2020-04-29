@@ -9,10 +9,10 @@ import androidx.viewpager.widget.ViewPager;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.dsetanzania.dse.AdminTabdapter;
+import com.dsetanzania.dse.adapters.AdminTabdapter;
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.SimulatedMarketToEditAdapter;
-import com.dsetanzania.dse.models.MarketSimulator;
+import com.dsetanzania.dse.adapters.SimulatedMarketToEditAdapter;
+import com.dsetanzania.dse.models.BoardSharesModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class SimulatedMarketListActivity extends AppCompatActivity {
 
     RecyclerView livemarketrecyclerview;
-    ArrayList<MarketSimulator> simulatedMarket;
+    ArrayList<BoardSharesModel> simulatedMarket;
     DatabaseReference reference;
     SimulatedMarketToEditAdapter simulatedMarketAdapter;
     FirebaseAuth mAuth;

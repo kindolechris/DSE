@@ -11,8 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.SimulatedBondsTabdapter;
-import com.dsetanzania.dse.SimulatedEquityTabdapter;
+import com.dsetanzania.dse.adapters.SimulatedBondsTabdapter;
 import com.google.android.material.tabs.TabLayout;
 
 public class SimulatedBondsActivity extends AppCompatActivity {

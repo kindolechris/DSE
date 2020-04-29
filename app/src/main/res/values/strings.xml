@@ -90,16 +90,15 @@
     <string name="copyright">DSE @ 2020</string>
 
     <string-array name="Faqs_content">
-        <item>Brief description about the question</item>
-        <item>Brief description about the question</item>
-        <item>Brief description about the question</item>
-        <item>Brief description about the question</item>
-        <item>Brief description about the question</item>
-        <item>Brief description about the question</item>
-        <item>Brief description about the question</item>
-        <item>Brief description about the question</item>
+        <item>To buy shares you need to make sure you have a virtual balance that doesn\â€™t fall out from + 15% or -15% of the buying price for that particular share. You can simply access the forms for selling shares by clicking the simulated Trading Link and choose Equity option. Then you will be given a list of shares that are on sale and choose what suit you.</item>
+        <item>To sell share you need to make sure you have more than 10 shares in your account. You can simply access the forms for selling shares by clicking the Simulated Trading Link and choose Equity option. From there you can access the form for creation of a selling order.</item>
+        <item>Shares are constrained by a matching price. In that case only the shares that have matching price as per selling and buying price then the transaction is executed. Otherwise if there\'s no matching price the orders are queued and awaiting for the matching price to line up.</item>
+        <item>You can purchase as many available shares as you can during the day.</item>
+        <item>For Successful In-app Transactions and accessing Live Market Data you need an active Internet connection.</item>
+        <item>To Access the Live Market Stats, you simply have to access the home screen of the application and all the live data can be seen in List View. Each entry can be clicked and more stats details can be found in the pop up dialog.</item>
+        <item>Yes. Shares can be sold to any of registered student in the application. By creating a selling entry, any student who has places a buying order in the queue will manage to purchase the share only if the price matches and the transaction is recorded.</item>
+        <item>After three months, the student with the highest portfolio value wins the challenge. The Portfolio value is calculated as the total value of stocks per user which can be made from successfully trading of stocks and bonds in the application.</item>
     </string-array>
-
 
     <string name="title_activity_sell_share">SellShareActivity</string>
     <string name="title_activity_buy_share">BuyShareActivity</string>

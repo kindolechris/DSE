@@ -3,19 +3,19 @@ package com.dsetanzania.dse.activities;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.dsetanzania.dse.models.SharesTransaction;
-import com.dsetanzania.dse.models.User;
+import com.dsetanzania.dse.models.SharesTransactionModel;
+import com.dsetanzania.dse.models.UserModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.text.TextUtils;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.dsetanzania.dse.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,8 +31,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class BuyShareActivity extends AppCompatActivity {
@@ -42,7 +40,7 @@ public class BuyShareActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     String companyname;
     Button buybtn;
-    User user;
+    UserModel user;
     TextView titletext;
     TextView txtholdings;
     TextView txtAmount;
@@ -51,10 +49,10 @@ public class BuyShareActivity extends AppCompatActivity {
     TextView txtreferenceId;
     FirebaseUser fuser;
     Toolbar toolbar;
-    ArrayList<SharesTransaction> transactionArray;
-    User otheruserclass;
-    SharesTransaction _transaction;
-    ArrayList<User> otherUserArray;
+    ArrayList<SharesTransactionModel> transactionArray;
+    UserModel otheruserclass;
+    SharesTransactionModel _transaction;
+    ArrayList<UserModel> otherUserArray;
     int status = 1;
 
     @Override
@@ -89,9 +87,9 @@ public class BuyShareActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Buy from " + companyname);
         }
 
-        user = new User();
-        otheruserclass = new User();
-        _transaction = new SharesTransaction();
+       // user = new User();
+       //otheruserclass = new User();
+        _transaction = new SharesTransactionModel();
 
 
         buybtn = (Button) findViewById(R.id.btnBuyshares);
@@ -101,7 +99,7 @@ public class BuyShareActivity extends AppCompatActivity {
         buybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(txtAmountofshares.getText().toString().trim()) || TextUtils.isEmpty(txtprice.getText().toString().trim())){
+           /*     if(TextUtils.isEmpty(txtAmountofshares.getText().toString().trim()) || TextUtils.isEmpty(txtprice.getText().toString().trim())){
                     Toast.makeText(getApplicationContext(),"Please place your quantity or price to buy",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -130,7 +128,7 @@ public class BuyShareActivity extends AppCompatActivity {
                         for(final SharesTransaction trns : transactionArray){
                             for (User usr : otherUserArray){
 
-                                if(usr.getUserId().equals(trns.getUserId())  && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(companyname) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
+                                if(usr.getId().equals(trns.getUserId())  && trns.getPrice() == Double.parseDouble(txtprice.getText().toString().trim()) && trns.getBoard().equals(companyname) && trns.getType().equals("Sales") && trns.getStatus().equals("Queued")){
 
                                     if(trns.getUserId().equals(fuser.getUid())){
                                         pushTransaction("Queued","","","","thirdParty");
@@ -138,7 +136,7 @@ public class BuyShareActivity extends AppCompatActivity {
                                         Toast.makeText(BuyShareActivity.this,"Purchase transaction was queued",Toast.LENGTH_SHORT).show();
                                         return;
                                     }
-                                    reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getUserId());
+                                    reference = FirebaseDatabase.getInstance().getReference("Users").child(trns.getId());
                                     reference.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -221,7 +219,7 @@ public class BuyShareActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Purchase transaction went wrong",Toast.LENGTH_SHORT).show();
                 }
 
-                getTransactionsAndOtherUser();
+                getTransactionsAndOtherUser();*/
             }
         });
     }
@@ -242,7 +240,7 @@ public class BuyShareActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(UserModel.class);
                 NumberFormat formatter = new DecimalFormat("#,###");
                 txtholdings.setText(String.valueOf(user.getStock()));
                 txtAmount.setText(formatter.format(user.getVirtualmoney()));
@@ -260,7 +258,7 @@ public class BuyShareActivity extends AppCompatActivity {
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         String id = reference.push().getKey();
-        SharesTransaction tickets = new SharesTransaction("DSE" + generateguid(),fuser.getUid(),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id,soldby,date,university,transactionParty);
+        SharesTransactionModel tickets = new SharesTransactionModel("DSE" + generateguid(),Integer.valueOf(fuser.getUid()),status,getCurrentTimeStamp(),companyname,Double.parseDouble(txtprice.getText().toString().trim()),Integer.parseInt(txtAmountofshares.getText().toString().trim()),"Purchase",id,soldby,date,university,transactionParty);
         reference.child(id).setValue(tickets).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -298,13 +296,13 @@ public class BuyShareActivity extends AppCompatActivity {
 
     public void getTransactionsAndOtherUser(){
 
-        transactionArray = new ArrayList<SharesTransaction>();
+        transactionArray = new ArrayList<SharesTransactionModel>();
         reference = FirebaseDatabase.getInstance().getReference("Transactions");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    _transaction = snapshot.getValue(SharesTransaction.class);
+                    _transaction = snapshot.getValue(SharesTransactionModel.class);
                     transactionArray.add(_transaction);
                 }
             }
@@ -315,14 +313,14 @@ public class BuyShareActivity extends AppCompatActivity {
             }
         });
 
-        otherUserArray = new ArrayList<User>();
+        otherUserArray = new ArrayList<UserModel>();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    otheruserclass = snapshot.getValue(User.class);
+                    otheruserclass = snapshot.getValue(UserModel.class);
                     otherUserArray.add(otheruserclass);
                 }
             }

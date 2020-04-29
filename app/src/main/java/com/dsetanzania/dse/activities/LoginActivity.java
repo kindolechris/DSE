@@ -1,6 +1,5 @@
 package com.dsetanzania.dse.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,35 +9,35 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Fade;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.helperClasses.Sms;
-import com.dsetanzania.dse.models.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.dsetanzania.dse.models.AuthResponseModel;
+import com.dsetanzania.dse.models.UserModel;
+import com.dsetanzania.dse.storage.SharedPrefManager;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
+
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
     public static final  String sharedPrefrences = "sharedpref";
     public static final  String emailAddress = "Email";
-
+    public  static final String token = "token";
+    private String _token;
     Button createNewAccounttxt;
     Button loginBtn;
     EditText emailtxt;
@@ -48,14 +47,13 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     Sms sms;
     private String userEmail;
-    private List<User> user;
-
+    private List<UserModel> user;
+    private SharedPrefManager sharedPrefManager;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // force full screen mode
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_login);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -69,17 +67,14 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
 
-        mAuth = FirebaseAuth.getInstance();
-
-
-        firebaseUser = mAuth.getCurrentUser();
-
-        if(firebaseUser !=null){
-
-            checkRole();
+        sharedPrefManager = new SharedPrefManager(LoginActivity.this);
+        if(sharedPrefManager.isLoggedIn()){
+            Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
+            NextActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            LoginActivity.this.startActivity(NextActivity);
         }
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         createNewAccounttxt = (Button) findViewById(R.id.registerNewAccountTxt);
         emailtxt = (EditText) findViewById(R.id.txtemailAddress);
@@ -119,22 +114,43 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 else{
-                    SignInLoader.setVisibility(View.VISIBLE);
-                    mAuth.signInWithEmailAndPassword(emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim())
-                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        checkRole();
-                                    } else {
-                                        SignInLoader.setVisibility(View.INVISIBLE);
-                                        new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
-                                                .setTitle("Problem!")
-                                                .setMessage("Authentication failed")
-                                                .setPositiveButton("Ok",null).show();
-                                    }
-                                }
-                            });
+
+                    Call<AuthResponseModel> call = RetrofitClient
+                            .getInstance().getApi().login(emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim());
+                    call.enqueue(new Callback<AuthResponseModel>() {
+                        @Override
+                        public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
+                            AuthResponseModel loginresponse = response.body();
+                            if (loginresponse.isSuccess()){
+                                //checkRole("Admin");
+                                SharedPrefManager.getInstance(LoginActivity.this)
+                                        .SavaUser(loginresponse.getUser());
+                                _token = loginresponse.getUser().getToken();
+                                saveLoginData();
+                                Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
+                                NextActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                LoginActivity.this.startActivity(NextActivity);
+                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AuthResponseModel> call, Throwable t) {
+
+                        }
+                    });
+                    //SignIn();
+                  /*  SignInLoader.setVisibility(View.VISIBLE);
+                    SignInLoader.setVisibility(View.INVISIBLE);
+                    new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
+                            .setTitle("Problem!")
+                            .setMessage("Authentication failed")
+                            .setPositiveButton("Ok",null).show();
+                    checkRole();*/
+                    //emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim()
                 }
                 
             }
@@ -149,17 +165,23 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     protected void onStop() {
         super.onStop();
         saveLoginData();
+        clearAppFref();
     }
 
     public void saveLoginData(){
         SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(emailAddress, emailtxt.getText().toString().trim());
+        editor.putString(token, _token);
         editor.apply();
     }
 
@@ -169,14 +191,9 @@ public class LoginActivity extends AppCompatActivity {
         emailtxt.setText(userEmail);
     }
 
-    public  void checkRole(){
+    public  void checkRole(String role){
         final FirebaseUser fuser = mAuth.getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("role");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                String role = dataSnapshot.getValue(String.class);
                 if(role.equals("Admin")){
                     SignInLoader.setVisibility(View.INVISIBLE);
                     Intent verifycodeintent = new Intent(LoginActivity.this, SimulatedMarketListActivity.class);
@@ -191,12 +208,10 @@ public class LoginActivity extends AppCompatActivity {
                     LoginActivity.this.startActivity(verifycodeintent);
                     finish();
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
+
+    public void clearAppFref(){
+        sharedPrefManager.clear();
+    }
+
 }

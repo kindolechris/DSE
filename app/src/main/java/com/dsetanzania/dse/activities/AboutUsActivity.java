@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.helperClasses.SychronizeLiveDataTimer;
 
 public class AboutUsActivity extends AppCompatActivity {
 

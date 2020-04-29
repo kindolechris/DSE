@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context=".activities.BuyOrSaleBoardShareActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleTextColor="@android:color/white"
+        android:background="@color/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ToolbarTheme"
+        app:titleTextAppearance="@style/Toolbar.TitleText"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        >
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        app:layout_constraintVertical_bias="0.07"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        <LinearLayout
+            android:id="@+id/fields_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="45dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="45dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/guideline5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Quantity"
+                android:theme="@style/MyTextInputLayout"
+                android:textColorHint="@color/colorBlackBlack">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtquantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="20"
+                    android:fontFamily="@font/montserrat"
+                    android:maxLines="1"
+                    android:textSize="14dp"
+                    android:textColorHint="@color/colorBlackBlack"
+                    android:singleLine="true"
+                    android:theme="@style/MyTextInputLayout"
+                    android:textColor="@color/colorBlackBlack" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/MyTextInputLayout"
+                android:textColorHint="@color/colorBlackBlack">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtprice"
+                    style="@style/MyTextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Price"
+                    android:inputType="numberDecimal"
+                    android:fontFamily="@font/montserrat"
+                    android:maxLength="15"
+                    android:textSize="14dp"
+                    android:maxLines="1"
+                    android:textColorHint="@color/colorBlackBlack"
+                    android:singleLine="true"
+                    android:theme="@style/MyTextInputLayout"
+                    android:textColor="@color/colorBlackBlack" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp">
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stock details"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/colorBlackBlack">
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Virtual balance :"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/colorBlack">
+                </TextView>
+                <TextView
+                    android:id="@+id/txtstockbalance"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/colorBlack">
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Holdings  (shareAmount) :"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/colorBlack">
+                </TextView>
+                <TextView
+                    android:id="@+id/txtholdings"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/colorBlack">
+                </TextView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="15dp">
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Transaction details"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/colorBlackBlack">
+                </TextView>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Order reference No"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/colorBlack">
+                </TextView>
+                <TextView
+                    android:id="@+id/txtreferenceId"
+                    android:layout_marginStart="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#ID"
+                    android:textSize="15dp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="@color/colorBlack">
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:layout_height="wrap_content">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBuyshares"
+                    android:layout_width="100dp"
+                    android:layout_height="60dp"
+                    android:textSize="15dp"
+                    app:rippleColor="@color/colorAccent"
+                    android:theme="@style/Theme.MaterialComponents.NoActionBar"
+                    android:textColor="@color/colorWhite"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:text="Buy" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSellshares"
+                    android:layout_width="100dp"
+                    android:layout_height="60dp"
+                    android:textSize="15dp"
+                    app:rippleColor="@color/colorAccent"
+                    android:theme="@style/Theme.MaterialComponents.NoActionBar"
+                    android:textColor="@color/colorBlackBlack"
+                    android:layout_marginStart="10dp"
+                    android:backgroundTint="@color/colorRed"
+                    android:text="Sell" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

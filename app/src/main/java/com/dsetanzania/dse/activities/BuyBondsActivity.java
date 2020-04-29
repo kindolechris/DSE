@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.BondTransaction;
-import com.dsetanzania.dse.models.User;
+import com.dsetanzania.dse.models.BondTransactionModel;
+import com.dsetanzania.dse.models.UserModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +42,7 @@ public class BuyBondsActivity extends AppCompatActivity {
     DatabaseReference reference;
     FirebaseAuth auth;
     FirebaseUser fuser;
-    User user;
+    UserModel user;
     TextView txtholdings;
     TextView txtAmount;
 
@@ -64,7 +64,7 @@ public class BuyBondsActivity extends AppCompatActivity {
         txtholdings = (TextView) findViewById(R.id.txtbondholdings);
         txtAmount = (TextView) findViewById(R.id.txtvirtualbalance);
 
-        user = new User();
+       // user = new User();
 
         getUserInfo();
         buybondsbtn.setOnClickListener(new View.OnClickListener() {
@@ -160,7 +160,7 @@ public class BuyBondsActivity extends AppCompatActivity {
         DatabaseReference reference;
         reference = FirebaseDatabase.getInstance().getReference("BondsTransaction");
         String id = reference.push().getKey();
-        BondTransaction bondTransaction = new BondTransaction(id,fuser.getUid(),bondnumber,"Successfully",consideration,"Purchase",units,price,getCurrentTimeStamp());
+        BondTransactionModel bondTransaction = new BondTransactionModel(id,fuser.getUid(),bondnumber,"Successfully",consideration,"Purchase",units,price,getCurrentTimeStamp());
         reference.child(id).setValue(bondTransaction).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -175,7 +175,7 @@ public class BuyBondsActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(UserModel.class);
                 NumberFormat formatter = new DecimalFormat("#,###");
                 txtholdings.setText(String.valueOf(user.getBonds()));
                 txtAmount.setText(formatter.format(user.getVirtualmoney()));

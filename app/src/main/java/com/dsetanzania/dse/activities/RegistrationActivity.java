@@ -1,11 +1,8 @@
 package com.dsetanzania.dse.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,22 +17,18 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.helperClasses.InternetcheckInterface;
+import com.dsetanzania.dse.api.RetrofitClient;
+import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 import com.dsetanzania.dse.helperClasses.checkInternet;
-import com.dsetanzania.dse.models.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.dsetanzania.dse.models.AuthResponseModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegistrationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -67,7 +60,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         setContentView(R.layout.activity_registration);
         parentLayout = findViewById(android.R.id.content);
 
-        mAuth = FirebaseAuth.getInstance();
+        //mAuth = FirebaseAuth.getInstance();
 
          spinner = (SearchableSpinner) findViewById(R.id.spinner_search);
         progressBar = (ProgressBar)  findViewById(R.id.RegistrationLoaderketLoader2);
@@ -79,8 +72,6 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
-
-
 
         radiogroupGender = (RadioGroup) findViewById(R.id.radioGender);
         firstname = (TextInputEditText) findViewById(R.id.txtfirstname);
@@ -168,11 +159,9 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     public void checkMethod(String result) {
 
                         if(result == "Access"){
-                            checkEmailFirstIfExist();
-                            //progressBar.setVisibility(View.INVISIBLE);
-                 /*   Snackbar snackbar = Snackbar
-                            .make(parentLayout, "Internet is on", Snackbar.LENGTH_LONG);
-                    snackbar.show();*/
+                            //checkEmailFirstIfExist();
+                            //API call
+                            registerUser();
                         }
                         else if(result == "NoAccess"){
                             Snackbar snackbar = Snackbar
@@ -228,36 +217,6 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
     }
 
 
-    public  void registerUser(){
-
-        mAuth.createUserWithEmailAndPassword(email.getText().toString().trim(),passoword.getText().toString().trim())
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            userId = mAuth.getUid();
-                            int radioId = radiogroupGender.getCheckedRadioButtonId();
-                            radiobtn = findViewById(radioId);
-                            DatabaseReference reference;
-                            reference = FirebaseDatabase.getInstance().getReference("Users");
-                            User _usermodel = new User(userId,firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),phoneNumber.getText().toString().trim(),3000000,0,"Student",0);
-                            reference.child(userId).setValue(_usermodel).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    signInwithEmailAndPassword();
-                                }
-                            });
-                        }
-                        else{
-                            progressBar.setVisibility(View.INVISIBLE);
-                            Toast.makeText(RegistrationActivity.this,"There was a problem when registering",Toast.LENGTH_SHORT).show();
-                            return;
-
-                        }
-                    }
-                });
-    }
-
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         spinner.getItemAtPosition(position).toString().toLowerCase();
@@ -268,62 +227,37 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
 
     }
 
-    private void signInwithEmailAndPassword() {
-        mAuth.signInWithEmailAndPassword(email.getText().toString().trim(),passoword.getText().toString().trim())
-                .addOnCompleteListener(RegistrationActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            _builder = new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
-                                    .setTitle("Welcome")
-                                    .setMessage("You are successfully registered")
-                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            _builder.dismiss();
-                                            Intent verifycodeintent = new Intent(RegistrationActivity.this, LoginActivity.class);
-                                            RegistrationActivity.this.startActivity(verifycodeintent);
-                                            finish();
-                                        }
-                                    }).show();
 
-                        } else {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            //verification unsuccessful.. display an error message
-                            //Toast.makeText(RegistrationActivity.this,"Somthing is wrong, we will fix it soon...",Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                });
-    }
-
-    public void checkEmailFirstIfExist(){
-        mAuth.fetchSignInMethodsForEmail(email.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-            @Override
-            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                boolean check = !task.getResult().getSignInMethods().isEmpty();
-
-                if(!check){
-                    registerUser();
-                    //progressBar.setVisibility(View.INVISIBLE);
-
-                }else {
-                    new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
-                            .setTitle("Alert!")
-                            .setMessage("Email already registered..")
-                            .setPositiveButton("Ok",null).show();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    return;
-                    //Toast.makeText(RegistrationActivity.this,"Email already registered..",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
     public  void checkbtn(View view){
         int radioId = radiogroupGender.getCheckedRadioButtonId();
         radiobtn = findViewById(radioId);
 
         //Toast.makeText(RegistrationActivity.this,"Selected : " + radiobtn.getText().toString(),Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void registerUser(){
+        Call<AuthResponseModel> call = RetrofitClient
+                .getInstance().getApi().register(firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),passoword.getText().toString().trim(),confirmpassword.getText().toString().trim(),phoneNumber.getText().toString().trim());
+        call.enqueue(new Callback<AuthResponseModel>() {
+            @Override
+            public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
+                AuthResponseModel regsterResponse = response.body();
+
+                if (regsterResponse.isSuccess()){
+                    Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponseModel> call, Throwable t) {
+
+            }
+        });
     }
 }
