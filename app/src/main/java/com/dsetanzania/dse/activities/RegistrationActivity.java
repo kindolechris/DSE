@@ -250,6 +250,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                 }
                 else{
                     Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
+                    return;
                 }
 
             }

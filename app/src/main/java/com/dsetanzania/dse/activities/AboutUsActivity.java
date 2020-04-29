@@ -9,13 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.helperClasses.SychronizeLiveDataTimer;
 
 public class AboutUsActivity extends AppCompatActivity {
 

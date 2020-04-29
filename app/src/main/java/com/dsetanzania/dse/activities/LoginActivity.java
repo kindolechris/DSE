@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Fade;
@@ -20,7 +21,8 @@ import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.helperClasses.Sms;
 import com.dsetanzania.dse.models.AuthResponseModel;
 import com.dsetanzania.dse.models.UserModel;
-import com.dsetanzania.dse.storage.SharedPrefManager;
+import com.dsetanzania.dse.storage.DbContract;
+import com.dsetanzania.dse.storage.DbHelper;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     public static final  String sharedPrefrences = "sharedpref";
     public static final  String emailAddress = "Email";
     public  static final String token = "token";
-    private String _token;
     Button createNewAccounttxt;
     Button loginBtn;
     EditText emailtxt;
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     Sms sms;
     private String userEmail;
     private List<UserModel> user;
-    private SharedPrefManager sharedPrefManager;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -66,12 +67,12 @@ public class LoginActivity extends AppCompatActivity {
 
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
-
-        sharedPrefManager = new SharedPrefManager(LoginActivity.this);
-        if(sharedPrefManager.isLoggedIn()){
+        sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+        String _token = sharedPreferences.getString(token, "");
+        if(!_token.isEmpty()){
             Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
-            NextActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             LoginActivity.this.startActivity(NextActivity);
+            finish();
         }
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -123,13 +124,17 @@ public class LoginActivity extends AppCompatActivity {
                             AuthResponseModel loginresponse = response.body();
                             if (loginresponse.isSuccess()){
                                 //checkRole("Admin");
-                                SharedPrefManager.getInstance(LoginActivity.this)
-                                        .SavaUser(loginresponse.getUser());
-                                _token = loginresponse.getUser().getToken();
-                                saveLoginData();
+                                saveToLocalDb(loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
+                                        loginresponse.getUser().getFirstname(),loginresponse.getUser().getLastname(),
+                                        loginresponse.getUser().getTradername(),loginresponse.getUser().getEmail(),
+                                        loginresponse.getUser().getYearOfStudy(),
+                                        loginresponse.getUser().getUniversity(),loginresponse.getUser().getCoursename(),
+                                        loginresponse.getUser().getPhonenumber(),loginresponse.getUser().getRole(),
+                                        loginresponse.getUser().getVirtualmoney(),loginresponse.getUser().getGender());
+                                saveLoginData(loginresponse.getUser().getToken());
                                 Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
-                                NextActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 LoginActivity.this.startActivity(NextActivity);
+                                finish();
                                 Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
                             }
                             else{
@@ -173,20 +178,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        saveLoginData();
-        clearAppFref();
     }
 
-    public void saveLoginData(){
+    public void saveLoginData(String accsesstoken){
         SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(emailAddress, emailtxt.getText().toString().trim());
-        editor.putString(token, _token);
+        editor.putString(token, accsesstoken);
         editor.apply();
     }
 
     public  void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         userEmail = sharedPreferences.getString(emailAddress,"");
         emailtxt.setText(userEmail);
     }
@@ -210,8 +212,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
     }
 
-    public void clearAppFref(){
-        sharedPrefManager.clear();
+
+    public void saveToLocalDb(int stock,int bond,String firstname,String lastname,String tradername,String email,String yearOfStrudy,String university,String coursename,String phonenumber,String role,Double virtualmoney,String gender){
+        DbHelper dbHelper = new DbHelper(this);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        dbHelper.saveTolocalDatabase(stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,database);
+        dbHelper.close();
     }
 
 }

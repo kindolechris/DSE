@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -28,17 +31,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.dsetanzania.dse.adapters.LiveMarketAdapter;
-import com.dsetanzania.dse.api.RetrofitClient;
-import com.dsetanzania.dse.helperClasses.SychronizeLiveDataTimer;
-import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 import com.dsetanzania.dse.helperClasses.UserImageUpdloads;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
 import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 import com.dsetanzania.dse.models.UserModel;
 import com.dsetanzania.dse.models.UserDataResponseModel;
-import com.dsetanzania.dse.storage.SharedPrefManager;
+import com.dsetanzania.dse.storage.DbContract;
+import com.dsetanzania.dse.storage.DbHelper;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,13 +52,8 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class HomeActivity extends AppCompatActivity {
@@ -94,9 +91,8 @@ public class HomeActivity extends AppCompatActivity {
     String realtimedata;
     UserModel user;
     NumberFormat formatter;
-    SychronizeLiveDataTimer sycnc;
+    //SychronizeLiveDataTimer sycnc;
     UserDataResponseModel userdata;
-    private SharedPrefManager sharedPrefManager;
     public static Retrofit retrofit = null;
     private static int PICK_IMAGE_REQUEST = 1;
     private static String SOAP_ACTION = "http://tempuri.org/AtsWebFeedService/LiveMarketPrices";
@@ -121,17 +117,11 @@ public class HomeActivity extends AppCompatActivity {
         getWindow().setExitTransition(fade);
 
         formatter = new DecimalFormat("#,###");
-        user = SharedPrefManager.getInstance(this).getUser();
-
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshLayout);
-
         dialog = new Dialog(HomeActivity.this,R.style.Mydialogtheme);
         dialog.setContentView(R.layout.custom_pop_up_for_queued_orders);
-
         queuestext = (TextView) dialog.findViewById(R.id.quedtransactiontxt);
-
         closeLayout  =(LinearLayout) dialog.findViewById(R.id.layoutclose);
-
         txttradername = (TextView) findViewById(R.id.txttradername);
         txtstockbalance = (TextView) findViewById(R.id.stocklbalance);
         txtbondbalance = (TextView) findViewById(R.id.bondsbalance);
@@ -183,37 +173,37 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        readFromLocalDb();
+        //saveToLocalDb();
+
         margeetxt.setSelected(true);
 
-        getlivedata();
+        //getlivedata();
 
 
-        Log.v("tokensssssssssssssss",user.getToken());
-
-        sycnc = new SychronizeLiveDataTimer(HomeActivity.this);
-
-         new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new TimerTask() {
-                    @Override
-                    public void run() {
-                        updateFieldsOnChange();
-                    }
-                });
-            }
-        }, 0, 20);
+//         new Timer().scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                runOnUiThread(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        updateFieldsOnChange();
+//                    }
+//                });
+//            }
+//        }, 0, 20);
 
 
 
-        checkInternet task = new checkInternet(getApplicationContext(), new InternetcheckInterface() {
+       checkInternet task = new checkInternet(getApplicationContext(), new InternetcheckInterface() {
             @Override
             public void checkMethod(String result) {
 
                 if(result == "Access"){
-                 /*   Snackbar snackbar = Snackbar
+                Snackbar snackbar = Snackbar
                             .make(parentLayout, "Internet is on", Snackbar.LENGTH_LONG);
-                    snackbar.show();*/
+                    snackbar.show();
+
                 }
                 else if(result == "NoAccess"){
                     Snackbar snackbar = Snackbar
@@ -327,24 +317,19 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(!SharedPrefManager.getInstance(this).isLoggedIn()){
-            Intent NextActivity = new Intent(HomeActivity.this, HomeActivity.class);
-            NextActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            HomeActivity.this.startActivity(NextActivity);
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sycnc.stopTimer();
+        //sycnc.stopTimer();
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        sycnc = new SychronizeLiveDataTimer(HomeActivity.this);
-        sycnc.startTimer(100);
+       // sycnc = new SychronizeLiveDataTimer(HomeActivity.this);
+        //sycnc.startTimer(100);
     }
 
 
@@ -383,12 +368,11 @@ public class HomeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.signOut) {
-            sycnc.stopTimer();
+            //sycnc.stopTimer();
+            UserLogOut();
             Intent homeintent = new Intent(HomeActivity.this, LoginActivity.class);
             homeintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             HomeActivity.this.startActivity(homeintent);
-            sharedPrefManager = new SharedPrefManager(HomeActivity.this);
-            sharedPrefManager.clear();
             finish();
         }
         else if(id== R.id.Userface){
@@ -522,11 +506,48 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-    public void updateFieldsOnChange(){
-        txttradername.setText(sycnc.userdata.getUsers().getTradername());
-        txtstockbalance.setText(String.valueOf(sycnc.userdata.getUsers().getStock()));
-        txtbondbalance.setText(String.valueOf(sycnc.userdata.getUsers().getBonds()));
-        txtvirtualshare.setText(formatter.format(sycnc.userdata.getUsers().getVirtualmoney()));
+    public void updateFieldsOnChange(String tradername,String stock,String bonds,String virtualbalance){
+        txttradername.setText(tradername);
+        txtstockbalance.setText(stock);
+        txtbondbalance.setText(bonds);
+        txtvirtualshare.setText(virtualbalance);
+    }
+
+    public void readFromLocalDb(){
+        DbHelper dbHelper = new DbHelper(this);
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+
+        Cursor cursor = dbHelper.readFromLocalDatabase(database);
+
+        while(cursor.moveToNext()){
+            String tradername = cursor.getString(cursor.getColumnIndex(DbContract.tradername));
+            double virtualmoney = cursor.getDouble(cursor.getColumnIndex(DbContract.virtualmoney));
+            int stock = cursor.getInt(cursor.getColumnIndex(DbContract.stock));
+            int bonds = cursor.getInt(cursor.getColumnIndex(DbContract.bonds));
+            int sync_status = cursor.getInt(cursor.getColumnIndex(DbContract.SYNC_STATUS));
+            updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),String.valueOf(virtualmoney));
+        }
+        cursor.close();
+        dbHelper.close();
+    }
+
+    public void saveToLocalDb(){
+        DbHelper dbHelper = new DbHelper(this);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        dbHelper.saveTolocalDatabase(0,0,"Christian","Kindole","ChrisKindole","ckindole@gmail.com","3","IFM","BCS","0689252757","Student",3000000,"male",DbContract.SYNC_STATUS_FAILED,database);
+        readFromLocalDb();
+        dbHelper.close();
+    }
+
+    public void UserLogOut(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedpref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.remove("token");
+        DbHelper dbHelper = new DbHelper(this);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        dbHelper.onUpgrade(database,1,2);
+        dbHelper.close();
+        editor.commit();
     }
 }
 

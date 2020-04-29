@@ -7,19 +7,18 @@ public class DbContract {
 
     public static final String TABLE_NAME = "user";
     public static final String DATABASE_NAME = "dse_db";
-    public static final String id = " ";
-    public static final String firstname = " ";
-    public static final String lastname = " ";
-    public static final String gender = " ";
-    public static final String tradername = " ";
-    public static final String phonenumber = " ";
-    public static final String university = " ";
-    public static final String yearOfStudy = " " ;
-    public static final String coursename = " ";
-    public static final String email = " ";
-    public static final String bonds = " ";
-    public static final String stock = " ";
-    public static final String virtualmoney = " ";
-    public static final String role = " ";
+    public static final String firstname = "firstname";
+    public static final String lastname = "lastname";
+    public static final String gender = "gender";
+    public static final String tradername = "tradername";
+    public static final String phonenumber = "phonenumber";
+    public static final String university = "university";
+    public static final String yearOfStudy = "yearOfStudy" ;
+    public static final String coursename = "coursename";
+    public static final String email = "email";
+    public static final String bonds = "bonds";
+    public static final String stock = "stock";
+    public static final String virtualmoney = "virtualmoney";
+    public static final String role = "role";
     public static final String SYNC_STATUS = "syncstatus";
 }

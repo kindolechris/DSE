@@ -1,38 +1,33 @@
 package com.dsetanzania.dse.fragments;
 
 
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.activities.HomeActivity;
 import com.dsetanzania.dse.adapters.SimulatedMarketAdapter;
 import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.models.BoardShareResponseModel;
 import com.dsetanzania.dse.models.BoardSharesModel;
-import com.dsetanzania.dse.models.UserDataResponseModel;
 import com.dsetanzania.dse.models.UserModel;
-import com.dsetanzania.dse.storage.SharedPrefManager;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.dsetanzania.dse.activities.LoginActivity.sharedPrefrences;
 
 public class BoardSharesFragment extends Fragment {
 
@@ -47,7 +42,9 @@ public class BoardSharesFragment extends Fragment {
     DatabaseReference reference;
     SimulatedMarketAdapter simulatedMarketAdapter;
     View view;
+    private String _token;
     RecyclerView.LayoutManager layoutManager;
+    private SharedPreferences sharedPreferences;
 
     // newInstance constructor for creating fragment with arguments
     public static BoardSharesFragment newInstance(int page, String title) {
@@ -78,7 +75,8 @@ public class BoardSharesFragment extends Fragment {
             layoutManager = new LinearLayoutManager(getActivity());
             livemarketpricerecyclerview = (RecyclerView) view.findViewById(R.id.listofmarketrecycler);
             //getlivedata();
-            user = SharedPrefManager.getInstance(getActivity()).getUser();
+            sharedPreferences = getActivity().getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+            _token = sharedPreferences.getString("token", "");
             getboards();
         }
 
@@ -89,7 +87,7 @@ public class BoardSharesFragment extends Fragment {
     public void getboards(){
 
         Call<BoardShareResponseModel> call = RetrofitClient
-                .getInstance().getApi().fetchBoardSharesdata("Bearer " +  user.getToken());
+                .getInstance().getApi().fetchBoardSharesdata("Bearer " +  _token);
 
         String s = call.toString();
         call.enqueue(new Callback<BoardShareResponseModel>() {
