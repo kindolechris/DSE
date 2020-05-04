@@ -75,7 +75,7 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        _position = position;
+/*        _position = position;
         NumberFormat formatter = new DecimalFormat("#,###");
         holder.itemView.setTag(personalShareModel.get(position));
         holder.txtcompanyname.setText(personalShareModel.get(position).getCompany());
@@ -91,7 +91,7 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
                 myIntent.putExtra("Companyname", personalShareModel.get(position).getCompany());
                 mycontext.startActivity(myIntent);
             }
-        });
+        });*/
 
         //pushMarkets();
         //_position = position + 1;
