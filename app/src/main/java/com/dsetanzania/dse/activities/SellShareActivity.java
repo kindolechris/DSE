@@ -1,16 +1,9 @@
 package com.dsetanzania.dse.activities;
 
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.view.MenuItem;
-import android.view.View;
-
 import com.dsetanzania.dse.R;
 
 public class SellShareActivity extends AppCompatActivity {
@@ -34,9 +27,7 @@ public class SellShareActivity extends AppCompatActivity {
         if (extras != null) {
             openingprice = extras.getString("OpeningPrice");
         }
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -33,7 +33,8 @@ public interface Api {
             @Field("coursename") String coursename,
             @Field("password") String password,
             @Field("c_password") String c_password,
-            @Field("phonenumber") String phonenumber
+            @Field("phonenumber") String phonenumber,
+            @Field("firebaseToken") String firebaseToken
     );
 
     @GET("user/{id}")

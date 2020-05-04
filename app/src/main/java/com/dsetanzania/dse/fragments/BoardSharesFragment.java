@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.adapters.SimulatedMarketAdapter;
+import com.dsetanzania.dse.adapters.BoardSharesAdapter;
 import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.models.BoardShareResponseModel;
 import com.dsetanzania.dse.models.BoardSharesModel;
@@ -40,7 +40,7 @@ public class BoardSharesFragment extends Fragment {
     RecyclerView livemarketpricerecyclerview;
     ArrayList<BoardSharesModel> simulatedMarket;
     DatabaseReference reference;
-    SimulatedMarketAdapter simulatedMarketAdapter;
+    BoardSharesAdapter simulatedMarketAdapter;
     View view;
     private String _token;
     RecyclerView.LayoutManager layoutManager;
@@ -97,7 +97,7 @@ public class BoardSharesFragment extends Fragment {
                 if ( boardShareResponseModel != null){
 
                     //updateFieldsOnChange();
-                    simulatedMarketAdapter = new SimulatedMarketAdapter(getContext(), boardShareResponseModel.getBoardSharesModel());
+                    simulatedMarketAdapter = new BoardSharesAdapter(getContext(), boardShareResponseModel.getBoardSharesModel());
                     livemarketpricerecyclerview.setHasFixedSize(true);
                     livemarketpricerecyclerview.setLayoutManager(layoutManager);
                     livemarketpricerecyclerview.setAdapter(simulatedMarketAdapter);

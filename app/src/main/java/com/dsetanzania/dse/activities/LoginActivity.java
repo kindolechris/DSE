@@ -1,5 +1,6 @@
 package com.dsetanzania.dse.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Fade;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,9 +25,14 @@ import com.dsetanzania.dse.models.AuthResponseModel;
 import com.dsetanzania.dse.models.UserModel;
 import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.annotations.SerializedName;
 
 
 import java.util.List;
@@ -38,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final  String sharedPrefrences = "sharedpref";
     public static final  String emailAddress = "Email";
+    public static final  String userId = "userid";
     public  static final String token = "token";
     Button createNewAccounttxt;
     Button loginBtn;
@@ -74,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
             LoginActivity.this.startActivity(NextActivity);
             finish();
         }
+
+
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
@@ -124,14 +134,14 @@ public class LoginActivity extends AppCompatActivity {
                             AuthResponseModel loginresponse = response.body();
                             if (loginresponse.isSuccess()){
                                 //checkRole("Admin");
-                                saveToLocalDb(loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
+                                saveToLocalDb(loginresponse.getUser().getId(),loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
                                         loginresponse.getUser().getFirstname(),loginresponse.getUser().getLastname(),
                                         loginresponse.getUser().getTradername(),loginresponse.getUser().getEmail(),
                                         loginresponse.getUser().getYearOfStudy(),
                                         loginresponse.getUser().getUniversity(),loginresponse.getUser().getCoursename(),
                                         loginresponse.getUser().getPhonenumber(),loginresponse.getUser().getRole(),
                                         loginresponse.getUser().getVirtualmoney(),loginresponse.getUser().getGender());
-                                saveLoginData(loginresponse.getUser().getToken());
+                                saveLoginData(loginresponse.getUser().getToken(),loginresponse.getUser().getId());
                                 Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
                                 LoginActivity.this.startActivity(NextActivity);
                                 finish();
@@ -180,11 +190,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    public void saveLoginData(String accsesstoken){
+    public void saveLoginData(String accsesstoken,int id){
         SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(emailAddress, emailtxt.getText().toString().trim());
         editor.putString(token, accsesstoken);
+        editor.putInt(userId,id);
         editor.apply();
     }
 
@@ -213,10 +224,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public void saveToLocalDb(int stock,int bond,String firstname,String lastname,String tradername,String email,String yearOfStrudy,String university,String coursename,String phonenumber,String role,Double virtualmoney,String gender){
+    public void saveToLocalDb(int id,int stock,int bond,String firstname,String lastname,String tradername,String email,String yearOfStrudy,String university,String coursename,String phonenumber,String role,Double virtualmoney,String gender){
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        dbHelper.saveTolocalDatabase(stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,database);
+        dbHelper.saveTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,database);
         dbHelper.close();
     }
 

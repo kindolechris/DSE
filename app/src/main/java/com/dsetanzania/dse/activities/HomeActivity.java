@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.dsetanzania.dse.adapters.LiveMarketAdapter;
+import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.helperClasses.UserImageUpdloads;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
@@ -54,7 +58,12 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import static com.dsetanzania.dse.activities.LoginActivity.sharedPrefrences;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -73,6 +82,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView queuestext;
     ProgressBar prgs;
     TextView txtvirtualshare;
+    private int userId;
     private String _token;
     RecyclerView livemarketpricerecyclerview;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -93,12 +103,19 @@ public class HomeActivity extends AppCompatActivity {
     NumberFormat formatter;
     //SychronizeLiveDataTimer sycnc;
     UserDataResponseModel userdata;
+    DbHelper dbHelper;
+    SQLiteDatabase database;
+    private BroadcastReceiver broadcastReceiver;
+    private IntentFilter  mIntentFilter;
+    private SharedPreferences sharedPreferences;
     public static Retrofit retrofit = null;
     private static int PICK_IMAGE_REQUEST = 1;
     private static String SOAP_ACTION = "http://tempuri.org/AtsWebFeedService/LiveMarketPrices";
     private static String NAMESPACE = "http://tempuri.org/";
     private static String METHOD_NAME = "LiveMarketPrices";
     private static String URL = "http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc?wsdl";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,10 +154,14 @@ public class HomeActivity extends AppCompatActivity {
         txttrandingstats = (TextView) findViewById(R.id.txttrendingTradestats);
         txttrandingstats.setText("Retrieving Real-time data..");
         parentLayout = findViewById(android.R.id.content);
-
+        dbHelper = new DbHelper(this);
+        database = dbHelper.getWritableDatabase();
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawable_layout);
         final LinearLayout content = (LinearLayout) findViewById(R.id.content);
 
+        sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userid", -1);
+        _token = sharedPreferences.getString("token", "");
         dialogChoice = new Dialog(HomeActivity.this,R.style.Mydialogtheme);
         dialogChoice.setContentView(R.layout.custom_pop_up_choice);
         equitybtn = (Button)dialogChoice.findViewById(R.id.btnEquity);
@@ -173,37 +194,35 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        readFromLocalDb();
+
+        updatelocaldb();
         //saveToLocalDb();
 
         margeetxt.setSelected(true);
 
         //getlivedata();
-
-
-//         new Timer().scheduleAtFixedRate(new TimerTask() {
-//            @Override
-//            public void run() {
-//                runOnUiThread(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        updateFieldsOnChange();
-//                    }
-//                });
-//            }
-//        }, 0, 20);
-
-
+     /*   new Timer().scheduleAtFixedRate(new TimerTask() {
+       @Override
+            public void run() {
+           runOnUiThread(new TimerTask() {
+                  @Override
+                    public void run() {
+                      updatelocaldb();
+                   }
+              });
+           }
+        }, 0, 20);
+*/
 
        checkInternet task = new checkInternet(getApplicationContext(), new InternetcheckInterface() {
             @Override
             public void checkMethod(String result) {
 
                 if(result == "Access"){
-                Snackbar snackbar = Snackbar
-                            .make(parentLayout, "Internet is on", Snackbar.LENGTH_LONG);
-                    snackbar.show();
 
+                    Snackbar snackbar = Snackbar
+                            .make(parentLayout,String.valueOf(userId), Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
                 else if(result == "NoAccess"){
                     Snackbar snackbar = Snackbar
@@ -298,6 +317,15 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updatelocaldb();
+                Toast.makeText(HomeActivity.this, "Notification received", Toast.LENGTH_LONG).show();
+            }
+        };
+
+        mIntentFilter = new IntentFilter("OPEN_NEW_ACTIVITY");
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,toolbar, R.string.open_drawer, R.string.close_drawer) {
 
@@ -317,21 +345,22 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        registerReceiver(broadcastReceiver, mIntentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //sycnc.stopTimer();
+        registerReceiver(broadcastReceiver, mIntentFilter);
     }
+
 
     @Override
-    public void onResume(){
+    protected void onResume() {
         super.onResume();
-       // sycnc = new SychronizeLiveDataTimer(HomeActivity.this);
-        //sycnc.startTimer(100);
+        updatelocaldb();
+        registerReceiver(broadcastReceiver, mIntentFilter);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -448,8 +477,6 @@ public class HomeActivity extends AppCompatActivity {
 
                 lvm = new LiveMarketAdapter(HomeActivity.this, res);
 
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -518,36 +545,70 @@ public class HomeActivity extends AppCompatActivity {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
 
         Cursor cursor = dbHelper.readFromLocalDatabase(database);
-
+        String tradername="";
+        double virtualmoney=0;
+        int stock=0;
+        int id=-1;
+        int bonds=0;
+        int sync_status;
         while(cursor.moveToNext()){
-            String tradername = cursor.getString(cursor.getColumnIndex(DbContract.tradername));
-            double virtualmoney = cursor.getDouble(cursor.getColumnIndex(DbContract.virtualmoney));
-            int stock = cursor.getInt(cursor.getColumnIndex(DbContract.stock));
-            int bonds = cursor.getInt(cursor.getColumnIndex(DbContract.bonds));
-            int sync_status = cursor.getInt(cursor.getColumnIndex(DbContract.SYNC_STATUS));
-            updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),String.valueOf(virtualmoney));
+             tradername = cursor.getString(cursor.getColumnIndex(DbContract.tradername));
+             virtualmoney = cursor.getDouble(cursor.getColumnIndex(DbContract.virtualmoney));
+             stock = cursor.getInt(cursor.getColumnIndex(DbContract.stock));
+             id = cursor.getInt(cursor.getColumnIndex("id"));
+             bonds = cursor.getInt(cursor.getColumnIndex(DbContract.bonds));
+             sync_status = cursor.getInt(cursor.getColumnIndex(DbContract.SYNC_STATUS));
+
+           /* Snackbar snackbar = Snackbar
+                    .make(parentLayout, "ID is "+id, Snackbar.LENGTH_LONG);
+            snackbar.show();*/
         }
+        updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),String.valueOf(virtualmoney));
         cursor.close();
         dbHelper.close();
     }
 
-    public void saveToLocalDb(){
-        DbHelper dbHelper = new DbHelper(this);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        dbHelper.saveTolocalDatabase(0,0,"Christian","Kindole","ChrisKindole","ckindole@gmail.com","3","IFM","BCS","0689252757","Student",3000000,"male",DbContract.SYNC_STATUS_FAILED,database);
-        readFromLocalDb();
-        dbHelper.close();
+
+
+    public void updatelocaldb(){
+        Call<UserDataResponseModel> call = RetrofitClient
+                .getInstance().getApi().fetchUserdata(userId,"Bearer " +  _token);
+
+        call.enqueue(new Callback<UserDataResponseModel>() {
+            @Override
+            public void onResponse(Call<UserDataResponseModel> call, Response<UserDataResponseModel> response) {
+                UserDataResponseModel userDataResponseModel = response.body();
+                if (userDataResponseModel != null){
+                    dbHelper.updateLocakDatabase(String.valueOf(userId),userDataResponseModel.getUsers().getStock(),userDataResponseModel.getUsers().getBonds(),userDataResponseModel.getUsers().getFirstname(),userDataResponseModel.getUsers().getLastname(),userDataResponseModel.getUsers().getTradername(),userDataResponseModel.getUsers().getEmail(),userDataResponseModel.getUsers().getYearOfStudy(),userDataResponseModel.getUsers().getUniversity(),userDataResponseModel.getUsers().getCoursename(),userDataResponseModel.getUsers().getPhonenumber(),userDataResponseModel.getUsers().getRole(),userDataResponseModel.getUsers().getVirtualmoney(),userDataResponseModel.getUsers().getGender(),DbContract.SYNC_STATUS_FAILED,database);
+                    Log.i("Check this ","user found");
+                    readFromLocalDb();
+                    //dbHelper.close();
+                }
+                else{
+                    //Toast.makeText(HomeActivity.this,"Nothing",Toast.LENGTH_LONG).show();
+                    //Log.i("Check this ","not workinnnnnnnng");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserDataResponseModel> call, Throwable t) {
+
+            }
+        });
     }
 
     public void UserLogOut(){
         SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedpref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.remove("token");
+        editor.remove("userid");
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         dbHelper.onUpgrade(database,1,2);
         dbHelper.close();
         editor.commit();
     }
+
+
 }
 

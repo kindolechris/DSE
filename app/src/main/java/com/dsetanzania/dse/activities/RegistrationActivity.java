@@ -1,10 +1,12 @@
 package com.dsetanzania.dse.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,9 +23,13 @@ import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.models.AuthResponseModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import retrofit2.Call;
@@ -161,7 +167,22 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                         if(result == "Access"){
                             //checkEmailFirstIfExist();
                             //API call
-                            registerUser();
+                            FirebaseInstanceId.getInstance().getInstanceId()
+                                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                            if (!task.isSuccessful()) {
+                                                Log.w("MESSAGE", "getInstanceId failed", task.getException());
+                                                return;
+                                            }
+
+                                            // Get new Instance ID token
+                                            String token = task.getResult().getToken();
+
+                                            Log.d("MESSAGE", token);
+                                            registerUser(token);
+                                        }
+                                    });
                         }
                         else if(result == "NoAccess"){
                             Snackbar snackbar = Snackbar
@@ -236,9 +257,9 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
     }
 
 
-    public void registerUser(){
+    public void registerUser(String FirebaseTOken){
         Call<AuthResponseModel> call = RetrofitClient
-                .getInstance().getApi().register(firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),passoword.getText().toString().trim(),confirmpassword.getText().toString().trim(),phoneNumber.getText().toString().trim());
+                .getInstance().getApi().register(firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),spinner.getSelectedItem().toString().trim(),coursename.getText().toString().trim(),passoword.getText().toString().trim(),confirmpassword.getText().toString().trim(),phoneNumber.getText().toString().trim(),FirebaseTOken);
         call.enqueue(new Callback<AuthResponseModel>() {
             @Override
             public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {

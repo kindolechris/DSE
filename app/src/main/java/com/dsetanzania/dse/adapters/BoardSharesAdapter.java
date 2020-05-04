@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.activities.BuyOrSaleBoardShareActivity;
-import com.dsetanzania.dse.models.BoardShareResponseModel;
 import com.dsetanzania.dse.models.BoardSharesModel;
 
 import java.text.DecimalFormat;
@@ -21,10 +20,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Vector;
 
-public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarketAdapter.ViewHolder>  {
+public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.ViewHolder>  {
 
     private ArrayList<BoardSharesModel> marketcksimulator;
     final Vector<ViewHolder> securityPriceListViewHold = new Vector<>();
@@ -37,7 +35,7 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
         void OnServerItemClicked(int index);
     }
 
-    public SimulatedMarketAdapter(Context context, ArrayList<BoardSharesModel> list) {
+    public BoardSharesAdapter(Context context, ArrayList<BoardSharesModel> list) {
         this.marketcksimulator = list;
         this.mycontext =  context;
 
@@ -76,7 +74,7 @@ public class SimulatedMarketAdapter extends RecyclerView.Adapter<SimulatedMarket
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_company_details, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.board_shares_list, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(view);
 

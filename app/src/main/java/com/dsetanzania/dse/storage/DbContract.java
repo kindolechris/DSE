@@ -21,4 +21,5 @@ public class DbContract {
     public static final String virtualmoney = "virtualmoney";
     public static final String role = "role";
     public static final String SYNC_STATUS = "syncstatus";
+    public static final String UI_SYNCHRONIZE_DATA = "com.dsetanzania.dse.UI_SYNCHRONIZE_SQLITE";
 }

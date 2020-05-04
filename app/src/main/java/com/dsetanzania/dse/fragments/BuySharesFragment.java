@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.adapters.SimulatedMarketAdapter;
+import com.dsetanzania.dse.adapters.BoardSharesAdapter;
 import com.dsetanzania.dse.models.BoardSharesModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,7 +34,7 @@ public class BuySharesFragment extends Fragment {
     RecyclerView livemarketpricerecyclerview;
     ArrayList<BoardSharesModel> simulatedMarket;
     DatabaseReference reference;
-    SimulatedMarketAdapter simulatedMarketAdapter;
+    BoardSharesAdapter simulatedMarketAdapter;
     View view;
 
     // newInstance constructor for creating fragment with arguments
@@ -84,7 +84,7 @@ public class BuySharesFragment extends Fragment {
                     BoardSharesModel _market = snapshot.getValue(BoardSharesModel.class);
                     simulatedMarket.add(_market);
                 }
-                simulatedMarketAdapter = new SimulatedMarketAdapter(getContext(), simulatedMarket);
+                simulatedMarketAdapter = new BoardSharesAdapter(getContext(), simulatedMarket);
                 livemarketpricerecyclerview.setHasFixedSize(true);
                 livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
                 livemarketpricerecyclerview.setAdapter(simulatedMarketAdapter);
@@ -108,7 +108,7 @@ public class BuySharesFragment extends Fragment {
 
     class GetLiveMarketTask extends AsyncTask {
 
-        SimulatedMarketAdapter lvm;
+        BoardSharesAdapter lvm;
 
         @Override
         protected Object doInBackground(Object[] objects) {
