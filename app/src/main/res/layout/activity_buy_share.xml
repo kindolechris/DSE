@@ -133,7 +133,7 @@
                     android:textColor="@color/colorBlack">
                 </TextView>
                 <TextView
-                    android:id="@+id/txtstockbalance"
+                    android:id="@+id/txtvirtualmoney"
                     android:layout_marginStart="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
                     android:textColor="@color/colorBlack">
                 </TextView>
                 <TextView
-                    android:id="@+id/txtholdings"
+                    android:id="@+id/txshares"
                     android:layout_marginStart="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

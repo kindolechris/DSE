@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="colorPrimary">#02A2DC</color>
+<!--    <color name="colorPrimary">#02A2DC</color>-->
 <!--    <color name="colorPrimary">#270460</color>-->
-    <color name="colorPrimaryDark">#0281B1</color>
+    <!--    <color name="colorPrimaryDark">#0281B1</color>-->
+    <color name="colorPrimary">#00c2e7</color>
+    <color name="colorPrimaryDark">#0091b5</color>
     <color name="colorBlack">#757474</color>
     <color name="colorForTab">#B5FFFFFF</color>
     <color name="colorBlackBlack">#1D1D1D</color>
     <color name="colorFortextOnblueBg">#7fc7f4</color>
+    <color name="colorForNotification">#00c2e7</color>
     <color name="colorFortextOnblueBg2">#BEDDF5</color>
     <color name="colorFortextOnblueBg3">#CCE0F3</color>
     <color name="colorAccent">#F7F7F7</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorgrey">#E0E0E0</color>
     <color name="colorRed">#ee293d</color>
+    <color name="colorBarChart">#8beafe</color>
     <color name="colorWhiteForText">#FFFFFF</color>
     <color name="colorSuccess">#48bf0e</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">@color/colorWhite</color>

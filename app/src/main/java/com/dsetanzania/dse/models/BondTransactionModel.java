@@ -12,17 +12,6 @@ public class BondTransactionModel {
     private String date;
     private String Bondstatus;
 
-    public BondTransactionModel(String id, String userId, String bondnumber, String bondstatus, Double cosideration, String type, int unit, int atPrice, String date) {
-        Id = id;
-        UserId = userId;
-        Bondnumber = bondnumber;
-        this.Bondstatus = bondstatus;
-        Cosideration = cosideration;
-        Type = type;
-        Unit = unit;
-        AtPrice = atPrice;
-        this.date = date;
-    }
 
     public BondTransactionModel() {
 

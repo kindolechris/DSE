@@ -4,28 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.adapters.ListofLeaderBoardAdapter;
 import com.dsetanzania.dse.models.UserModel;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class LeaderBoardActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     ArrayList<UserModel> leaderboardusers;
-    DatabaseReference reference;
     ListofLeaderBoardAdapter listofLeaderBoardAdapter;
     RecyclerView leaderboardrecycler;
     TextView txtusername;
@@ -38,17 +29,18 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolBarElevation(7);
         leaderboardrecycler = (RecyclerView) findViewById(R.id.leaderboardrecycler);
         txtusername = (TextView) findViewById(R.id.txtusername);
         txtuniversity = (TextView) findViewById(R.id.txtuniversity);
-
-        getleaderboars();
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setTitle("Leader board");
         }
+
+        getleaderboards();
     }
 
     public void toolBarElevation(int size){
@@ -59,32 +51,19 @@ public class LeaderBoardActivity extends AppCompatActivity {
         }
     }
 
-    private void  getleaderboars(){
+    private void  getleaderboards(){
         //serverpgsBar.setVisibility(View.VISIBLE);
+
         leaderboardusers = new ArrayList<UserModel>();
         leaderboardusers.clear();
-        reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    UserModel user = snapshot.getValue(UserModel.class);
-                    leaderboardusers.add(user);
-                }
-                listofLeaderBoardAdapter = new ListofLeaderBoardAdapter(LeaderBoardActivity.this, leaderboardusers);
 
-                leaderboardrecycler.setHasFixedSize(true);
-                leaderboardrecycler.setLayoutManager(new LinearLayoutManager(LeaderBoardActivity.this));
-                leaderboardrecycler.setAdapter(listofLeaderBoardAdapter);
-                leaderboardrecycler.setLayoutManager(new LinearLayoutManager(LeaderBoardActivity.this));
+        listofLeaderBoardAdapter = new ListofLeaderBoardAdapter(LeaderBoardActivity.this, leaderboardusers);
 
-            }
+        leaderboardrecycler.setHasFixedSize(true);
+        leaderboardrecycler.setLayoutManager(new LinearLayoutManager(LeaderBoardActivity.this));
+        leaderboardrecycler.setAdapter(listofLeaderBoardAdapter);
+        leaderboardrecycler.setLayoutManager(new LinearLayoutManager(LeaderBoardActivity.this));
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override

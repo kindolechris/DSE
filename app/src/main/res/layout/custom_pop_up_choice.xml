@@ -24,12 +24,13 @@
                     android:id="@+id/txtcompanyname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Choose option"
+                    android:text="Trading options"
+                    android:paddingBottom="10dp"
                     android:layout_gravity="left"
                     android:textColor="@color/colorWhite"
                     android:layout_weight="1"
                     android:textSize="18dp"
-                    android:fontFamily="@font/montserrat"
+                    android:fontFamily="@font/fontawesome"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"></TextView>
             </LinearLayout>
         </LinearLayout>
@@ -66,10 +67,10 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEquity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="120dp"
+                    android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:fontFamily="@font/montserrat"
+                    android:fontFamily="@font/fontawesome"
                     android:text="Equity"
                     app:rippleColor="@color/colorWhite"
                     android:theme="@style/Theme.MaterialComponents.NoActionBar"
@@ -81,10 +82,10 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnBonds"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="120dp"
+                    android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:fontFamily="@font/montserrat"
+                    android:fontFamily="@font/fontawesome"
                     android:text="Bonds"
                     app:rippleColor="@color/colorWhite"
                     android:theme="@style/Theme.MaterialComponents.NoActionBar"
@@ -125,12 +126,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.9999">
 
-            <TextView
+            <Button
                 android:id="@+id/btnclose"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Close"
+                android:background="@null"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15dp" />
         </LinearLayout>

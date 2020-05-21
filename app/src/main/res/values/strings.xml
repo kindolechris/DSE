@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">DSE</string>
-    <string name="forgotpass">Forgot you password ?</string>
-    <string name="signuptxt">New here? <u>Sign up instead</u></string>
+    <string name="forgotpass">Forgot your password ?</string>
+    <string name="signuptxt">New here ?  <u> SIGN UP INSTEAD</u></string>
     <string name="open_drawer">Open navigation drawer</string>
     <string name="close_drawer">Close navigation drawer</string>
     <string name="yourBalanceTxt">Your Virtual Balance</string>

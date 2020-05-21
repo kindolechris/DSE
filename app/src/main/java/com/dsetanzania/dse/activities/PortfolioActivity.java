@@ -1,23 +1,25 @@
 package com.dsetanzania.dse.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.UserModel;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.dsetanzania.dse.storage.DbContract;
+import com.dsetanzania.dse.storage.DbHelper;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class PortfolioActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -25,11 +27,10 @@ public class PortfolioActivity extends AppCompatActivity {
     TextView txtbonds;
     TextView txtshares;
     TextView txtuniversity;
+    TextView txtvirtualmoney;
+    LinearLayout cardshares;
+    LinearLayout cardbonds;
     //TextView txtshares;
-    DatabaseReference reference;
-    UserModel user;
-    FirebaseUser fuser;
-    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,12 @@ public class PortfolioActivity extends AppCompatActivity {
 
         //user = new User();
         txtusername  = (TextView) findViewById(R.id.txtusername);
+        txtvirtualmoney  = (TextView) findViewById(R.id.txtvirtualmoney);
         txtbonds  = (TextView) findViewById(R.id.bondtxt);
         txtshares  = (TextView) findViewById(R.id.sharestxt);
         txtuniversity  = (TextView) findViewById(R.id.txtuniversity);
+        cardshares = (LinearLayout) findViewById(R.id.cardshares);
+        cardbonds = (LinearLayout) findViewById(R.id.cardbonds);
 
         txtusername.setSelected(true);
         txtuniversity.setSelected(true);
@@ -48,9 +52,23 @@ public class PortfolioActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolBarElevation(0);
 
-        auth = FirebaseAuth.getInstance();
-        fuser = auth.getCurrentUser();
-        getUserInfo();
+        cardshares.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(PortfolioActivity.this, TotalSharesHoldingsActivity.class);
+                PortfolioActivity.this.startActivity(myIntent);
+            }
+        });
+
+        cardbonds.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(PortfolioActivity.this, TotalBondsHoldingsActivity.class);
+                PortfolioActivity.this.startActivity(myIntent);
+            }
+        });
+
+        readFromLocalDb();
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -79,22 +97,40 @@ public class PortfolioActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getUserInfo(){
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                user = dataSnapshot.getValue(UserModel.class);
-                txtusername.setText(user.getFirstname() + " " + user.getLastname());
-                txtshares.setText(String.valueOf(user.getStock()));
-                txtbonds.setText(String.valueOf(user.getBonds()));
-                txtuniversity.setText(String.valueOf(user.getUniversity()));
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+    public void readFromLocalDb(){
+        DbHelper dbHelper = new DbHelper(this);
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
 
-            }
-        });
+        Cursor cursor = dbHelper.readUserFromLocalDatabase(database);
+        String tradername="";
+        String university="";
+        String virtualmoney="";
+        int stock=0;
+        int id=-1;
+        int bonds=0;
+        int sync_status;
+        while(cursor.moveToNext()){
+            tradername = cursor.getString(cursor.getColumnIndex(DbContract.tradername));
+            virtualmoney = cursor.getString(cursor.getColumnIndex(DbContract.virtualmoney));
+            university = cursor.getString(cursor.getColumnIndex(DbContract.university));
+            stock = cursor.getInt(cursor.getColumnIndex(DbContract.stock));
+            id = cursor.getInt(cursor.getColumnIndex("id"));
+            bonds = cursor.getInt(cursor.getColumnIndex(DbContract.bonds));
+
+        }
+        updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),university,virtualmoney);
+        cursor.close();
+        dbHelper.close();
+    }
+
+
+    public void updateFieldsOnChange(String fullname,String stock,String bonds,String university,String virtualmoney){
+        NumberFormat formatter = new DecimalFormat("#,###");
+        txtusername.setText(fullname);
+        txtshares.setText(stock);
+        txtbonds.setText(bonds);
+        txtuniversity.setText(university);
+        txtvirtualmoney.setText(formatter.format((Double.parseDouble(virtualmoney))));
     }
 }

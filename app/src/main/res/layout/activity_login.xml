@@ -26,7 +26,7 @@
                 android:layout_height="250dp"
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical"
-                android:background="@drawable/students_cover">
+                android:background="@drawable/image_bg">
             </LinearLayout>
 
             <LinearLayout
@@ -65,7 +65,7 @@
                             android:maxLength="40"
                             android:fontFamily="@font/montserrat"
                             android:maxLines="1"
-                            android:textCursorDrawable="@drawable/cursor"
+                            android:textCursorDrawable="@drawable/white_cursor"
                             android:singleLine="true"
                             android:textAppearance="@style/TextAppearance.App.TextInputLayout"
                             android:textColor="@color/colorWhite" />
@@ -85,7 +85,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Password"
-                            android:textCursorDrawable="@drawable/cursor"
+                            android:textCursorDrawable="@drawable/white_cursor"
                             android:inputType="textPassword"
                             android:fontFamily="@font/montserrat"
                             android:maxLength="15"
@@ -101,6 +101,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:layout_marginTop="8dp"
+                        android:textColor="@color/colorWhite"
                         android:text="@string/forgotpass"></TextView>
 
                     <LinearLayout
@@ -131,6 +132,7 @@
                         app:layout_constraintBottom_toTopOf="@+id/guideline9"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:clickable="true"
+                        android:layout_marginTop="15dp"
                         android:focusableInTouchMode="false"
                         android:descendantFocusability="blocksDescendants"
                         app:layout_constraintStart_toStartOf="parent"
@@ -168,9 +170,9 @@
                 android:indeterminate="true"
                 android:visibility="invisible"
                 android:layout_height="30dp"
-
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="@color/colorWhite"
                 />
-
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

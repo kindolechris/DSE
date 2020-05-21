@@ -1,16 +1,13 @@
 package com.dsetanzania.dse.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.widget.Button;
 import android.widget.ProgressBar;
-
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
+
 
 public class PhoneVerificationActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
     private String mVerificationId;
     TextInputEditText verificationtxtxfield;
     String userId;

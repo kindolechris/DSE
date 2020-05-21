@@ -29,14 +29,6 @@ import com.dsetanzania.dse.models.BoardSharesModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,8 +39,6 @@ public class BondsFragment extends Fragment {
     private String title;
     private int page;
     View view;
-    DatabaseReference reference;
-    FirebaseAuth mAuth;
     int status = 1;
     RecyclerView livemarketrecyclerview;
     ArrayList<BoardSharesModel> simulatedMarket;
@@ -87,11 +77,10 @@ public class BondsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
         view = inflater.inflate(R.layout.fragment_bonds, container, false);
         bondsAddbtn = (FloatingActionButton) view.findViewById(R.id.addbondsbtn);
         layoutManager = new LinearLayoutManager(getActivity());
-        getBonds();
+
 
         dialog = new Dialog(getActivity(),R.style.Mydialogtheme);
         dialog.setContentView(R.layout.pop_up_add_bonds);
@@ -152,7 +141,6 @@ public class BondsFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.signOut) {
-            mAuth.signOut();
             Intent homeintent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(homeintent);
             getActivity().finish();
@@ -162,16 +150,7 @@ public class BondsFragment extends Fragment {
     }
 
     public void addBonds(int bondnumber,int bondrate,int bondyears){
-        DatabaseReference reference;
-            reference = FirebaseDatabase.getInstance().getReference("Bonds");
-        String id = reference.push().getKey();
-        BondsModel _bonds = new BondsModel(id,bondnumber,bondrate,bondyears,getCurrentTimeStamp());
-        reference.child(id).setValue(_bonds).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVosid) {
-                Toast.makeText(getContext(),"Bond was added",Toast.LENGTH_SHORT).show();
-            }
-        });
+
     }
 
     public static String getCurrentTimeStamp(){
@@ -188,33 +167,5 @@ public class BondsFragment extends Fragment {
         }
     }
 
-    private void  getBonds(){
-        bonds = new ArrayList<BondsModel>();
-
-        bonds.clear();
-        final FirebaseUser fuser = mAuth.getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Bonds");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                bonds.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    BondsModel _bonds = snapshot.getValue(BondsModel.class);
-                        bonds.add(_bonds);
-                }
-
-
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(layoutManager);
-                ListOfBondsAdapter listOfBondsAdapter = new ListOfBondsAdapter(getActivity(),bonds);
-                recyclerView.setAdapter(listOfBondsAdapter);;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 }
 

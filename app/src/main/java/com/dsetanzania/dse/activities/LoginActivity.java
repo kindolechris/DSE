@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Fade;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -21,18 +20,19 @@ import android.widget.Toast;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.helperClasses.Sms;
+import com.dsetanzania.dse.helperClasses.checkInternet;
+import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 import com.dsetanzania.dse.models.AuthResponseModel;
+import com.dsetanzania.dse.models.BaseResponseModel;
 import com.dsetanzania.dse.models.UserModel;
 import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.gson.annotations.SerializedName;
 
 
 import java.util.List;
@@ -47,13 +47,13 @@ public class LoginActivity extends AppCompatActivity {
     public static final  String emailAddress = "Email";
     public static final  String userId = "userid";
     public  static final String token = "token";
+    public  static final String firebasetoken = "firebasetoken";
     Button createNewAccounttxt;
     Button loginBtn;
+    View parentLayout;
     EditText emailtxt;
     TextInputEditText passswordtxt;
-    private FirebaseAuth mAuth;
     ProgressBar SignInLoader;
-    private FirebaseUser firebaseUser;
     Sms sms;
     private String userEmail;
     private List<UserModel> user;
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
         fade.excludeTarget(android.R.id.statusBarBackground, true);
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
-
+        parentLayout = findViewById(android.R.id.content);
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
         sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
@@ -82,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
             LoginActivity.this.startActivity(NextActivity);
             finish();
         }
-
 
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -117,57 +116,84 @@ public class LoginActivity extends AppCompatActivity {
                 });
                 nthread.start();*/
 
-                if(TextUtils.isEmpty(emailtxt.getText().toString()) || TextUtils.isEmpty(passswordtxt.getText().toString())){
-                    new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
-                            .setTitle("Problem!")
-                            .setMessage("All fields are required")
-                            .setPositiveButton("Ok",null).show();
-                }
+                checkInternet task = new checkInternet(getApplicationContext(), new InternetcheckInterface() {
+                    @Override
+                    public void checkMethod(String result) {
 
-                else{
-
-                    Call<AuthResponseModel> call = RetrofitClient
-                            .getInstance().getApi().login(emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim());
-                    call.enqueue(new Callback<AuthResponseModel>() {
-                        @Override
-                        public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
-                            AuthResponseModel loginresponse = response.body();
-                            if (loginresponse.isSuccess()){
-                                //checkRole("Admin");
-                                saveToLocalDb(loginresponse.getUser().getId(),loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
-                                        loginresponse.getUser().getFirstname(),loginresponse.getUser().getLastname(),
-                                        loginresponse.getUser().getTradername(),loginresponse.getUser().getEmail(),
-                                        loginresponse.getUser().getYearOfStudy(),
-                                        loginresponse.getUser().getUniversity(),loginresponse.getUser().getCoursename(),
-                                        loginresponse.getUser().getPhonenumber(),loginresponse.getUser().getRole(),
-                                        loginresponse.getUser().getVirtualmoney(),loginresponse.getUser().getGender());
-                                saveLoginData(loginresponse.getUser().getToken(),loginresponse.getUser().getId());
-                                Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
-                                LoginActivity.this.startActivity(NextActivity);
-                                finish();
-                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                        if(result == "Access"){
+                            if(TextUtils.isEmpty(emailtxt.getText().toString()) || TextUtils.isEmpty(passswordtxt.getText().toString())){
+                                new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
+                                        .setTitle("Problem!")
+                                        .setMessage("All fields are required")
+                                        .setPositiveButton("Ok",null).show();
                             }
+
                             else{
-                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                                try {
+                                    loginBtn.setEnabled(false);
+                                    SignInLoader.setVisibility(View.VISIBLE);
+                                    Call<AuthResponseModel> call = RetrofitClient
+                                            .getInstance().getApi().login(emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim());
+                                    call.enqueue(new Callback<AuthResponseModel>() {
+                                        @Override
+                                        public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
+                                            AuthResponseModel loginresponse = response.body();
+                                            if (loginresponse.isSuccess()){
+                                                //checkRole("Admin");
+                                                saveToLocalDb(loginresponse.getUser().getId(),loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
+                                                        loginresponse.getUser().getFirstname(),loginresponse.getUser().getLastname(),
+                                                        loginresponse.getUser().getTradername(),loginresponse.getUser().getEmail(),
+                                                        loginresponse.getUser().getYearOfStudy(),
+                                                        loginresponse.getUser().getUniversity(),loginresponse.getUser().getCoursename(),
+                                                        loginresponse.getUser().getPhonenumber(),loginresponse.getUser().getRole(),
+                                                        loginresponse.getUser().getVirtualmoney(),loginresponse.getUser().getGender());
+                                                FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                        String token = task.getResult().getToken();
+                                                        saveLoginData(loginresponse.getUser().getToken(),loginresponse.getUser().getId(),token);
+                                                        pushFirebaseToken(loginresponse.getUser().getId(),token,loginresponse.getUser().getToken());
+                                                        //Log.i("Valuuuuuuues", token + "\n" + loginresponse.getUser().getToken() + "\n" + loginresponse.getUser().getId());
+                                                        SignInLoader.setVisibility(View.INVISIBLE);
+                                                        loginBtn.setEnabled(true);
+                                                    }
+                                                });
+
+                                                Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
+                                                LoginActivity.this.startActivity(NextActivity);
+                                                finish();
+                                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                                            }
+                                            else{
+                                                SignInLoader.setVisibility(View.INVISIBLE);
+                                                loginBtn.setEnabled(true);
+                                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<AuthResponseModel> call, Throwable t) {
+
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    Toast.makeText(LoginActivity.this,"System error",Toast.LENGTH_SHORT).show();
+                                }
+
                             }
                         }
-
-                        @Override
-                        public void onFailure(Call<AuthResponseModel> call, Throwable t) {
+                        else if(result == "NoAccess"){
+                            Snackbar snackbar = Snackbar
+                                    .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+                        else{
 
                         }
-                    });
-                    //SignIn();
-                  /*  SignInLoader.setVisibility(View.VISIBLE);
-                    SignInLoader.setVisibility(View.INVISIBLE);
-                    new AlertDialog.Builder(LoginActivity.this,R.style.Mydialogtheme)
-                            .setTitle("Problem!")
-                            .setMessage("Authentication failed")
-                            .setPositiveButton("Ok",null).show();
-                    checkRole();*/
-                    //emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim()
-                }
-                
+                    }
+                });
+
+                task.execute();
             }
         });
 
@@ -190,11 +216,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    public void saveLoginData(String accsesstoken,int id){
+    public void saveLoginData(String accsesstoken,int id,String _firebasetoken){
         SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(emailAddress, emailtxt.getText().toString().trim());
         editor.putString(token, accsesstoken);
+        editor.putString(firebasetoken, _firebasetoken);
         editor.putInt(userId,id);
         editor.apply();
     }
@@ -205,11 +232,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public  void checkRole(String role){
-        final FirebaseUser fuser = mAuth.getCurrentUser();
 
-                if(role.equals("Admin")){
+        if(role.equals("Admin")){
                     SignInLoader.setVisibility(View.INVISIBLE);
-                    Intent verifycodeintent = new Intent(LoginActivity.this, SimulatedMarketListActivity.class);
+                    Intent verifycodeintent = new Intent(LoginActivity.this, AdminPanelActivity.class);
                     LoginActivity.this.startActivity(verifycodeintent);
                     finish();
                     return;
@@ -217,8 +243,8 @@ public class LoginActivity extends AppCompatActivity {
                 else {
 
                     SignInLoader.setVisibility(View.INVISIBLE);
-                    Intent verifycodeintent = new Intent(LoginActivity.this, HomeActivity.class);
-                    LoginActivity.this.startActivity(verifycodeintent);
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    LoginActivity.this.startActivity(intent);
                     finish();
                 }
     }
@@ -227,8 +253,31 @@ public class LoginActivity extends AppCompatActivity {
     public void saveToLocalDb(int id,int stock,int bond,String firstname,String lastname,String tradername,String email,String yearOfStrudy,String university,String coursename,String phonenumber,String role,Double virtualmoney,String gender){
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        dbHelper.saveTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,database);
+        dbHelper.saveUserTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,database);
         dbHelper.close();
+    }
+
+    public void pushFirebaseToken(int id,String firebasetoken,String token){
+        Call<BaseResponseModel> call = RetrofitClient
+                .getInstance().getApi().pushFirebaseToken(id,firebasetoken,"Bearer " + token);
+        call.enqueue(new Callback<BaseResponseModel>() {
+            @Override
+            public void onResponse(Call<BaseResponseModel> call, Response<BaseResponseModel> response) {
+                BaseResponseModel loginresponse = response.body();
+                if (loginresponse.isSuccess()){
+
+                    //Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                }
+                else{
+                    //Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponseModel> call, Throwable t) {
+
+            }
+        });
     }
 
 }

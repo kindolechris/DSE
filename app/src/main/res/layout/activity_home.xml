@@ -228,22 +228,24 @@
             android:gravity="center"
             android:background="@color/colorPrimaryDark">
 
-            <ImageView
+
+            <Button
+                android:id="@+id/avatornametxt"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:text="Dse Tz"
-                android:paddingStart="10dp"
-                android:paddingBottom="12dp"
-                android:textSize="30dp"
-                android:gravity="bottom"
-                android:background="@drawable/logo_app_alt_down"
+                android:background="@drawable/round_avator_button"
+                android:fontFamily="@font/montserrat_bold"
+                android:gravity="center"
+                android:padding="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintHorizontal_bias="0.07"
                 app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Name"
+                android:textColor="@color/colorWhite"
+                android:textSize="22dp"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.3"
-                android:textColor="@android:color/white" />
+                app:layout_constraintVertical_bias="0.3"/>
 
          <!--   <LinearLayout
                 android:orientation="horizontal"
@@ -289,8 +291,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Stock balance :"
-                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Shares balance :"
+                    android:fontFamily="@font/fontawesome"
                     android:paddingStart="20dp"
                     android:textSize="15dp"
                     android:textColor="@color/colorFortextOnblueBg">
@@ -301,7 +303,7 @@
                     android:layout_height="wrap_content"
                     android:text="0"
                     android:textSize="14dp"
-                    android:fontFamily="@font/montserrat_bold"
+                    android:fontFamily="@font/fontawesome"
                     android:paddingStart="5dp"
                     android:textColor="@color/colorFortextOnblueBg">
                 </TextView>
@@ -319,8 +321,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bond balance :"
-                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Bonds balance :"
+                    android:fontFamily="@font/fontawesome"
                     android:paddingStart="20dp"
                     android:textSize="15dp"
                     android:textColor="@color/colorFortextOnblueBg">
@@ -331,7 +333,7 @@
                     android:layout_height="wrap_content"
                     android:text="0"
                     android:textSize="14dp"
-                    android:fontFamily="@font/montserrat_bold"
+                    android:fontFamily="@font/fontawesome"
                     android:paddingStart="5dp"
                     android:textColor="@color/colorFortextOnblueBg">
                 </TextView>
@@ -341,7 +343,8 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbarSize="0.1dp">
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -369,9 +372,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     app:mrl_rippleColor="@color/colorAccent"
-                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleDuration="600"
                     app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
+                    app:mrl_rippleDelayClick="false"
                     rv_centered="true">
                     <LinearLayout
                         android:id="@+id/livemarketLayout"
@@ -401,10 +404,10 @@
                 <com.balysv.materialripple.MaterialRippleLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleDuration="600"
                     app:mrl_rippleColor="@color/colorAccent"
                     app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
+                    app:mrl_rippleDelayClick="false"
                     android:layout_margin="3dp"
                     rv_centered="true">
                     <LinearLayout
@@ -437,9 +440,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     app:mrl_rippleColor="@color/colorAccent"
-                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleDuration="600"
                     app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
+                    app:mrl_rippleDelayClick="false"
                     rv_centered="true">
                     <LinearLayout
                         android:id="@+id/transactionLayout"
@@ -466,15 +469,14 @@
                             android:textColor="@android:color/white" />
                     </LinearLayout>
                 </com.balysv.materialripple.MaterialRippleLayout>
-
                 <com.balysv.materialripple.MaterialRippleLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     app:mrl_rippleColor="@color/colorAccent"
-                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleDuration="600"
                     app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
+                    app:mrl_rippleDelayClick="false"
                     rv_centered="true">
                     <LinearLayout
                         android:id="@+id/leaderboardLayout"
@@ -487,7 +489,7 @@
                             android:layout_height="30dp"
                             android:layout_gravity="center"
                             android:tint="@color/colorAccent"
-                            android:background="@drawable/ic_leader">
+                            android:background="@drawable/ic_crown">
                         </ImageView>
                         <TextView
                             android:layout_width="wrap_content"
@@ -524,9 +526,43 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     app:mrl_rippleColor="@color/colorAccent"
-                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleDuration="600"
                     app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
+                    app:mrl_rippleDelayClick="false"
+                    rv_centered="true">
+                    <LinearLayout
+                        android:id="@+id/newsLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:tint="@color/colorAccent"
+                            android:background="@drawable/ic_earth">
+                        </ImageView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="News"
+                            android:gravity="center"
+                            android:fontFamily="@font/fontawesome"
+                            android:layout_gravity="bottom"
+                            android:paddingStart="10dp"
+                            android:textSize="16dp"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    app:mrl_rippleColor="@color/colorAccent"
+                    app:mrl_rippleDuration="600"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="false"
                     rv_centered="true">
                     <LinearLayout
                         android:id="@+id/tellafriendLayout"
@@ -558,9 +594,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     app:mrl_rippleColor="@color/colorAccent"
-                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleDuration="600"
                     app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
+                    app:mrl_rippleDelayClick="false"
                     rv_centered="true">
                     <LinearLayout
                         android:id="@+id/faqsLayout"
@@ -592,9 +628,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
                     app:mrl_rippleColor="@color/colorAccent"
-                    app:mrl_rippleDuration="750"
+                    app:mrl_rippleDuration="600"
                     app:mrl_rippleFadeDuration="75"
-                    app:mrl_rippleDelayClick="true"
+                    app:mrl_rippleDelayClick="false"
                     rv_centered="true">
                     <LinearLayout
                         android:id="@+id/aboutusLayout"

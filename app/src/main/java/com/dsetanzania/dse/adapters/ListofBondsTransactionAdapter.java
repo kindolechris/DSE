@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.BondTransactionModel;
+import com.dsetanzania.dse.models.PersonalBondTransactionModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,20 +22,12 @@ import java.util.List;
 
 public class ListofBondsTransactionAdapter extends RecyclerView.Adapter<ListofBondsTransactionAdapter.ViewHolder> {
 
-    private List<BondTransactionModel> bonds;
+    private List<PersonalBondTransactionModel> bonds;
     Context context;
     Dialog dialog1,dialog2,dialog3;
 
-    int index;
-    TextView txtdatesoldorpurchased;
-    TextView personwhosoldorpurchased;
-    TextView univercitytype;
-    TextView transactiontype;
-    TextView textdescription1;
-    TextView textdescription2;
-    LinearLayout transactionlayout;
 
-    public ListofBondsTransactionAdapter(Context context, List<BondTransactionModel> bonds) {
+    public ListofBondsTransactionAdapter(Context context, List<PersonalBondTransactionModel> bonds) {
         this.bonds = bonds;
         this.context = context;
     }
@@ -95,30 +87,36 @@ public class ListofBondsTransactionAdapter extends RecyclerView.Adapter<ListofBo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtbondid;
-        TextView txtdate;
+        TextView txtbongnumber;
+        TextView txtbonunits;
+        TextView txtbonddate;
         TextView txtstatus;
-        TextView txttype;
+        LinearLayout bondtransactionlayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            txtbonunits = (TextView)itemView.findViewById(R.id.txtbondunits);
+            txtbongnumber = (TextView)itemView.findViewById(R.id.txtbondnumber);
+            txtbonddate = (TextView)itemView.findViewById(R.id.txtbonddate);
             txtstatus = (TextView)itemView.findViewById(R.id.txtstatus);
-            txtbondid = (TextView)itemView.findViewById(R.id.txtbondid);
-            txttype = (TextView)itemView.findViewById(R.id.txttype);
-            txtdate = (TextView)itemView.findViewById(R.id.txtdate);
+            bondtransactionlayout = (LinearLayout)itemView.findViewById(R.id.bondtransactionlayout);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull ListofBondsTransactionAdapter.ViewHolder holder, final int position) {
-
+        String gettimeAgo = format(bonds.get(position).getCreatedAt());
         holder.itemView.setTag(bonds.get(position));
-        String gettimeAgo = parseDate(bonds.get(position).getDate());
-        holder.txtdate.setText(gettimeAgo);
-        holder.txtbondid.setText(bonds.get(position).getBondnumber());
-        holder.txtstatus.setText(bonds.get(position).getBondstatus());
-        holder.txttype.setText(bonds.get(position).getType());
+        holder.txtbonddate.setText(parseDate(gettimeAgo));
+        holder.txtbongnumber.setText(bonds.get(position).getBondnumber());
+        holder.txtstatus.setText("Status : " + bonds.get(position).getStatus());
+        holder.txtbonunits.setText("Units : " + bonds.get(position).getUnits());
+        holder.bondtransactionlayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+            }
+        });
     }
 
     @Override
@@ -142,17 +140,13 @@ public class ListofBondsTransactionAdapter extends RecyclerView.Adapter<ListofBo
             e.printStackTrace();
         }
 
-
         String result = "now";
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-
         String todayDate = formatter.format(new Date());
         Calendar calendar = Calendar.getInstance();
-
         long dayagolong =  timeInMilliseconds;
         calendar.setTimeInMillis(dayagolong);
         String agoformater = formatter.format(calendar.getTime());
-
         Date CurrentDate = null;
         Date CreateDate = null;
 
@@ -262,5 +256,29 @@ public class ListofBondsTransactionAdapter extends RecyclerView.Adapter<ListofBo
             sb.append(cap);
         }
         return sb.toString();
+    }
+
+    public String format(String date){
+        SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+
+        Date d = null;
+        try
+        {
+            d = input.parse(date);
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        String formatted = output.format(d);
+
+        return formatted;
+    }
+
+    public static String capitalize(String str)
+    {
+        if(str == null) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

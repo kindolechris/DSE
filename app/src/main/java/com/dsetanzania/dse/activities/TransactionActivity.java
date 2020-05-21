@@ -12,19 +12,13 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.adapters.TransactionTabdapter;
-import com.dsetanzania.dse.models.SharesTransactionModel;
+import com.dsetanzania.dse.adapters.tabs.TransactionTabdapter;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
 
 public class TransactionActivity extends AppCompatActivity {
 
-    ArrayList<SharesTransactionModel> transaction;
     RecyclerView recyclerView;
     RecyclerView.Adapter listOfTransactionAdapter;
-    private FirebaseAuth mAuth;
     LinearLayoutManager layoutManager;
     Toolbar toolbar;
     FragmentPagerAdapter adapterViewPager;

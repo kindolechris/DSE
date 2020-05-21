@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.activities.BuyBondsActivity;
+import com.dsetanzania.dse.activities.BuyBondActivity;
 import com.dsetanzania.dse.models.BondsModel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -82,7 +82,7 @@ public class SimulatedBondsAdapter extends RecyclerView.Adapter<SimulatedBondsAd
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(mycontext, BuyBondsActivity.class);
+                Intent myIntent = new Intent(mycontext, BuyBondActivity.class);
                 myIntent.putExtra("Bondnumber",String.valueOf(bonds.get(position).getBondnumber()));
                 myIntent.putExtra("Rate",String.valueOf(bonds.get(position).getRate()));
                 myIntent.putExtra("Duration",String.valueOf(bonds.get(position).getMonth()));

@@ -46,7 +46,7 @@ public class AboutUsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dse.co.tz/contact"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dse.co.tz/"));
                 startActivity(browserIntent);
 
             }
@@ -55,7 +55,8 @@ public class AboutUsActivity extends AppCompatActivity {
         txtterms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dse.co.tz/content/dse-rules-regulations"));
+                startActivity(browserIntent);
             }
         });
 

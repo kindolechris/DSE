@@ -2,17 +2,23 @@ package com.dsetanzania.dse.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.models.SharesTransactionModel;
+import com.dsetanzania.dse.models.PersonalsharesTransactionModel;
+import com.dsetanzania.dse.storage.DbContract;
+import com.dsetanzania.dse.storage.DbHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,22 +26,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ListofSharesTransactionAdapter extends RecyclerView.Adapter<ListofSharesTransactionAdapter.ViewHolder> {
+public class ListofSharesTransactionAdapter extends RecyclerSwipeAdapter<ListofSharesTransactionAdapter.ViewHolder> {
 
-    private List<SharesTransactionModel> transactions;
+    private List<PersonalsharesTransactionModel> transactions;
     Context context;
-    Dialog dialog1,dialog2,dialog3;
+    DbHelper dbHelper;
+    SQLiteDatabase database;
 
     int index;
-    TextView txtdatesoldorpurchased;
-    TextView personwhosoldorpurchased;
-    TextView univercitytype;
-    TextView transactiontype;
-    TextView textdescription1;
-    TextView textdescription2;
-    LinearLayout transactionlayout;
 
-    public ListofSharesTransactionAdapter(Context context, List<SharesTransactionModel> transactions) {
+    public ListofSharesTransactionAdapter(Context context, List<PersonalsharesTransactionModel> transactions) {
         this.transactions = transactions;
         this.context = context;
     }
@@ -43,53 +43,16 @@ public class ListofSharesTransactionAdapter extends RecyclerView.Adapter<ListofS
     @NonNull
     @Override
     public ListofSharesTransactionAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listofsharestransactions, parent, false);
-
-        dialog1 = new Dialog(context,R.style.Mydialogtheme);
-        dialog1.setContentView(R.layout.custom_pop_up_info1);
-
-        dialog2 = new Dialog(context,R.style.Mydialogtheme);
-        dialog2.setContentView(R.layout.custom_pop_up_info2);
-
-        dialog3 = new Dialog(context,R.style.Mydialogtheme);
-        dialog3.setContentView(R.layout.custom_pop_up_info3);
-
-        LinearLayout closeModal1 = dialog1.findViewById(R.id.layoutclose);
-        LinearLayout closeModal2 = dialog2.findViewById(R.id.layoutclose);
-        LinearLayout closeModal3 = dialog3.findViewById(R.id.layoutclose);
-
-        txtdatesoldorpurchased = (TextView) dialog1.findViewById(R.id.dateoftransactiontxt);
-        personwhosoldorpurchased = (TextView) dialog1.findViewById(R.id.personwhoboughtorsold);
-        univercitytype = (TextView) dialog1.findViewById(R.id.universitynametxt);
-        transactiontype = (TextView) dialog1.findViewById(R.id.transactiontypetxt);
-        textdescription1 = (TextView) dialog2.findViewById(R.id.notransactiontxt);
-        textdescription2 = (TextView) dialog3.findViewById(R.id.notransactiontxt);
-        transactionlayout = (LinearLayout) dialog1.findViewById(R.id.transactionInfoLayout);
-
-        closeModal1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog1.cancel();
-            }
-        });
-        closeModal2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog2.cancel();
-            }
-        });
-
-        closeModal3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog3.cancel();
-            }
-        });
-
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.swipe_layout, parent, false);
 
         ListofSharesTransactionAdapter.ViewHolder viewHolder = new ListofSharesTransactionAdapter.ViewHolder(view);
 
         return viewHolder;
+    }
+
+    @Override
+    public int getSwipeLayoutResourceId(int position) {
+        return R.id.swipe;
     }
 
 
@@ -97,34 +60,100 @@ public class ListofSharesTransactionAdapter extends RecyclerView.Adapter<ListofS
 
         TextView txtsatus;
         TextView txtdate;
-        TextView txtid;
+        TextView txtcompanyname;
         TextView txttype;
+        public TextView Delete;
+        public SwipeLayout swipeLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
             txtsatus = (TextView)itemView.findViewById(R.id.txtstatus);
             txtdate = (TextView)itemView.findViewById(R.id.txttransactiondate);
-            txtid = (TextView)itemView.findViewById(R.id.txttransactionId);
+            txtcompanyname = (TextView)itemView.findViewById(R.id.txtcompanyname);
             txttype = (TextView)itemView.findViewById(R.id.txttype);
-
-
+            Delete = (TextView) itemView.findViewById(R.id.Delete);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull ListofSharesTransactionAdapter.ViewHolder holder, final int position) {
+        final PersonalsharesTransactionModel item = transactions.get(position);
+      holder.itemView.setTag(item);
+        String gettimeAgo = format(item.getCreatedAt());
+        holder.txtdate.setText(parseDate(gettimeAgo));
+        holder.txtcompanyname.setText(item.getCompanyname());
+        holder.txttype.setText("Type :: " + capitalize(item.getTransactiontype()));
 
-        holder.itemView.setTag(transactions.get(position));
-        String gettimeAgo = parseDate(transactions.get(position).getDate());
-        holder.txtdate.setText(gettimeAgo);
-        holder.txtid.setText(transactions.get(position).getId());
-        holder.txttype.setText(transactions.get(position).getType());
+        holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+
+        //dari kiri
+        holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.swipeLayout.findViewById(R.id.bottom_wrapper1));
+
+        //dari kanan
+        holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Left, holder.swipeLayout.findViewById(R.id.bottom_wraper));
+
+        holder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
+            @Override
+            public void onStartOpen(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onOpen(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onStartClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+            }
+
+            @Override
+            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+            }
+        });
+
+        holder.swipeLayout.getSurfaceView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, " Transaction is on " + item.getStatus() + " Status", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(item.getStatus().equalsIgnoreCase("closed")){
+                    Toast.makeText(v.getContext(), "Transaction is closed, can't be cancelled", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                mItemManger.removeShownLayouts(holder.swipeLayout);
+                transactions.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, transactions.size());
+                mItemManger.closeAllItems();
+                deleteRow(String.valueOf(item.getId()));
+                Toast.makeText(v.getContext(), "Transaction " + holder.txtcompanyname.getText().toString() + " cancelled", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                if(transactions.get(position).getStatus().equals("Successfully") && (!transactions.get(position).getTransactionParty().equals("fromCompany"))){
+               /* if(transactions.get(position).getStatus().equals("Successfully") && (!transactions.get(position).getTransactionParty().equals("fromCompany"))){
                     txtdatesoldorpurchased.setText(transactions.get(position).getTransactionSuccessfulldate());
                     personwhosoldorpurchased.setText(getCapsSentences(transactions.get(position).getBoughtOrSoldBy()));
                     univercitytype.setText(transactions.get(position).getUniversictyfrom());
@@ -142,17 +171,17 @@ public class ListofSharesTransactionAdapter extends RecyclerView.Adapter<ListofS
                 } else if ((transactions.get(position).getStatus().equals("Successfully") && (transactions.get(position).getTransactionParty().equals("fromCompany")) && transactions.get(position).getType().equals("Purchase"))){
                     textdescription2.setText("Bought from " + transactions.get(position).getBoard() + " on\n\n" + transactions.get(position).getDate().substring(0,10));
                     dialog3.show();
-                }
+                }*/
             }
         });
 
-        if(transactions.get(position).getStatus().equals("Successfully")){
-            holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorSuccess));
-            holder.txtsatus.setText(transactions.get(position).getStatus());
+        if(item.getStatus().equalsIgnoreCase("closed")){
+            holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            holder.txtsatus.setText("Status :: " + capitalize(item.getStatus()));
 
         }else {
-            holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorRed));
-            holder.txtsatus.setText(transactions.get(position).getStatus());
+            holder.txtsatus.setTextColor(context.getResources().getColor(R.color.colorSuccess));
+            holder.txtsatus.setText(capitalize(item.getStatus()));
         }
 
     }
@@ -298,5 +327,37 @@ public class ListofSharesTransactionAdapter extends RecyclerView.Adapter<ListofS
             sb.append(cap);
         }
         return sb.toString();
+    }
+
+    public String format(String date){
+        SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+
+        Date d = null;
+        try
+        {
+            d = input.parse(date);
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        String formatted = output.format(d);
+
+        return formatted;
+    }
+
+    public static String capitalize(String str)
+    {
+        if(str == null) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public void deleteRow(String value)
+    {
+        dbHelper = new DbHelper(context);
+        database = dbHelper.getWritableDatabase();
+        database.execSQL("DELETE FROM " + DbContract.SHARE_TRANSACTION_TABLE + " WHERE id "+"='"+value+"'");
+        database.close();
     }
 }

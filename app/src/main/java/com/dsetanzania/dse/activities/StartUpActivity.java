@@ -1,32 +1,18 @@
 package com.dsetanzania.dse.activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dsetanzania.dse.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 public class StartUpActivity extends AppCompatActivity {
 
     private static int SPLASH_SCREEN = 5000;
@@ -35,8 +21,9 @@ public class StartUpActivity extends AppCompatActivity {
     Animation topAnim, bottomAnim;
     ImageView image;
     TextView poweredtxt, companynametxt;
-    FirebaseUser firebaseUser;
-    FirebaseAuth mAuth;
+    private SharedPreferences sharedPreferences;
+    public static final  String sharedPrefrences = "sharedpref";
+    public  static final String token = "token";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,47 +45,31 @@ public class StartUpActivity extends AppCompatActivity {
         poweredtxt.setAnimation(bottomAnim);
         companynametxt.setAnimation(bottomAnim);
 
-
-        mAuth = FirebaseAuth.getInstance();
-
-
-        firebaseUser = mAuth.getCurrentUser();
-
-        firebaseUser = mAuth.getCurrentUser();
-
-
-
+        sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+        String _token = sharedPreferences.getString(token, "");
         //Calling New Activity after SPLASH_SCREEN seconds 1s = 1000
         new Handler().postDelayed(new Runnable() {
                                       @Override
                                       public void run() {
-                                          if(firebaseUser !=null){
-
-                                              checkRole();
+                                          String role = "Student";
+                                          if(!_token.isEmpty()){
+                                            checkRole(role);
                                           }
-                                          else{
-                                              Intent verifycodeintent = new Intent(StartUpActivity.this, LoginActivity.class);
-                                              StartUpActivity.this.startActivity(verifycodeintent);
+                                          else {
+                                              Intent NextActivity = new Intent(StartUpActivity.this, LoginActivity.class);
+                                              StartUpActivity.this.startActivity(NextActivity);
                                               finish();
                                           }
-
-
                                       }
                                   },
                 SPLASH_SCREEN);
 
     }
 
-    public  void checkRole(){
-        final FirebaseUser fuser = mAuth.getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("role");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+    public  void checkRole(String role){
 
-                String role = dataSnapshot.getValue(String.class);
                 if(role.equals("Admin")){
-                    Intent verifycodeintent = new Intent(StartUpActivity.this, SimulatedMarketListActivity.class);
+                    Intent verifycodeintent = new Intent(StartUpActivity.this, AdminPanelActivity.class);
                     StartUpActivity.this.startActivity(verifycodeintent);
                     finish();
                 }
@@ -108,13 +79,6 @@ public class StartUpActivity extends AppCompatActivity {
                     StartUpActivity.this.startActivity(verifycodeintent);
                     finish();
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
 

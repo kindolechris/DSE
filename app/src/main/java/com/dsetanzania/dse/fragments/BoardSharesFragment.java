@@ -7,21 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.ProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.adapters.BoardSharesAdapter;
 import com.dsetanzania.dse.api.RetrofitClient;
-import com.dsetanzania.dse.models.BoardShareResponseModel;
-import com.dsetanzania.dse.models.BoardSharesModel;
+import com.dsetanzania.dse.models.shares.BoardShareResponseModel;
 import com.dsetanzania.dse.models.UserModel;
-import com.google.firebase.database.DatabaseReference;
-
-import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,14 +31,13 @@ public class BoardSharesFragment extends Fragment {
     UserModel user;
     BoardShareResponseModel boardShareResponseModel;
     //SnappingRecyclerView livemarketpricerecyclerview;
-    RecyclerView livemarketpricerecyclerview;
-    ArrayList<BoardSharesModel> simulatedMarket;
-    DatabaseReference reference;
+    RecyclerView boardSharesrerecyclerview;
     BoardSharesAdapter simulatedMarketAdapter;
     View view;
     private String _token;
     RecyclerView.LayoutManager layoutManager;
     private SharedPreferences sharedPreferences;
+    ProgressBar boardSharesLoader;
 
     // newInstance constructor for creating fragment with arguments
     public static BoardSharesFragment newInstance(int page, String title) {
@@ -72,9 +65,9 @@ public class BoardSharesFragment extends Fragment {
 
         if(view == null){
             view = inflater.inflate(R.layout.fragment_buy, container, false);
+            boardSharesLoader = (ProgressBar) view.findViewById(R.id.boardSharesLoader);
             layoutManager = new LinearLayoutManager(getActivity());
-            livemarketpricerecyclerview = (RecyclerView) view.findViewById(R.id.listofmarketrecycler);
-            //getlivedata();
+            boardSharesrerecyclerview = (RecyclerView) view.findViewById(R.id.boardSharesrecyclerview);
             sharedPreferences = getActivity().getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
             _token = sharedPreferences.getString("token", "");
             getboards();
@@ -95,13 +88,12 @@ public class BoardSharesFragment extends Fragment {
             public void onResponse(Call<BoardShareResponseModel> call, Response<BoardShareResponseModel> response) {
                 boardShareResponseModel = response.body();
                 if ( boardShareResponseModel != null){
-
-                    //updateFieldsOnChange();
                     simulatedMarketAdapter = new BoardSharesAdapter(getContext(), boardShareResponseModel.getBoardSharesModel());
-                    livemarketpricerecyclerview.setHasFixedSize(true);
-                    livemarketpricerecyclerview.setLayoutManager(layoutManager);
-                    livemarketpricerecyclerview.setAdapter(simulatedMarketAdapter);
+                    boardSharesrerecyclerview.setHasFixedSize(true);
+                    boardSharesrerecyclerview.setLayoutManager(layoutManager);
+                    boardSharesrerecyclerview.setAdapter(simulatedMarketAdapter);
                     Log.i("Check this ","boards found");
+                    boardSharesLoader.setVisibility(View.INVISIBLE);
                 }
                 else{
                     //Toast.makeText(HomeActivity.this,"Nothing",Toast.LENGTH_LONG).show();

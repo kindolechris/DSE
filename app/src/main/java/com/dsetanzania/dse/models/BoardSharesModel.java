@@ -1,59 +1,57 @@
 package com.dsetanzania.dse.models;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class BoardSharesModel {
 
     @SerializedName("id")
+    @Expose
     private String Id;
 
     @SerializedName("board")
+    @Expose
     private String Board;
 
     @SerializedName("change")
+    @Expose
     private String Change;
 
     @SerializedName("close")
+    @Expose
     private String Close;
 
     @SerializedName("company")
+    @Expose
     private String Company;
 
     @SerializedName("high")
+    @Expose
     private String High;
 
     @SerializedName("lastDealPrice")
+    @Expose
     private String LastDealPrice;
 
     @SerializedName("lastTradedQuantity")
+    @Expose
     private String LastTradedQuantity;
 
     @SerializedName("low")
+    @Expose
     private String Low;
 
     @SerializedName("marketCap")
+    @Expose
     private String MarketCap;
 
     @SerializedName("openingPrice")
+    @Expose
     private String OpeningPrice;
 
     @SerializedName("volume")
+    @Expose
     private String Volume;
-
-    public BoardSharesModel(String id, String board, String change, String close, String company, String high, String lastDealPrice, String lastTradedQuantity, String low, String marketCap, String openingPrice, String volume) {
-        Id = id;
-        Board = board;
-        Change = change;
-        Close = close;
-        Company = company;
-        High = high;
-        LastDealPrice = lastDealPrice;
-        LastTradedQuantity = lastTradedQuantity;
-        Low = low;
-        MarketCap = marketCap;
-        OpeningPrice = openingPrice;
-        Volume = volume;
-    }
 
     public String getId() {
         return Id;
@@ -152,7 +150,6 @@ public class BoardSharesModel {
     }
 
     public BoardSharesModel() {
-
 
     }
 

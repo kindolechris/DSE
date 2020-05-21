@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/colorWhite">
+
+
+    <LinearLayout
+        android:layout_width="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:gravity="center"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/logo_app_alt_down" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="80dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="New notification"
+            android:fontFamily="@font/fontawesome"
+            android:textColor="@color/colorBlack"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/charging"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="3dp"
+            android:text="From DSE"
+            android:fontFamily="@font/fontawesome"
+            android:textColor="@color/colorBlack"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -2,26 +2,31 @@ package com.dsetanzania.dse.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.activities.BuyBondActivity;
+import com.dsetanzania.dse.models.BondModel;
 import com.dsetanzania.dse.models.BondsModel;
 import java.util.List;
 
 public class ListOfBondsAdapter extends RecyclerView.Adapter<ListOfBondsAdapter.ViewHolder> {
 
-    private List<BondsModel> bonds;
+    private List<BondModel> bonds;
     Context context;
     Dialog dialog1,dialog2,dialog3;
 
     int index;
 
-    public ListOfBondsAdapter(Context context, List<BondsModel> bonds) {
+    public ListOfBondsAdapter(Context context, List<BondModel> bonds) {
         this.bonds = bonds;
         this.context = context;
     }
@@ -43,13 +48,15 @@ public class ListOfBondsAdapter extends RecyclerView.Adapter<ListOfBondsAdapter.
         TextView txtbondmonth;
         TextView txtbondrate;
         TextView txtbonddate;
+        LinearLayout bondlayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtbonnumber = (TextView)itemView.findViewById(R.id.txtbondnumber);
-            txtbondmonth = (TextView)itemView.findViewById(R.id.txtbondmonth);
+            txtbondmonth = (TextView)itemView.findViewById(R.id.txtbondvolume);
             txtbondrate = (TextView)itemView.findViewById(R.id.txtbondrate);
             txtbonddate = (TextView)itemView.findViewById(R.id.txtbonddate);
+            bondlayout = (LinearLayout) itemView.findViewById(R.id.bondlayout);
 
         }
     }
@@ -59,9 +66,23 @@ public class ListOfBondsAdapter extends RecyclerView.Adapter<ListOfBondsAdapter.
 
         holder.itemView.setTag(bonds.get(position));
         holder.txtbonnumber.setText("No. " + String.valueOf(bonds.get(position).getBondnumber()));
-        holder.txtbonddate.setText(bonds.get(position).getDate().substring(0,10));
-        holder.txtbondmonth.setText("Duration : "+ String.valueOf(bonds.get(position).getMonth()) + " Month (s)");
-        holder.txtbondrate.setText("Rate : " + String.valueOf(bonds.get(position).getRate()) + " %");
+        holder.txtbonddate.setText(bonds.get(position).getCreatedAt().substring(0,10));
+        holder.txtbondmonth.setText("Duration : "+ String.valueOf(bonds.get(position).getDuration()) + " Month (s)");
+        holder.txtbondrate.setText("Interest rate : " + String.valueOf(bonds.get(position).getInterestRate()) + " %");
+
+        holder.bondlayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(context, BuyBondActivity.class);
+                myIntent.putExtra("Bondnumber",bonds.get(position).getBondnumber());
+                myIntent.putExtra("Rate",String.valueOf(bonds.get(position).getInterestRate()));
+                myIntent.putExtra("Duration",bonds.get(position).getDuration());
+                myIntent.putExtra("issuer",bonds.get(position).getIssuer());
+                myIntent.putExtra("bondprice",bonds.get(position).getPrice());
+                myIntent.putExtra("bondid",String.valueOf(bonds.get(position).getId()));
+                context.startActivity(myIntent);
+            }
+        });
 
     }
 

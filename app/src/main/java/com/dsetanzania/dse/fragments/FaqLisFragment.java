@@ -17,9 +17,6 @@ import com.dsetanzania.dse.helperClasses.FaqsChildLayout;
 import com.dsetanzania.dse.helperClasses.FaqsParentLayout;
 import com.dsetanzania.dse.helperClasses.FaqsTitleCreator;
 import com.dsetanzania.dse.models.BondTransactionModel;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,16 +31,9 @@ public class FaqLisFragment extends Fragment {
 
     private String title;
     private int page;
-    //SnappingRecyclerView livemarketpricerecyclerview;
-    RecyclerView bondlistrecyclerviewrecyclerview;
     ArrayList<BondTransactionModel> bonds;
-    DatabaseReference reference;
-    SimulatedBondsAdapter simulatedBondsAdapter;
     View view;
     RecyclerView recyclerView;
-    RecyclerView.Adapter listOfTransactionAdapter;
-    private FirebaseAuth mAuth;
-    LinearLayoutManager layoutManager;
 
     // newInstance constructor for creating fragment with arguments
     public static FaqLisFragment newInstance(int page, String title) {

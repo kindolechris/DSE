@@ -1,51 +1,55 @@
 package com.dsetanzania.dse.fragments;
 
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dsetanzania.dse.adapters.ListofBondsTransactionAdapter;
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.adapters.SimulatedBondsAdapter;
-import com.dsetanzania.dse.models.BondTransactionModel;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.dsetanzania.dse.api.RetrofitClient;
+import com.dsetanzania.dse.helperClasses.checkInternet;
+import com.dsetanzania.dse.interfaces.InternetcheckInterface;
+import com.dsetanzania.dse.models.PersonalBondTransactionModel;
+import com.dsetanzania.dse.models.transactions.transactionlist.PersonalBondTransactionListResponseModel;
+import com.dsetanzania.dse.storage.DbContract;
+import com.dsetanzania.dse.storage.DbHelper;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link BondsTransactionFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import static android.content.Context.MODE_PRIVATE;
+import static com.dsetanzania.dse.activities.LoginActivity.sharedPrefrences;
+
+
 public class BondsTransactionFragment extends Fragment {
-
 
     private String title;
     private int page;
-    //SnappingRecyclerView livemarketpricerecyclerview;
-    RecyclerView bondlistrecyclerviewrecyclerview;
-    ArrayList<BondTransactionModel> bonds;
-    DatabaseReference reference;
-    SimulatedBondsAdapter simulatedBondsAdapter;
+    TextView txtnotransaction;
     View view;
+    private int userId;
+    private String _token;
+    DbHelper dbHelper;
+    SQLiteDatabase database;
+    private SharedPreferences sharedPreferences;
+    ArrayList<PersonalBondTransactionModel> transaction;
     RecyclerView recyclerView;
-    RecyclerView.Adapter listOfTransactionAdapter;
-    private FirebaseAuth mAuth;
+    ListofBondsTransactionAdapter listofBondsTransactionAdapter;
     LinearLayoutManager layoutManager;
+    ProgressBar bondstransactionLoader;
 
     // newInstance constructor for creating fragment with arguments
     public static BondsTransactionFragment newInstance(int page, String title) {
@@ -69,49 +73,144 @@ public class BondsTransactionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.fragment_bonds_transaction, container, false);
-
+        if(view==null){
+            view = inflater.inflate(R.layout.fragment_bonds_transaction, container, false);
+            layoutManager = new LinearLayoutManager(getActivity());
+            sharedPreferences = getActivity().getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+            userId = sharedPreferences.getInt("userid", -1);
+            _token = sharedPreferences.getString("token", "");
+            txtnotransaction = (TextView) view.findViewById(R.id.txtnotransaction);
+            dbHelper = new DbHelper(getActivity());
+            database = dbHelper.getWritableDatabase();
+            bondstransactionLoader = (ProgressBar) view.findViewById(R.id.bondstransactionLoader);
+            txtnotransaction = (TextView) view.findViewById(R.id.txtnotransaction);
+            recyclerView = (RecyclerView) view.findViewById(R.id.bondstransactionrecycler);
+            recyclerView.setLayoutManager(layoutManager);
+        }
         layoutManager = new LinearLayoutManager(getActivity());
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.bondstransactionrecycler);
+        checkInternet task = new checkInternet(getContext(), new InternetcheckInterface() {
+            @Override
+            public void checkMethod(String result) {
 
-        getTransactions();
+                if(result == "Access"){
+                    try {
+                        getlivePersonalbondTransaction();
+                    } catch (Exception e) {
+                        Toast.makeText(getActivity(),"System error",Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                else if(result == "NoAccess"){
+                    try {
+                        readPersonalTransactionFromLocalDb();
+                    } catch (Exception e) {
+                        Toast.makeText(getActivity(),"System error (DB)",Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                else{
+
+                }
+            }
+        });
+
+        task.execute();
+
         return view;
     }
 
-    private void  getTransactions(){
+    public void getlivePersonalbondTransaction(){
+        Call<PersonalBondTransactionListResponseModel> call = RetrofitClient
+                .getInstance().getApi().fetchUserBondTransaction(userId,"Bearer " +  _token);
 
-        bonds = new ArrayList<BondTransactionModel>();
-
-        bonds.clear();
-        mAuth = FirebaseAuth.getInstance();
-        final FirebaseUser fuser = mAuth.getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("BondsTransaction");
-        reference.addValueEventListener(new ValueEventListener() {
+        call.enqueue(new Callback<PersonalBondTransactionListResponseModel>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                bonds.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    BondTransactionModel _transaction = snapshot.getValue(BondTransactionModel.class);
-                    if(_transaction.getUserId().equals(fuser.getUid())){
-                        bonds.add(_transaction);
+            public void onResponse(Call<PersonalBondTransactionListResponseModel> call, Response<PersonalBondTransactionListResponseModel> response) {
+                PersonalBondTransactionListResponseModel personalBondTransactionListResponseModel = response.body();
+                if (personalBondTransactionListResponseModel.isSuccess()){
+                    if(transactionTableIsEmpty()){
+                        for(int i=0; i<personalBondTransactionListResponseModel.getPersonalBondTransactionModel().size(); i++) {
+                            dbHelper.saveBondTransactionTolocalDatabase((personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getId()),String.valueOf(personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBondnumber()),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getStatus(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getUnits(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCreatedAt(),database);
+                        }
                     }
+                    else{
+                        droptabletransaction();
+                        for(int i=0; i<personalBondTransactionListResponseModel.getPersonalBondTransactionModel().size(); i++) {
+                            dbHelper.saveBondTransactionTolocalDatabase((personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getId()),String.valueOf(personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBondnumber()),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getStatus(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getUnits(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCreatedAt(),database);
+                        }
+
+                    }
+                    //Toast.makeText(getActivity(),personalBondTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                    readPersonalTransactionFromLocalDb();
+                    bondstransactionLoader.setVisibility(View.INVISIBLE);
                 }
-
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setNestedScrollingEnabled(false);
-                layoutManager.setReverseLayout(true);
-                layoutManager.setStackFromEnd(true);
-
-                listOfTransactionAdapter = new ListofBondsTransactionAdapter(getActivity(),bonds);
-                recyclerView.setAdapter(listOfTransactionAdapter);;
+                else{
+                    txtnotransaction.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    bondstransactionLoader.setVisibility(View.INVISIBLE);
+                    //Toast.makeText(getActivity(),personalBondTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public void onFailure(Call<PersonalBondTransactionListResponseModel> call, Throwable t) {
+                bondstransactionLoader.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    public void readPersonalTransactionFromLocalDb(){
+        if(transactionTableIsEmpty()){
+            txtnotransaction.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
+            bondstransactionLoader.setVisibility(View.INVISIBLE);
+        }
+        else{
+            txtnotransaction.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
+            bondstransactionLoader.setVisibility(View.INVISIBLE);
+            transaction = new ArrayList<PersonalBondTransactionModel>();
+            transaction.clear();
+            DbHelper dbHelper = new DbHelper(getActivity());
+            SQLiteDatabase database = dbHelper.getReadableDatabase();
+            Cursor cursor = dbHelper.readBondTransactionFromLocalDatabase(database);
+            int id=0;
+            Integer units=0;
+            String bondtransactiondate="";
+            String bondnumber="";
+            String bondstatus="";
+            while(cursor.moveToNext()){
+                id = cursor.getInt(cursor.getColumnIndex("id"));
+                units = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.bondunit)));
+                bondtransactiondate = cursor.getString(cursor.getColumnIndex(DbContract.bondtransactiondate));
+                bondnumber = cursor.getString(cursor.getColumnIndex(DbContract.bondnumber));
+                bondstatus = cursor.getString(cursor.getColumnIndex(DbContract.bondstatus));
+                PersonalBondTransactionModel personalBondTransactionModel = new PersonalBondTransactionModel(String.valueOf(units),bondtransactiondate,id,bondnumber,bondstatus);
+                transaction.add(personalBondTransactionModel);
+            }
+
+            listofBondsTransactionAdapter = new ListofBondsTransactionAdapter(getActivity(), transaction);
+            recyclerView.setAdapter(listofBondsTransactionAdapter);
+            cursor.close();
+            dbHelper.close();
+        }
+
+    }
+
+    public boolean transactionTableIsEmpty(){
+        String count = "SELECT count(*) FROM " + DbContract.BOND_TRANSACTION_TABLE;
+        Cursor mcursor = database.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if(icount>0){
+            return false;
+        }
+        return true;
+    }
+
+    public void droptabletransaction(){
+        String query = "DELETE FROM "+ DbContract.BOND_TRANSACTION_TABLE;
+        database.execSQL(query);
     }
 }

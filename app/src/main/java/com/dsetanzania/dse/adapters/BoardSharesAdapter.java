@@ -5,26 +5,26 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.activities.BuyOrSaleBoardShareActivity;
+import com.dsetanzania.dse.activities.BuyBoardShareActivity;
 import com.dsetanzania.dse.models.BoardSharesModel;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.ViewHolder>  {
 
-    private ArrayList<BoardSharesModel> marketcksimulator;
+    private List<BoardSharesModel> marketcksimulator;
     final Vector<ViewHolder> securityPriceListViewHold = new Vector<>();
     Context mycontext;
     int _position;
@@ -35,7 +35,7 @@ public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.
         void OnServerItemClicked(int index);
     }
 
-    public BoardSharesAdapter(Context context, ArrayList<BoardSharesModel> list) {
+    public BoardSharesAdapter(Context context, List<BoardSharesModel> list) {
         this.marketcksimulator = list;
         this.mycontext =  context;
 
@@ -45,15 +45,11 @@ public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtcompanyname;
-        TextView txtlastdealvalue;
         TextView txtlasttradequantity;
+        LinearLayout boardsharelayout;
         TextView txtvolume;
         TextView txtchange;
         TextView txtprice;
-        TextView txtdate;
-        Button buybtn;
-        Button sellbtn;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +58,7 @@ public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.
             txtlasttradequantity = (TextView)itemView.findViewById(R.id.lasttradequality);
             txtvolume = (TextView)itemView.findViewById(R.id.txtvolume);
             txtprice = (TextView)itemView.findViewById(R.id.openingPrice);
+            boardsharelayout = (LinearLayout) itemView.findViewById(R.id.boardsharelayout);
             //buybtn = (Button) itemView.findViewById(R.id.btnbuy);
             //sellbtn = (Button) itemView.findViewById(R.id.btnSell);
 
@@ -91,12 +88,13 @@ public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.
         holder.txtlasttradequantity.setText("LTQ :" + formatter.format(Double.parseDouble(marketcksimulator.get(position).getLastTradedQuantity())));
         holder.txtvolume.setText("Volume :" + formatter.format(Double.parseDouble(marketcksimulator.get(position).getVolume())));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.boardsharelayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(mycontext, BuyOrSaleBoardShareActivity.class);
+                Intent myIntent = new Intent(mycontext, BuyBoardShareActivity.class);
                 myIntent.putExtra("OpeningPrice",marketcksimulator.get(position).getOpeningPrice());
                 myIntent.putExtra("Companyname",marketcksimulator.get(position).getCompany());
+                myIntent.putExtra("boardid",marketcksimulator.get(position).getId());
                 mycontext.startActivity(myIntent);
             }
         });

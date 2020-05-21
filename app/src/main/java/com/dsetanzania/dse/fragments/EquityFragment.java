@@ -22,13 +22,6 @@ import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.activities.LoginActivity;
 import com.dsetanzania.dse.adapters.SimulatedMarketToEditAdapter;
 import com.dsetanzania.dse.models.BoardSharesModel;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class EquityFragment extends Fragment {
@@ -37,8 +30,6 @@ public class EquityFragment extends Fragment {
     private String title;
     private int page;
     View view;
-    DatabaseReference reference;
-    FirebaseAuth mAuth;
     int status = 1;
     RecyclerView livemarketrecyclerview;
     ArrayList<BoardSharesModel> simulatedMarket;
@@ -69,7 +60,7 @@ public class EquityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
+
         view = inflater.inflate(R.layout.fragment_shares_equity, container, false);
 
         livemarketrecyclerview =  view.findViewById(R.id.MarketsPriceListRecyclerView);
@@ -83,29 +74,6 @@ public class EquityFragment extends Fragment {
         //serverpgsBar.setVisibility(View.VISIBLE);
         simulatedMarket = new ArrayList<BoardSharesModel>();
         simulatedMarket.clear();
-        reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                simulatedMarket.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    BoardSharesModel _market = snapshot.getValue(BoardSharesModel.class);
-                    simulatedMarket.add(_market);
-                }
-                simulatedMarketAdapter = new SimulatedMarketToEditAdapter(getContext(), simulatedMarket);
-
-                livemarketrecyclerview.setHasFixedSize(true);
-                livemarketrecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
-                livemarketrecyclerview.setAdapter(simulatedMarketAdapter);
-                livemarketrecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
 
@@ -143,7 +111,6 @@ public class EquityFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.signOut) {
-            mAuth.signOut();
             Intent homeintent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(homeintent);
             getActivity().finish();

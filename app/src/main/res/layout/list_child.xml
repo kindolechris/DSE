@@ -19,8 +19,8 @@
             android:paddingStart="20dp"
             android:text="Option 1"
             android:textSize="14dp"
-            android:textColor="@color/colorBlackBlack"
-            android:fontFamily="@font/montserrat"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@font/fontawesome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

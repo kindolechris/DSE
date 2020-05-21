@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.Menu;
@@ -35,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.dsetanzania.dse.adapters.LiveMarketAdapter;
 import com.dsetanzania.dse.api.RetrofitClient;
-import com.dsetanzania.dse.helperClasses.UserImageUpdloads;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
 import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
@@ -45,15 +45,11 @@ import com.dsetanzania.dse.models.UserModel;
 import com.dsetanzania.dse.models.UserDataResponseModel;
 import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -72,10 +68,13 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout portfoliolinearlayout;
     LinearLayout tellafriendlinearlayout;
     LinearLayout faqslinearlayout;
+    LinearLayout newslinearlayout;
     LinearLayout transactionlinearlayout;
-    LinearLayout layoutcloseChoice;
+    LinearLayout leaderboardlayout;
+    Button btncloseChoice;
     LinearLayout aboutUstlinearlayout;
     TextView txttradername;
+    Button avatornametxt;
     TextView txtstockbalance;
     TextView txtbondbalance;
     TextView txttrandingstats;
@@ -89,9 +88,6 @@ public class HomeActivity extends AppCompatActivity {
     View parentLayout;
     TextView QueuesCountTxt;
     TextView margeetxt;
-    DatabaseReference dbReference;
-    StorageReference storegaReference;
-    FirebaseUser fuser;
     Uri selectedImagURL;
     de.hdodenhof.circleimageview.CircleImageView imageView;
     Dialog dialog,dialogChoice;
@@ -101,7 +97,6 @@ public class HomeActivity extends AppCompatActivity {
     String realtimedata;
     UserModel user;
     NumberFormat formatter;
-    //SychronizeLiveDataTimer sycnc;
     UserDataResponseModel userdata;
     DbHelper dbHelper;
     SQLiteDatabase database;
@@ -143,7 +138,10 @@ public class HomeActivity extends AppCompatActivity {
         txtstockbalance = (TextView) findViewById(R.id.stocklbalance);
         txtbondbalance = (TextView) findViewById(R.id.bondsbalance);
         txtvirtualshare = (TextView) findViewById(R.id.sharepricetxt);
+        avatornametxt = (Button) findViewById(R.id.avatornametxt);
         livemarketlinearlayout = (LinearLayout) findViewById(R.id.livemarketLayout);
+        newslinearlayout = (LinearLayout) findViewById(R.id.newsLayout);
+        leaderboardlayout = (LinearLayout) findViewById(R.id.leaderboardLayout);
         portfoliolinearlayout = (LinearLayout) findViewById(R.id.portfolioLayout);
         tellafriendlinearlayout = (LinearLayout) findViewById(R.id.tellafriendLayout);
         transactionlinearlayout = (LinearLayout) findViewById(R.id.transactionLayout);
@@ -170,15 +168,15 @@ public class HomeActivity extends AppCompatActivity {
         equitybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(HomeActivity.this, SimulatedEquityActivity.class);
+                Intent myIntent = new Intent(HomeActivity.this, EquityActivity.class);
                 HomeActivity.this.startActivity(myIntent);
                 dialogChoice.dismiss();
             }
         });
 
-        layoutcloseChoice  =(LinearLayout) dialogChoice.findViewById(R.id.layoutcloseChoice);
+        btncloseChoice  =(Button) dialogChoice.findViewById(R.id.btnclose);
 
-        layoutcloseChoice.setOnClickListener(new View.OnClickListener() {
+        btncloseChoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialogChoice.dismiss();
@@ -188,14 +186,14 @@ public class HomeActivity extends AppCompatActivity {
         bondbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(HomeActivity.this, SimulatedBondsActivity.class);
+                Intent myIntent = new Intent(HomeActivity.this, BondsActivity.class);
                 HomeActivity.this.startActivity(myIntent);
                 dialogChoice.dismiss();
             }
         });
 
 
-        updatelocaldb();
+        //updatelocaUserInfoTodb();
         //saveToLocalDb();
 
         margeetxt.setSelected(true);
@@ -219,20 +217,25 @@ public class HomeActivity extends AppCompatActivity {
             public void checkMethod(String result) {
 
                 if(result == "Access"){
+                    try {
+                        updatelocaUserInfoTodb();
+                    } catch (Exception e) {
+                        Toast.makeText(HomeActivity.this,"System error",Toast.LENGTH_SHORT).show();
+                    }
 
-                    Snackbar snackbar = Snackbar
-                            .make(parentLayout,String.valueOf(userId), Snackbar.LENGTH_LONG);
-                    snackbar.show();
                 }
                 else if(result == "NoAccess"){
-                    Snackbar snackbar = Snackbar
-                            .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+                    try {
+                        readFromLocalDb();
+                        Snackbar snackbar = Snackbar
+                                .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    } catch (Exception e) {
+                        Toast.makeText(HomeActivity.this,"System error (DB)",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
-                    Snackbar snackbar = Snackbar
-                            .make(parentLayout, "Service unavailable", Snackbar.LENGTH_LONG);
-                    snackbar.show();
+
                 }
             }
         });
@@ -243,8 +246,13 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getSupportActionBar().show();
-                //drawerLayout.closeDrawers();
-                dialogChoice.show();
+                drawerLayout.closeDrawers();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        dialogChoice.show();
+                    }
+                }, 300);
             }
         });
 
@@ -284,6 +292,27 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        newslinearlayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportActionBar().show();
+                Intent myIntent = new Intent(HomeActivity.this, NewsActivity.class);
+                HomeActivity.this.startActivity(myIntent);
+
+            }
+        });
+
+        leaderboardlayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportActionBar().show();
+                Intent myIntent = new Intent(HomeActivity.this, LeaderBoardActivity.class);
+                HomeActivity.this.startActivity(myIntent);
+
+            }
+        });
+
+
         tellafriendlinearlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -320,7 +349,7 @@ public class HomeActivity extends AppCompatActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                updatelocaldb();
+                updatelocaUserInfoTodb();
                 Toast.makeText(HomeActivity.this, "Notification received", Toast.LENGTH_LONG).show();
             }
         };
@@ -351,14 +380,18 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        registerReceiver(broadcastReceiver, mIntentFilter);
+        unregisterReceiver(broadcastReceiver);
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        updatelocaldb();
+        try {
+            updatelocaUserInfoTodb();
+        } catch (Exception e) {
+            Toast.makeText(HomeActivity.this,"System error",Toast.LENGTH_SHORT).show();
+        }
         registerReceiver(broadcastReceiver, mIntentFilter);
     }
 
@@ -430,31 +463,8 @@ public class HomeActivity extends AppCompatActivity {
             Picasso.get().load(selectedImagURL).into(imageView);
             //uploadFile();
 
-            dbReference = FirebaseDatabase.getInstance().getReference("UserImageUpdloads");
-            storegaReference = FirebaseStorage.getInstance().getReference("UserImageUpdloads");
-            final StorageReference Imagename = storegaReference.child("image" + selectedImagURL.getLastPathSegment());
-            Imagename.putFile(selectedImagURL).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Imagename.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-
-                            UserImageUpdloads upload = new UserImageUpdloads(fuser.getUid(),String.valueOf(uri));
-                            String uploadId = dbReference.push().getKey();
-                            dbReference.child(uploadId).setValue(upload).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(HomeActivity.this, "Upload successful", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
         }
     }
-
 
     public void getlivedata(){
         GetLiveMarketTask gt = new GetLiveMarketTask();
@@ -533,19 +543,25 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-    public void updateFieldsOnChange(String tradername,String stock,String bonds,String virtualbalance){
+    public void updateFieldsOnChange(String tradername,String stock,String bonds,Double virtualbalance,String firstname,String lastname){
+        NumberFormat formatter = new DecimalFormat("#,###");
+        char first = firstname.charAt(0);
+        char last = lastname.charAt(0);
         txttradername.setText(tradername);
         txtstockbalance.setText(stock);
+        avatornametxt.setText(String.valueOf(first) + String.valueOf(last));
         txtbondbalance.setText(bonds);
-        txtvirtualshare.setText(virtualbalance);
+        txtvirtualshare.setText(formatter.format(virtualbalance));
     }
 
     public void readFromLocalDb(){
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
 
-        Cursor cursor = dbHelper.readFromLocalDatabase(database);
+        Cursor cursor = dbHelper.readUserFromLocalDatabase(database);
         String tradername="";
+        String firstname="";
+        String lastname="";
         double virtualmoney=0;
         int stock=0;
         int id=-1;
@@ -553,24 +569,22 @@ public class HomeActivity extends AppCompatActivity {
         int sync_status;
         while(cursor.moveToNext()){
              tradername = cursor.getString(cursor.getColumnIndex(DbContract.tradername));
+            firstname = cursor.getString(cursor.getColumnIndex(DbContract.firstname));
+            lastname = cursor.getString(cursor.getColumnIndex(DbContract.lastname));
              virtualmoney = cursor.getDouble(cursor.getColumnIndex(DbContract.virtualmoney));
              stock = cursor.getInt(cursor.getColumnIndex(DbContract.stock));
              id = cursor.getInt(cursor.getColumnIndex("id"));
              bonds = cursor.getInt(cursor.getColumnIndex(DbContract.bonds));
-             sync_status = cursor.getInt(cursor.getColumnIndex(DbContract.SYNC_STATUS));
 
-           /* Snackbar snackbar = Snackbar
-                    .make(parentLayout, "ID is "+id, Snackbar.LENGTH_LONG);
-            snackbar.show();*/
         }
-        updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),String.valueOf(virtualmoney));
+        updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),virtualmoney,firstname,lastname);
         cursor.close();
         dbHelper.close();
     }
 
 
 
-    public void updatelocaldb(){
+    public void updatelocaUserInfoTodb(){
         Call<UserDataResponseModel> call = RetrofitClient
                 .getInstance().getApi().fetchUserdata(userId,"Bearer " +  _token);
 
@@ -579,8 +593,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onResponse(Call<UserDataResponseModel> call, Response<UserDataResponseModel> response) {
                 UserDataResponseModel userDataResponseModel = response.body();
                 if (userDataResponseModel != null){
-                    dbHelper.updateLocakDatabase(String.valueOf(userId),userDataResponseModel.getUsers().getStock(),userDataResponseModel.getUsers().getBonds(),userDataResponseModel.getUsers().getFirstname(),userDataResponseModel.getUsers().getLastname(),userDataResponseModel.getUsers().getTradername(),userDataResponseModel.getUsers().getEmail(),userDataResponseModel.getUsers().getYearOfStudy(),userDataResponseModel.getUsers().getUniversity(),userDataResponseModel.getUsers().getCoursename(),userDataResponseModel.getUsers().getPhonenumber(),userDataResponseModel.getUsers().getRole(),userDataResponseModel.getUsers().getVirtualmoney(),userDataResponseModel.getUsers().getGender(),DbContract.SYNC_STATUS_FAILED,database);
-                    Log.i("Check this ","user found");
+                    dbHelper.updateUserLocalDatabase(String.valueOf(userId),userDataResponseModel.getUsers().getStock(),userDataResponseModel.getUsers().getBonds(),userDataResponseModel.getUsers().getFirstname(),userDataResponseModel.getUsers().getLastname(),userDataResponseModel.getUsers().getTradername(),userDataResponseModel.getUsers().getEmail(),userDataResponseModel.getUsers().getYearOfStudy(),userDataResponseModel.getUsers().getUniversity(),userDataResponseModel.getUsers().getCoursename(),userDataResponseModel.getUsers().getPhonenumber(),userDataResponseModel.getUsers().getRole(),userDataResponseModel.getUsers().getVirtualmoney(),userDataResponseModel.getUsers().getGender(),DbContract.SYNC_STATUS_FAILED,database);
                     readFromLocalDb();
                     //dbHelper.close();
                 }
@@ -607,8 +620,23 @@ public class HomeActivity extends AppCompatActivity {
         dbHelper.onUpgrade(database,1,2);
         dbHelper.close();
         editor.commit();
+        resetInstanceId();
     }
 
+    public static void resetInstanceId() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    FirebaseInstanceId.getInstance().deleteInstanceId();
+                    FirebaseInstanceId.getInstance().getInstanceId();
+                    Log.i("FirebaseInstance ", "InstanceId removed and regenerated.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
 }
 

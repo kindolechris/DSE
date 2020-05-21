@@ -14,19 +14,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.models.BoardSharesModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -46,8 +38,6 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
     ItemClicked fragmentActivity;
     int position = 1;
     Dialog dialog;
-    FirebaseAuth mAuth;
-    DatabaseReference reference;
     TextInputEditText quantity;
     TextInputEditText price;
     TextView date;
@@ -175,30 +165,6 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
                     Toast.makeText(mycontext,"Enter some values to update",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                reference = FirebaseDatabase.getInstance().getReference("MarketSimulator").child(marketSimulator.get(id).getId());
-                Map<String, Object> map = new HashMap<>();
-                map.put("openingPrice", price.getText().toString().trim());
-                map.put("lastTradedQuantity", quantity.getText().toString().trim());
-
-                reference.updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>()
-                {
-                    @Override
-                    public void onSuccess(Void aVoid)
-                    {
-                        Toast.makeText(mycontext,"Updated",Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e)
-                    {
-                        Toast.makeText(mycontext,"Not updated",Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                });
-
-                //Toast.makeText(mycontext,"Updated"+ marketSimulator.get(id).getId(),Toast.LENGTH_SHORT).show();
-
-                //setkeys();
             }
         });
     }
@@ -215,19 +181,6 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
         return f;
     }
 
- /*   public void pushMarkets(int index){
-
-        DatabaseReference reference;
-        reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
-        String id = reference.push().getKey();
-        MarketSimulator livemarket = new MarketSimulator( LivesecurityPrices.get(position).Board,LivesecurityPrices.get(position).Change.doubleValue(),LivesecurityPrices.get(position).Close.doubleValue(),LivesecurityPrices.get(position).Company, LivesecurityPrices.get(position).High.doubleValue(),LivesecurityPrices.get(position).LastDealPrice.doubleValue(), LivesecurityPrices.get(position).LastTradedQuantity.longValue(),LivesecurityPrices.get(position).Low.doubleValue(), LivesecurityPrices.get(position).MarketCap.doubleValue(), LivesecurityPrices.get(position).OpeningPrice.doubleValue(), LivesecurityPrices.get(position).Volume);
-        reference.child(id).setValue(livemarket).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(mycontext,"Markets pushed.",Toast.LENGTH_LONG).show();
-            }
-        });
-    }*/
 
     public static String getdate(){
         try {
@@ -243,25 +196,6 @@ public class SimulatedMarketToEditAdapter extends RecyclerView.Adapter<Simulated
         }
     }
 
-    private void  setkeys(){
-
-        reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String childKey = snapshot.getKey();
-                    snapshot.getRef().child("Id").setValue(childKey);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     public static String formatValue(double value) {
         int power;

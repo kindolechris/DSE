@@ -35,102 +35,113 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintVertical_bias="0.0">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/profile_image"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/ic_account_circle_black_24dp"
-                app:civ_border_color="@color/colorPrimary"
-                app:civ_border_width="2dp" />
-
+        <com.balysv.materialripple.MaterialRippleLayout xmlns:app2="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:mrl_rippleColor="@color/colorFortextOnblueBg"
+            app:mrl_rippleDuration="600"
+            app:mrl_rippleOverlay="true"
+            app:mrl_rippleFadeDuration="75"
+            app:mrl_rippleDelayClick="true"
+            rv_centered="true"
+            xmlns:android="http://schemas.android.com/apk/res/android">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/txtusername"
-                    android:layout_width="wrap_content"
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/profile_image"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/ic_account_circle_black_24dp"
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_width="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:letterSpacing="0.2"
-                    android:text="Chris Kindole"
-                    android:ellipsize="marquee"
+                    android:layout_marginTop="15dp"
                     android:gravity="center"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="22sp"></TextView>
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtusername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:letterSpacing="0.2"
+                        android:text="Chris Kindole"
+                        android:ellipsize="marquee"
+                        android:gravity="center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="22sp"></TextView>
+
+                </LinearLayout>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/ic_student"></ImageView>
-
-                <TextView
-                    android:id="@+id/txtuniversity"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat"
-                    android:paddingStart="10dp"
-                    android:text="Ardhi University"
-                    android:ellipsize="marquee"
+                    android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:textColor="@color/colorBlackBlack"
-                    android:textSize="15sp"></TextView>
+                    android:orientation="horizontal">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/ic_student"></ImageView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/txtuniversity"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat"
+                        android:paddingStart="10dp"
+                        android:text="Ardhi University"
+                        android:ellipsize="marquee"
+                        android:gravity="center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:textColor="@color/colorBlackBlack"
+                        android:textSize="15sp"></TextView>
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/ic_trophy"></ImageView>
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtachievement"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat"
-                    android:paddingStart="5dp"
-                    android:text=" ( 5 ) Achievements"
-                    android:textColor="@color/colorBlackBlack"
-                    android:textSize="15sp"></TextView>
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/ic_trophy"></ImageView>
+
+                    <TextView
+                        android:id="@+id/txtachievement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat"
+                        android:paddingStart="5dp"
+                        android:text=" ( 0 ) Achievements"
+                        android:textColor="@color/colorBlackBlack"
+                        android:textSize="15sp"></TextView>
+
+                </LinearLayout>
+
 
             </LinearLayout>
-
-
-        </LinearLayout>
+        </com.balysv.materialripple.MaterialRippleLayout>
 
     </androidx.cardview.widget.CardView>
 
@@ -166,31 +177,43 @@
                 app:cardUseCompatPadding="true"
                 app:layout_constraintVertical_bias="0.57">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.balysv.materialripple.MaterialRippleLayout xmlns:app2="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    app:mrl_rippleColor="@color/colorFortextOnblueBg"
+                    app:mrl_rippleDuration="600"
+                    app:mrl_rippleOverlay="true"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true"
+                    xmlns:android="http://schemas.android.com/apk/res/android">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:paddingStart="10dp"
-                        android:text="48%"
-                        android:textColor="@color/colorBlackBlack"
-                        android:textSize="22sp"></TextView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:paddingStart="10dp"
+                            android:text="V.M"
+                            android:textColor="@color/colorBlackBlack"
+                            android:textSize="22sp"></TextView>
 
-                    <TextView
-                        android:id="@+id/txtprogress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat"
-                        android:paddingStart="10dp"
-                        android:text="Progress"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="14sp"></TextView>
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/txtvirtualmoney"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat"
+                            android:paddingStart="10dp"
+                            android:text="0"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="14sp"></TextView>
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -203,32 +226,44 @@
                 app:cardUseCompatPadding="true"
                 app:layout_constraintVertical_bias="0.57">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+
+                <com.balysv.materialripple.MaterialRippleLayout xmlns:app2="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    app:mrl_rippleColor="@color/colorFortextOnblueBg"
+                    app:mrl_rippleDuration="600"
+                    app:mrl_rippleOverlay="true"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true"
+                    xmlns:android="http://schemas.android.com/apk/res/android">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:paddingStart="10dp"
-                        android:text="124.4"
-                        android:textColor="@color/colorBlackBlack"
-                        android:textSize="22sp"></TextView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:paddingStart="10dp"
+                            android:text="P.V"
+                            android:textColor="@color/colorBlackBlack"
+                            android:textSize="22sp"></TextView>
 
-                    <TextView
-                        android:id="@+id/txtportfoliovalue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat"
-                        android:paddingStart="10dp"
-                        android:text="Portfolio Value"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="14sp"></TextView>
-                </LinearLayout>
-
+                        <TextView
+                            android:id="@+id/txtportfoliovalue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat"
+                            android:paddingStart="10dp"
+                            android:text="0"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="14sp"></TextView>
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -248,7 +283,6 @@
             app:layout_constraintVertical_bias="0.0">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardshares"
                 android:layout_width="180dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
@@ -257,86 +291,113 @@
                 app:cardUseCompatPadding="true"
                 app:layout_constraintVertical_bias="0.57">
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.balysv.materialripple.MaterialRippleLayout xmlns:app2="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    app:mrl_rippleColor="@color/colorFortextOnblueBg"
+                    app:mrl_rippleDuration="400"
+                    app:mrl_rippleOverlay="true"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true"
+                    xmlns:android="http://schemas.android.com/apk/res/android">
 
                     <LinearLayout
+                        android:id="@+id/cardshares"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center">
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:text="Shares"
+                                android:gravity="center"
+                                android:textColor="@color/colorBlackBlack"
+                                android:textSize="22sp"></TextView>
+                        </LinearLayout>
+
+
                         <TextView
+                            android:id="@+id/sharestxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_bold"
-                            android:text="Bonds"
+                            android:text="0"
                             android:gravity="center"
-                            android:textColor="@color/colorBlackBlack"
+                            android:textColor="@color/colorBlack"
                             android:textSize="22sp"></TextView>
                     </LinearLayout>
-
-
-                    <TextView
-                        android:id="@+id/bondtxt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:text="5"
-                        android:gravity="center"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="22sp"></TextView>
-                </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardbonds"
                 android:layout_width="180dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="4dp"
+                android:clickable="true"
                 app:cardUseCompatPadding="true"
                 app:layout_constraintVertical_bias="0.57">
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.balysv.materialripple.MaterialRippleLayout xmlns:app2="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    app:mrl_rippleColor="@color/colorFortextOnblueBg"
+                    app:mrl_rippleDuration="400"
+                    app:mrl_rippleOverlay="true"
+                    app:mrl_rippleFadeDuration="75"
+                    app:mrl_rippleDelayClick="true"
+                    rv_centered="true"
+                    xmlns:android="http://schemas.android.com/apk/res/android">
 
                     <LinearLayout
+                        android:id="@+id/cardbonds"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center">
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:text="Bonds"
+                                android:gravity="center"
+                                android:textColor="@color/colorBlackBlack"
+                                android:textSize="22sp"></TextView>
+                        </LinearLayout>
+
+
                         <TextView
+                            android:id="@+id/bondtxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_bold"
-                            android:text="Shares"
+                            android:text="0"
                             android:gravity="center"
-                            android:textColor="@color/colorBlackBlack"
+                            android:textColor="@color/colorBlack"
                             android:textSize="22sp"></TextView>
                     </LinearLayout>
 
-
-                    <TextView
-                        android:id="@+id/sharestxt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:text="3"
-                        android:gravity="center"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="22sp"></TextView>
-                </LinearLayout>
-
+                </com.balysv.materialripple.MaterialRippleLayout>
             </androidx.cardview.widget.CardView>
+
+
 
         </LinearLayout>
     </LinearLayout>

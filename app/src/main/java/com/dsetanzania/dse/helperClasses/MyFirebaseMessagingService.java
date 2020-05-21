@@ -3,6 +3,8 @@ package com.dsetanzania.dse.helperClasses;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
@@ -11,6 +13,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,39 +37,54 @@ import retrofit2.http.Url;
 import static android.icu.text.DisplayContext.LENGTH_SHORT;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.dsetanzania.dse.activities.LoginActivity.sharedPrefrences;
+import static com.dsetanzania.dse.helperClasses.AppUtil.CHANNEL_1_ID;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    private static RemoteViews contentView;
+    private static Notification notification;
+    private static NotificationManagerCompat notificationManager;
+    private static final int NotificationID = 1005;
+    private static NotificationCompat.Builder mBuilder;
 
-  /* @Override
+   @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("Channel_ID","Messages",importance);
-            channel.setDescription("SyncMessage");
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-        Uri path = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        Notification notification = new NotificationCompat.Builder(this, "Channel_ID")
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setSound(path)
-                .setContentText(remoteMessage.getNotification().getBody())
-                .build();
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.notify(1, notification);
+       if (remoteMessage.getNotification() != null){
 
+           if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+               int importance = NotificationManager.IMPORTANCE_HIGH;
+               NotificationChannel channel = new NotificationChannel("Channel_ID","Messages",importance);
+               channel.setDescription("SyncMessage");
+               NotificationManager notificationManager = getSystemService(NotificationManager.class);
+               notificationManager.createNotificationChannel(channel);
+           }
+           notificationManager = NotificationManagerCompat.from(getBaseContext());
+
+           Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_1_ID)
+                   .setSmallIcon(R.drawable.logo_app_alt_down)
+                   .setContentTitle(remoteMessage.getNotification().getTitle())
+                   .setContentText(remoteMessage.getNotification().getBody())
+                   .setColor(getResources().getColor(R.color.colorForNotification))
+                   .setPriority(NotificationCompat.PRIORITY_HIGH)
+                   .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                   .build();
+           notificationManager.notify(1, notification);
+
+
+           Intent broadcast = new Intent();
+           broadcast.setAction("OPEN_NEW_ACTIVITY");
+           sendBroadcast(broadcast);
+       }
         super.onMessageReceived(remoteMessage);
-    }*/
+    }
 
     @Override
     public void onNewToken(String s) {
         Log.e("NEW_TOKEN", s);
     }
 
-    @Override
+   /* @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
         // TODO(developer): Handle FCM messages here.
@@ -77,7 +95,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d("MESSAGE RECEIVED", "Message data payload: " + remoteMessage.getData());
 
-            if (/* Check if data needs to be processed by long running job */ true) {
+            if (*//* Check if data needs to be processed by long running job *//* true) {
                 // For long-running tasks (10 seconds or more) use WorkManager.
             } else {
                 // Handle message within 10 seconds
@@ -104,6 +122,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
-    }
+    }*/
+
 
 }

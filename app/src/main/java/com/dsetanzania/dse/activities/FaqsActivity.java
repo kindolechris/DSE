@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.adapters.FaqsTabadapter;
+import com.dsetanzania.dse.adapters.tabs.FaqsTabadapter;
 import com.google.android.material.tabs.TabLayout;
 
 

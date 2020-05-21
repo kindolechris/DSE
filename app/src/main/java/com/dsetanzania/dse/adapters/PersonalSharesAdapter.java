@@ -5,25 +5,26 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dsetanzania.dse.R;
-import com.dsetanzania.dse.activities.BuyOrSaleBoardShareActivity;
-import com.dsetanzania.dse.models.PersonalShareModel;
+import com.dsetanzania.dse.activities.BuyPersonShareActivity;
+import com.dsetanzania.dse.models.PersonalsharesTransactionModel;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAdapter.ViewHolder>  {
 
-    private ArrayList<PersonalShareModel> personalShareModel;
+    private List<PersonalsharesTransactionModel> personalShareData;
     final Vector<ViewHolder> securityPriceListViewHold = new Vector<>();
     Context mycontext;
     int _position;
@@ -34,8 +35,8 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
         void OnServerItemClicked(int index);
     }
 
-    public PersonalSharesAdapter(Context context, ArrayList<PersonalShareModel> list) {
-        this.personalShareModel = list;
+    public PersonalSharesAdapter(Context context, List<PersonalsharesTransactionModel> list) {
+        this.personalShareData = list;
         this.mycontext =  context;
 
     }
@@ -44,18 +45,19 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtcompanyname;
-        TextView txtpersonname;
+        TextView txtstatus;
         TextView txtlquantity;
         TextView txtprice;
-        TextView txtdate;
+        LinearLayout personalshareLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             txtcompanyname = (TextView)itemView.findViewById(R.id.txtcompanyname);
-            txtpersonname = (TextView)itemView.findViewById(R.id.txtpersname);
+            txtstatus = (TextView)itemView.findViewById(R.id.txtstatus);
             txtlquantity = (TextView)itemView.findViewById(R.id.txtquantity);
             txtprice = (TextView)itemView.findViewById(R.id.openingPrice);
+            personalshareLayout = (LinearLayout)itemView.findViewById(R.id.personalshareLayout);
             //buybtn = (Button) itemView.findViewById(R.id.btnbuy);
             //sellbtn = (Button) itemView.findViewById(R.id.btnSell);
 
@@ -75,31 +77,29 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-/*        _position = position;
+       _position = -1;
         NumberFormat formatter = new DecimalFormat("#,###");
-        holder.itemView.setTag(personalShareModel.get(position));
-        holder.txtcompanyname.setText(personalShareModel.get(position).getCompany());
-        holder.txtprice.setText("Opened at " + formatter.format(Double.parseDouble(personalShareModel.get(position).getOpeningPrice())));
-        holder.txtlasttradequantity.setText("LTQ :" + formatter.format(Double.parseDouble(personalShareModel.get(position).getLastTradedQuantity())));
-        holder.txtvolume.setText("Volume :" + formatter.format(Double.parseDouble(personalShareModel.get(position).getVolume())));
+        holder.itemView.setTag(personalShareData.get(position));
+        holder.txtcompanyname.setText(personalShareData.get(position).getCompanyname());
+        holder.txtprice.setText("Opened at " + formatter.format(personalShareData.get(position).getPrice()));
+        holder.txtlquantity.setText("Quantity :" + formatter.format(personalShareData.get(position).getSharesamount()));
+        holder.txtstatus.setText("Status :" + personalShareData.get(position).getStatus());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.personalshareLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(mycontext, BuyOrSaleBoardShareActivity.class);
-                myIntent.putExtra("OpeningPrice", personalShareModel.get(position).getOpeningPrice());
-                myIntent.putExtra("Companyname", personalShareModel.get(position).getCompany());
+                Intent myIntent = new Intent(mycontext, BuyPersonShareActivity.class);
+                myIntent.putExtra("OpeningPrice", String.valueOf(personalShareData.get(position).getPrice()));
+                myIntent.putExtra("Companyname", personalShareData.get(position).getCompanyname());
+                myIntent.putExtra("peerid", String.valueOf(personalShareData.get(position).getId()));
                 mycontext.startActivity(myIntent);
             }
-        });*/
-
-        //pushMarkets();
-        //_position = position + 1;
+        });
     }
 
     @Override
     public int getItemCount() {
-        return personalShareModel.size();
+        return personalShareData.size();
     }
 
     public  String formatExponential(String value){
@@ -109,22 +109,6 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
         return f;
     }
 
-    /*public void pushMarkets(){
-
-        DatabaseReference reference;
-        reference = FirebaseDatabase.getInstance().getReference("MarketSimulator");
-        String id;
-        for(int index=0; index<getItemCount(); index++){
-            id = reference.push().getKey();
-            MarketSimulator livemarket = new MarketSimulator(LivesecurityPrices.get(index).Board,String.valueOf(LivesecurityPrices.get(index).Change.doubleValue()),String.valueOf(LivesecurityPrices.get(index).Close.doubleValue()),String.valueOf(LivesecurityPrices.get(index).Company), String.valueOf(LivesecurityPrices.get(index).High.doubleValue()),String.valueOf(LivesecurityPrices.get(index).LastDealPrice.doubleValue()), String.valueOf(LivesecurityPrices.get(index).LastTradedQuantity.longValue()),String.valueOf(LivesecurityPrices.get(index).Low.doubleValue()), String.valueOf(LivesecurityPrices.get(index).MarketCap.doubleValue()),String.valueOf(LivesecurityPrices.get(index).OpeningPrice.doubleValue()), String.valueOf(LivesecurityPrices.get(index).Volume));
-            reference.child(id).setValue(livemarket).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    // Toast.makeText(mycontext,"Markets pushed.",Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-    }*/
 
     public static String getdate(){
         try {

@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    tools:context=".activities.BuyOrSaleBoardShareActivity">
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    tools:context=".activities.BuyBoardShareActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -24,6 +26,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
+        android:id="@+id/buybondLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,6 +49,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            <TextView
+                android:id="@+id/bondinfotxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You are about to buy bond .."
+                android:textSize="15dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:textColor="@color/colorBlack">
+            </TextView>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -71,34 +85,6 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-            </LinearLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/MyTextInputLayout"
-                android:textColorHint="@color/colorBlackBlack">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtprice"
-                    style="@style/MyTextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="At price"
-                    android:inputType="numberDecimal"
-                    android:fontFamily="@font/montserrat"
-                    android:maxLength="15"
-                    android:textSize="14dp"
-                    android:maxLines="1"
-                    android:textColorHint="@color/colorBlackBlack"
-                    android:singleLine="true"
-                    android:theme="@style/MyTextInputLayout"
-                    android:textColor="@color/colorBlackBlack" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="15dp">
             </LinearLayout>
@@ -111,7 +97,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bond details"
+                    android:text="Stock details"
                     android:textSize="15dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:textColor="@color/colorBlackBlack">
@@ -134,7 +120,7 @@
                 </TextView>
                 <TextView
                     android:id="@+id/txtvirtualbalance"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0.0"
@@ -160,7 +146,7 @@
                 </TextView>
                 <TextView
                     android:id="@+id/txtbondholdings"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -177,52 +163,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Transaction details"
-                    android:textSize="15dp"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:textColor="@color/colorBlackBlack">
-                </TextView>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Order reference No"
-                    android:textSize="15dp"
-                    android:fontFamily="@font/montserrat"
-                    android:textColor="@color/colorBlack">
-                </TextView>
-                <TextView
-                    android:id="@+id/txtreferenceId"
-                    android:layout_marginStart="8dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="#ID"
-                    android:textSize="15dp"
-                    android:fontFamily="@font/montserrat"
-                    android:textColor="@color/colorBlack">
-                </TextView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
                 android:layout_height="wrap_content">
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnbuybonds"
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:textSize="15dp"
                     app:rippleColor="@color/colorAccent"
@@ -232,19 +178,25 @@
                     android:backgroundTint="@color/colorPrimary"
                     android:text="Buy" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnsellbonds"
-                    android:layout_width="100dp"
-                    android:layout_height="60dp"
-                    android:textSize="15dp"
-                    app:rippleColor="@color/colorAccent"
-                    android:theme="@style/Theme.MaterialComponents.NoActionBar"
-                    android:textColor="@color/colorWhite"
-                    android:backgroundTint="@color/colorRed"
-                    android:text="Sell" />
             </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/bondprogressbar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="10dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/colorPrimary"
+        app:layout_constraintVertical_bias="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

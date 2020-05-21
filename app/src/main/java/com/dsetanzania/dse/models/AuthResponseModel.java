@@ -1,43 +1,17 @@
 package com.dsetanzania.dse.models;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AuthResponseModel {
-
-    @SerializedName("success")
-    private boolean success;
-
-    @SerializedName("message")
-    private String message;
+public class AuthResponseModel extends BaseResponseModel {
 
     @SerializedName("name")
+    @Expose
     private String name;
 
     @SerializedName("data")
+    @Expose
     private UserModel user;
-
-    public AuthResponseModel(boolean success, String message, UserModel user, String name) {
-        this.success = success;
-        this.message = message;
-        this.name = name;
-        this.user = user;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
     public UserModel getUser() {
         return user;
