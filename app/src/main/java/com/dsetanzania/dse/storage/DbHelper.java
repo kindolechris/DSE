@@ -21,7 +21,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_SHARE_TRANSACTION = "create table "+DbContract.SHARE_TRANSACTION_TABLE +
             "(id integer," +DbContract.sharesAmout+" text," +DbContract.sharetransactiondate +
-            " text,"+DbContract.boardShareName+" text," +DbContract.sharePrice+ " text," +DbContract.transactiontype+
+            " text,"+ DbContract.elapsetime+" text,"+DbContract.boardShareName+" text," +DbContract.sharePrice+ " text," +DbContract.transactiontype+
             " text,"+DbContract.transactionstatus+" text)";
 
     private static final String CREATE_TABLE_BOND_TRANSACTION = "create table "+DbContract.BOND_TRANSACTION_TABLE +
@@ -119,11 +119,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     ////////////////////////////////////////////////////////////////////
-    public boolean saveShareTransactionTolocalDatabase(int id, String sharesAmount, String transactiondate, String boardShareName, Integer price, String transactiontype, String transactionstatus, SQLiteDatabase database){
+    public boolean saveShareTransactionTolocalDatabase(int id, String sharesAmount, String transactiondate,String elapsetime, String boardShareName, Integer price, String transactiontype, String transactionstatus, SQLiteDatabase database){
         ContentValues contentValues = new ContentValues();
         contentValues.put("id",id);
         contentValues.put(DbContract.sharesAmout,sharesAmount);
         contentValues.put(DbContract.sharetransactiondate,transactiondate);
+        contentValues.put(DbContract.elapsetime,elapsetime);
         contentValues.put(DbContract.boardShareName,boardShareName);
         contentValues.put(DbContract.sharePrice,price);
         contentValues.put(DbContract.transactiontype,transactiontype);
@@ -132,11 +133,12 @@ public class DbHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateShareTransactionTolocalDatabase(String id, String sharesAmount, String transactiondate, String boardShareName, String price, String transactiontype, String transactionstatus, SQLiteDatabase database){
+    public boolean updateShareTransactionTolocalDatabase(String id, String sharesAmount, String transactiondate,String elapsetime, String boardShareName, String price, String transactiontype, String transactionstatus, SQLiteDatabase database){
         ContentValues contentValues = new ContentValues();
         contentValues.put("id",id);
         contentValues.put(DbContract.sharesAmout,sharesAmount);
         contentValues.put(DbContract.sharetransactiondate,transactiondate);
+        contentValues.put(DbContract.elapsetime,elapsetime);
         contentValues.put(DbContract.boardShareName,boardShareName);
         contentValues.put(DbContract.sharePrice,price);
         contentValues.put(DbContract.transactiontype,transactiontype);
@@ -147,7 +149,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public Cursor readShareTransactionFromLocalDatabase(SQLiteDatabase database){
-        String [] projection = {"id",DbContract.sharesAmout,DbContract.sharetransactiondate,DbContract.boardShareName,DbContract.sharePrice,DbContract.transactiontype,DbContract.transactionstatus};
+        String [] projection = {"id",DbContract.sharesAmout,DbContract.sharetransactiondate,DbContract.elapsetime,DbContract.boardShareName,DbContract.sharePrice,DbContract.transactiontype,DbContract.transactionstatus};
         return (database.query(DbContract.SHARE_TRANSACTION_TABLE,projection,null,null,null,null,null));
     }
 

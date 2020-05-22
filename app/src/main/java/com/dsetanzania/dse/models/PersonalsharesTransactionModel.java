@@ -40,16 +40,20 @@ public class PersonalsharesTransactionModel {
     @SerializedName("id")
     @Expose
     private Integer id;
+    @SerializedName("timeago")
+    @Expose
+    private String timeago;
     @SerializedName("companyname")
     @Expose
     private String companyname;
 
 
-    public PersonalsharesTransactionModel(Integer sharesamount , Integer price , String status, String createdAt, Integer id, String companyname, String transactiontype) {
+    public PersonalsharesTransactionModel(Integer sharesamount , Integer price , String status,String createdAt, String timeago, Integer id, String companyname, String transactiontype) {
         this.transactiontype = transactiontype;
         this.sharesamount = sharesamount;
         this.price = price;
         this.status = status;
+        this.timeago = timeago;
         this.createdAt = createdAt;
         this.id = id;
         this.companyname = companyname;
@@ -159,5 +163,12 @@ public class PersonalsharesTransactionModel {
         this.companyname = companyname;
     }
 
+    public String getTimeago() {
+        return timeago;
+    }
+
+    public void setTimeago(String timeago) {
+        this.timeago = timeago;
+    }
 }
 

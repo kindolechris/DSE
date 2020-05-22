@@ -23,6 +23,7 @@ import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.interfaces.InternetcheckInterface;
+import com.dsetanzania.dse.models.graphdata.GraphDataResponseModel;
 import com.dsetanzania.dse.models.transactions.buy.transaction.shares.board.BuyFromBoardResponseModel;
 import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
@@ -72,7 +73,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     private ProgressBar buyBoardSharesLoader;
     private LinearLayout buyBoardSharesLayout;
     private LineChart linechart;
-    final List<String> xAxisLabel = new ArrayList<>();
+     List<String> xAxisLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +147,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
             }
         });
 
-        initGraph("w");
+        initGraph("d");
 
     }
 
@@ -191,7 +192,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
                     buyBoardSharesLoader.setVisibility(View.INVISIBLE);
                     buyBoardSharesLayout.setVisibility(View.VISIBLE);
                     dbHelper.updateUserLocalDatabase(String.valueOf(buyboardshareresponse.getData().getUser().getId()),buyboardshareresponse.getData().getUser().getStock(),buyboardshareresponse.getData().getUser().getBonds(),buyboardshareresponse.getData().getUser().getFirstname(),buyboardshareresponse.getData().getUser().getLastname(),buyboardshareresponse.getData().getUser().getTradername(),buyboardshareresponse.getData().getUser().getEmail(),buyboardshareresponse.getData().getUser().getYearOfStudy(),buyboardshareresponse.getData().getUser().getUniversity(),buyboardshareresponse.getData().getUser().getCoursename(),buyboardshareresponse.getData().getUser().getPhonenumber(),buyboardshareresponse.getData().getUser().getRole(),buyboardshareresponse.getData().getUser().getVirtualmoney(),buyboardshareresponse.getData().getUser().getGender(),DbContract.SYNC_STATUS_FAILED,database);
-                    dbHelper.saveShareTransactionTolocalDatabase(buyboardshareresponse.getData().getPersonalsharesTransaction().getId(),String.valueOf(buyboardshareresponse.getData().getPersonalsharesTransaction().getSharesamount()),buyboardshareresponse.getData().getPersonalsharesTransaction().getCreatedAt(),buyboardshareresponse.getData().getPersonalsharesTransaction().getCompanyname(),buyboardshareresponse.getData().getPersonalsharesTransaction().getPrice(),buyboardshareresponse.getData().getPersonalsharesTransaction().getTransactiontype(),buyboardshareresponse.getData().getPersonalsharesTransaction().getStatus(),database);
+                    dbHelper.saveShareTransactionTolocalDatabase(buyboardshareresponse.getData().getPersonalsharesTransaction().getId(),String.valueOf(buyboardshareresponse.getData().getPersonalsharesTransaction().getSharesamount()),buyboardshareresponse.getData().getPersonalsharesTransaction().getCreatedAt(),buyboardshareresponse.getData().getPersonalsharesTransaction().getTimeago(),buyboardshareresponse.getData().getPersonalsharesTransaction().getCompanyname(),buyboardshareresponse.getData().getPersonalsharesTransaction().getPrice(),buyboardshareresponse.getData().getPersonalsharesTransaction().getTransactiontype(),buyboardshareresponse.getData().getPersonalsharesTransaction().getStatus(),database);
                     readFromLocalDb();
                     Toast.makeText(BuyBoardShareActivity.this, buyboardshareresponse.getMessage(),Toast.LENGTH_LONG).show();
                     finish();
@@ -234,7 +235,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     }
 
     public void initGraph(String duration){
-        xAxisLabel.clear();
+        //xAxisLabel.clear();
         linechart = findViewById(R.id.chart1);
         linechart.getDescription().setEnabled(false);
         // if more than 60 entries are displayed in the chart, no values will be
@@ -247,6 +248,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
         linechart.setDrawGridBackground(false);
 
         XAxis xAxis = linechart.getXAxis();
+        xAxis.setLabelCount(5,true);
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -276,30 +278,41 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     }
 
     public void setDaily(){
-        xAxisLabel.add("7:00AM");
-        xAxisLabel.add("8:00AM");
-        xAxisLabel.add("9:00AM");
-        xAxisLabel.add("10:00AM");
-        xAxisLabel.add("11:00AM");
-        xAxisLabel.add("12:00PM");
-        xAxisLabel.add("13:00PM");
         List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0f, 85f));
-        entries.add(new Entry(1f, 90f));
-        entries.add(new Entry(2f, 106f));
-        entries.add(new Entry(3f, 86f));
-        entries.add(new Entry(4f, 92f));
-        entries.add(new Entry(5f, 110f));
-        entries.add(new Entry(6f, 100f));
+        Call<GraphDataResponseModel> call = RetrofitClient
+                .getInstance().getApi().fetchDailyBoardGraphData("Bearer " + _token);
+        call.enqueue(new Callback<GraphDataResponseModel>() {
+            @Override
+            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
+                GraphDataResponseModel dailygraphdata = response.body();
+                xAxisLabel = new ArrayList<>();
+                if (dailygraphdata.isSuccess()){
+                    for(int i=0; i<dailygraphdata.getData().size(); i++) {
+                        xAxisLabel.add(dailygraphdata.getData().get(i).getFullDateData());
+                        entries.add(new Entry(Float.valueOf(i), Float.valueOf(dailygraphdata.getData().get(i).getOpeningPrice())));
+                    }
+                    
+                    LineDataSet set = new LineDataSet(entries, "Market Price");
+                    set.setColors(getResources().getColor(R.color.colorPrimary));
+                    set.setDrawFilled(true);
+                    set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
+                    set.setDrawValues(false);
+                    LineData data = new LineData(set);
+                    linechart.setData(data);
+                    linechart.invalidate();
+                }
+                else{
 
-        LineDataSet set = new LineDataSet(entries, "Market Price");
-        set.setColors(getResources().getColor(R.color.colorPrimary));
-        set.setDrawFilled(true);
-        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
-        set.setDrawValues(false);
-        LineData data = new LineData(set);
-        linechart.setData(data);
-        linechart.invalidate();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
+            }
+        });
+
+
+
     }
 
     public void setWeekly(){

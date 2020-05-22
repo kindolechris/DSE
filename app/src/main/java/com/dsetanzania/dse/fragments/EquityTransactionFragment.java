@@ -154,6 +154,7 @@ public class EquityTransactionFragment extends Fragment {
             String boardShareName="";
             Integer price=0;
             String transactiontype="";
+            String elapsetime="";
             String transactionstatus="";
             while(cursor.moveToNext()){
                 id = cursor.getInt(cursor.getColumnIndex("id"));
@@ -163,7 +164,8 @@ public class EquityTransactionFragment extends Fragment {
                 price = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.sharePrice)));
                 transactiontype = cursor.getString(cursor.getColumnIndex(DbContract.transactiontype));
                 transactionstatus = cursor.getString(cursor.getColumnIndex(DbContract.transactionstatus));
-                PersonalsharesTransactionModel buyerSharesTransaction = new PersonalsharesTransactionModel(sharesAmount,price,transactionstatus,transactiondate,id,boardShareName,transactiontype);
+                elapsetime = cursor.getString(cursor.getColumnIndex(DbContract.elapsetime));
+                PersonalsharesTransactionModel buyerSharesTransaction = new PersonalsharesTransactionModel(sharesAmount,price,transactionstatus,transactiondate,elapsetime,id,boardShareName,transactiontype);
                 transaction.add(buyerSharesTransaction);
             }
 
@@ -189,13 +191,13 @@ public class EquityTransactionFragment extends Fragment {
 
                     if(transactionTableIsEmpty()){
                         for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
-                            dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
+                            dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTimeago(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
                         }
                     }
                     else{
                         droptabletransaction();
                         for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
-                            dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
+                            dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTimeago(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
                         }
 
                        /* for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
@@ -211,7 +213,7 @@ public class EquityTransactionFragment extends Fragment {
                     txtnotransaction.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.INVISIBLE);
                     sharestransactionLoader.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getActivity(),personalTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(),personalTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
 

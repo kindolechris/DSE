@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -93,7 +94,7 @@ public class LiveMarketAdapter extends RecyclerView.Adapter<LiveMarketAdapter.Vi
         txtlastdealvalue = (TextView)dialog.findViewById(R.id.txtlastdealvalue);
         txthigh = (TextView)dialog.findViewById(R.id.txthigh);
         txtlow = (TextView)dialog.findViewById(R.id.txtlow);
-        LinearLayout closeModal = dialog.findViewById(R.id.layoutclose);
+        Button closeModal = dialog.findViewById(R.id.btnclose);
 
         closeModal.setOnClickListener(new View.OnClickListener() {
             @Override

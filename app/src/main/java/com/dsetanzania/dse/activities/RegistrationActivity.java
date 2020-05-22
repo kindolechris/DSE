@@ -282,12 +282,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 AuthResponseModel regsterResponse = response.body();
 
                 if (regsterResponse.isSuccess()){
-                    if(regsterResponse.getMessage().equals("User arleady registered.")){
-                        Toast.makeText(RegistrationActivity.this,"Email already registered",Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.INVISIBLE);
-                        registrationLayout.setVisibility(View.VISIBLE);
-                        return;
-                    }
+
                     Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
                     saveLoginData(regsterResponse.getUser().getToken(),regsterResponse.getUser().getId(),regsterResponse.getUser().getFirebaseToken(),regsterResponse.getUser().getEmail());
                     saveToLocalDb(regsterResponse.getUser().getId(),regsterResponse.getUser().getStock(),regsterResponse.getUser().getBonds(),regsterResponse.getUser().getFirstname(),regsterResponse.getUser().getLastname(),regsterResponse.getUser().getTradername(),regsterResponse.getUser().getEmail(),regsterResponse.getUser().getYearOfStudy(),regsterResponse.getUser().getUniversity(),regsterResponse.getUser().getCoursename(),regsterResponse.getUser().getPhonenumber(),regsterResponse.getUser().getRole(),regsterResponse.getUser().getVirtualmoney(),regsterResponse.getUser().getGender());
@@ -302,7 +297,8 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
                 else{
                     Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
-                    return;
+                    progressBar.setVisibility(View.INVISIBLE);
+                    registrationLayout.setVisibility(View.VISIBLE);
                 }
 
             }

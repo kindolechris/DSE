@@ -47,94 +47,109 @@
                 android:background="@null"
                 android:gravity="center" />
         </LinearLayout>
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+        <com.balysv.materialripple.MaterialRippleLayout xmlns:app2="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:mrl_rippleColor="@color/colorFortextOnblueBg"
+            app:mrl_rippleDuration="350"
+            app:mrl_rippleOverlay="true"
+            android:clickable="true"
+            app:mrl_rippleFadeDuration="75"
+            app:mrl_rippleDelayClick="true"
+            rv_centered="true"
+            xmlns:android="http://schemas.android.com/apk/res/android">
             <LinearLayout
-                android:id="@+id/AccountLayout"
+                android:id="@+id/sharetransactionlayout"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:padding="8dp">
+                android:layout_height="wrap_content">
+
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:paddingStart="10dp"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
-                    <ImageView
-                        android:id="@+id/profileusericon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/ic_buy"
-                        android:backgroundTint="@color/colorBlack">
-                    </ImageView>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-                    <TextView
-                        android:id="@+id/txtcompanyname"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="left"
-                        android:text="Id"
-                        android:textColor="@color/colorBlackBlack"
-                        android:layout_marginTop="5dp"
-                        android:textSize="15dp"
-                        android:fontFamily="@font/montserrat">
-                    </TextView>
-                    <TextView
-                        android:id="@+id/txtstatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="11sp"
-                        android:text="status"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@color/colorBlack"
-                        android:fontFamily="@font/fontawesome">
-                    </TextView>
-                    <TextView
-                        android:id="@+id/txttype"
-                        android:layout_width="match_parent"
-                        android:layout_height="15dp"
-                        android:textSize="11sp"
-                        android:text="type"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@color/colorBlack"
-                        android:fontFamily="@font/fontawesome">
-                    </TextView>
-                </LinearLayout>
-                <LinearLayout
+                    android:id="@+id/AccountLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center|right"
-                    android:paddingEnd="10dp">
-                    <TextView
-                        android:id="@+id/txttransactiondate"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:textSize="11sp"
-                        android:text="01/02/2020"
-                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
                         android:gravity="center"
-                        android:layout_marginTop="5dp"
-                        android:textFontWeight="800"
-                        android:textColor="@color/colorBlack"
-                        android:fontFamily="@font/fontawesome">
-                    </TextView>
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:id="@+id/profileusericon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_buy"
+                            android:backgroundTint="@color/colorBlack">
+                        </ImageView>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+                        <TextView
+                            android:id="@+id/txtcompanyname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="left"
+                            android:text="Id"
+                            android:textColor="@color/colorBlackBlack"
+                            android:layout_marginTop="5dp"
+                            android:textSize="15dp"
+                            android:fontFamily="@font/montserrat">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/txtstatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="11sp"
+                            android:text="status"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@color/colorBlack"
+                            android:fontFamily="@font/fontawesome">
+                        </TextView>
+                        <TextView
+                            android:id="@+id/txttype"
+                            android:layout_width="match_parent"
+                            android:layout_height="15dp"
+                            android:textSize="11sp"
+                            android:text="type"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@color/colorBlack"
+                            android:fontFamily="@font/fontawesome">
+                        </TextView>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center|right"
+                        android:paddingEnd="10dp">
+                        <TextView
+                            android:id="@+id/txttransactiondate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:textSize="11sp"
+                            android:text="01/02/2020"
+                            android:paddingEnd="10dp"
+                            android:gravity="center"
+                            android:layout_marginTop="5dp"
+                            android:textFontWeight="800"
+                            android:textColor="@color/colorBlack"
+                            android:fontFamily="@font/fontawesome">
+                        </TextView>
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
+        </com.balysv.materialripple.MaterialRippleLayout>
 
-        </LinearLayout>
 
     </com.daimajia.swipe.SwipeLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -115,10 +115,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_home);
         margeetxt = (TextView) findViewById(R.id.marquutxtbottom);
-
         Fade fade = new Fade();
         View decor = getWindow().getDecorView();
         fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
@@ -350,7 +348,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 updatelocaUserInfoTodb();
-                Toast.makeText(HomeActivity.this, "Notification received", Toast.LENGTH_LONG).show();
             }
         };
 
@@ -506,7 +503,6 @@ public class HomeActivity extends AppCompatActivity {
 
             try {
                 realtimedata = "";
-
                 NumberFormat formatter = new DecimalFormat("#,###");
                 for (int i = 0; i < res.getPropertyCount(); i++) {
                     realtimedata = res.get(i).MarketCap.toString();

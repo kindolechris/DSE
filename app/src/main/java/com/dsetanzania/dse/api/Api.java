@@ -4,6 +4,7 @@ import com.dsetanzania.dse.models.AuthResponseModel;
 import com.dsetanzania.dse.models.BaseResponseModel;
 import com.dsetanzania.dse.models.bond_holdings.PersonalBondHoldingResponseModal;
 import com.dsetanzania.dse.models.bonds.BondResponseModel;
+import com.dsetanzania.dse.models.graphdata.GraphDataResponseModel;
 import com.dsetanzania.dse.models.shares.BoardShareResponseModel;
 import com.dsetanzania.dse.models.shares.PersonalShareResponseModel;
 import com.dsetanzania.dse.models.transactions.buy.transaction.bonds.BuyBondResponseModel;
@@ -63,6 +64,7 @@ public interface Api {
             @Header("Authorization") String token
     );
 
+
     @FormUrlEncoded
     @POST("get/personalsharetransaction")
     Call<PersonalShareTransactionListResponseModel> fetchUserShareTransaction(
@@ -79,6 +81,11 @@ public interface Api {
 
     @GET("get/salesshareslist/board")
     Call<BoardShareResponseModel> fetchBoardSharesdata(
+            @Header("Authorization") String token
+    );
+
+    @GET(" get/share/data/1/day")
+    Call<GraphDataResponseModel> fetchDailyBoardGraphData(
             @Header("Authorization") String token
     );
 

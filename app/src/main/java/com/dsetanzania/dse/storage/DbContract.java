@@ -28,6 +28,7 @@ public class DbContract {
     public static final String SHARE_TRANSACTION_TABLE = "sharestransaction";
     public static final String sharesAmout = "sharesAmount";
     public static final String sharetransactiondate = "transactiondate";
+    public static final String elapsetime = "elapsetime";
     public static final String boardShareName = "boardShareName";
     public static final String sharePrice = "price";
     public static final String transactiontype = "transactiontype";
