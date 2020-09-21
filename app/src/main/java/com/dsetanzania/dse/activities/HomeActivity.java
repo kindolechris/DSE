@@ -18,9 +18,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,27 +37,26 @@ import android.widget.Toast;
 import com.dsetanzania.dse.adapters.LiveMarketAdapter;
 import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.helperClasses.checkInternet;
-import com.dsetanzania.dse.helperClasses.livedata_classes.OOUArrayOfSecurityLivePrice;
-import com.dsetanzania.dse.helperClasses.livedata_classes.OOUdefault_AtsWebFeedService;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.interfaces.InternetcheckInterface;
-import com.dsetanzania.dse.models.UserModel;
 import com.dsetanzania.dse.models.UserDataResponseModel;
+import com.dsetanzania.dse.models.live_data.LiveDataResponseModel;
 import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
-
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import static com.dsetanzania.dse.activities.LoginActivity.sharedPrefrences;
 
@@ -81,7 +80,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView queuestext;
     ProgressBar prgs;
     TextView txtvirtualshare;
-    private int userId;
+    private String userId;
     private String _token;
     RecyclerView livemarketpricerecyclerview;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -94,23 +93,13 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout closeLayout;
     Button equitybtn;
     Button bondbtn;
-    String realtimedata;
-    UserModel user;
     NumberFormat formatter;
-    UserDataResponseModel userdata;
     DbHelper dbHelper;
     SQLiteDatabase database;
     private BroadcastReceiver broadcastReceiver;
     private IntentFilter  mIntentFilter;
     private SharedPreferences sharedPreferences;
-    public static Retrofit retrofit = null;
     private static int PICK_IMAGE_REQUEST = 1;
-    private static String SOAP_ACTION = "http://tempuri.org/AtsWebFeedService/LiveMarketPrices";
-    private static String NAMESPACE = "http://tempuri.org/";
-    private static String METHOD_NAME = "LiveMarketPrices";
-    private static String URL = "http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc?wsdl";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,12 +111,9 @@ public class HomeActivity extends AppCompatActivity {
         fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
         fade.excludeTarget(android.R.id.statusBarBackground, true);
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
-
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
-
         formatter = new DecimalFormat("#,###");
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefreshLayout);
         dialog = new Dialog(HomeActivity.this,R.style.Mydialogtheme);
         dialog.setContentView(R.layout.custom_pop_up_for_queued_orders);
         queuestext = (TextView) dialog.findViewById(R.id.quedtransactiontxt);
@@ -156,13 +142,13 @@ public class HomeActivity extends AppCompatActivity {
         final LinearLayout content = (LinearLayout) findViewById(R.id.content);
 
         sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
-        userId = sharedPreferences.getInt("userid", -1);
+        userId = sharedPreferences.getString("userid", "");
         _token = sharedPreferences.getString("token", "");
         dialogChoice = new Dialog(HomeActivity.this,R.style.Mydialogtheme);
         dialogChoice.setContentView(R.layout.custom_pop_up_choice);
         equitybtn = (Button)dialogChoice.findViewById(R.id.btnEquity);
         bondbtn = (Button)dialogChoice.findViewById(R.id.btnBonds);
-
+        //Toast.makeText(HomeActivity.this,_token,Toast.LENGTH_SHORT).show();
         equitybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,13 +176,11 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
         //updatelocaUserInfoTodb();
         //saveToLocalDb();
 
         margeetxt.setSelected(true);
 
-        //getlivedata();
      /*   new Timer().scheduleAtFixedRate(new TimerTask() {
        @Override
             public void run() {
@@ -217,17 +201,17 @@ public class HomeActivity extends AppCompatActivity {
                 if(result == "Access"){
                     try {
                         updatelocaUserInfoTodb();
+                        getliveData();
                     } catch (Exception e) {
-                        Toast.makeText(HomeActivity.this,"System error",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.this,"Live market feed error",Toast.LENGTH_SHORT).show();
                     }
 
                 }
                 else if(result == "NoAccess"){
                     try {
                         readFromLocalDb();
-                        Snackbar snackbar = Snackbar
-                                .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        //readLivedatafromlocal();
+                        showSnackbar("No internet access");
                     } catch (Exception e) {
                         Toast.makeText(HomeActivity.this,"System error (DB)",Toast.LENGTH_SHORT).show();
                     }
@@ -267,7 +251,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getSupportActionBar().show();
-                Intent myIntent = new Intent(HomeActivity.this, FaqsActivity.class);
+                Intent myIntent = new Intent(HomeActivity.this, LearningActivity.class);
                 HomeActivity.this.startActivity(myIntent);
             }
         });
@@ -319,7 +303,6 @@ public class HomeActivity extends AppCompatActivity {
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Try this app.");
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, "Share via"));
-
             }
         });
 
@@ -335,14 +318,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getlivedata();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -386,6 +361,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         try {
             updatelocaUserInfoTodb();
+            margeetxt.setSelected(true);
         } catch (Exception e) {
             Toast.makeText(HomeActivity.this,"System error",Toast.LENGTH_SHORT).show();
         }
@@ -441,7 +417,7 @@ public class HomeActivity extends AppCompatActivity {
             startActivityForResult(i, PICK_IMAGE_REQUEST);
         }
         else{
-            queuestext.setText("You have " + QueuesCountTxt.getText().toString() + " pending \nqueue order(s)");
+            queuestext.setText("No info currently !");
             dialog.show();
         }
         return super.onOptionsItemSelected(item);
@@ -459,63 +435,6 @@ public class HomeActivity extends AppCompatActivity {
             imageView.setBorderColor(getResources().getColor(R.color.colorWhite));
             Picasso.get().load(selectedImagURL).into(imageView);
             //uploadFile();
-
-        }
-    }
-
-    public void getlivedata(){
-        GetLiveMarketTask gt = new GetLiveMarketTask();
-        gt.execute();
-    }
-
-    class GetLiveMarketTask extends AsyncTask {
-
-        LiveMarketAdapter lvm;
-        OOUArrayOfSecurityLivePrice res;
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
-
-            try {
-
-                OOUdefault_AtsWebFeedService service = new OOUdefault_AtsWebFeedService("http://ht.ddnss.ch:6080/livefeedCustodian/FeedWebService.svc");
-
-             res  = service.LiveMarketPrices();
-
-                lvm = new LiveMarketAdapter(HomeActivity.this, res);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-
-            livemarketpricerecyclerview.setHasFixedSize(true);
-            livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            livemarketpricerecyclerview.setAdapter(lvm);
-            txttrandingstats.setText("Real-Time Market Prices");
-            prgs.setVisibility(View.INVISIBLE);
-
-            try {
-                realtimedata = "";
-                NumberFormat formatter = new DecimalFormat("#,###");
-                for (int i = 0; i < res.getPropertyCount(); i++) {
-                    realtimedata = res.get(i).MarketCap.toString();
-                    Log.i("Dataaaaaa", realtimedata);
-                    margeetxt.append(" " + (res.get(i).Company) + " " + (formatter.format((res.get(i).OpeningPrice)))+ "  ");
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.i("TAAAAAG","No dataaa");
-                return;
-            }
-
         }
     }
 
@@ -553,7 +472,6 @@ public class HomeActivity extends AppCompatActivity {
     public void readFromLocalDb(){
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-
         Cursor cursor = dbHelper.readUserFromLocalDatabase(database);
         String tradername="";
         String firstname="";
@@ -582,14 +500,14 @@ public class HomeActivity extends AppCompatActivity {
 
     public void updatelocaUserInfoTodb(){
         Call<UserDataResponseModel> call = RetrofitClient
-                .getInstance().getApi().fetchUserdata(userId,"Bearer " +  _token);
+                .getInstance().getApi().fetchUserdata("Bearer " +  _token);
 
         call.enqueue(new Callback<UserDataResponseModel>() {
             @Override
             public void onResponse(Call<UserDataResponseModel> call, Response<UserDataResponseModel> response) {
                 UserDataResponseModel userDataResponseModel = response.body();
                 if (userDataResponseModel != null){
-                    dbHelper.updateUserLocalDatabase(String.valueOf(userId),userDataResponseModel.getUsers().getStock(),userDataResponseModel.getUsers().getBonds(),userDataResponseModel.getUsers().getFirstname(),userDataResponseModel.getUsers().getLastname(),userDataResponseModel.getUsers().getTradername(),userDataResponseModel.getUsers().getEmail(),userDataResponseModel.getUsers().getYearOfStudy(),userDataResponseModel.getUsers().getUniversity(),userDataResponseModel.getUsers().getCoursename(),userDataResponseModel.getUsers().getPhonenumber(),userDataResponseModel.getUsers().getRole(),userDataResponseModel.getUsers().getVirtualmoney(),userDataResponseModel.getUsers().getGender(),DbContract.SYNC_STATUS_FAILED,database);
+                    dbHelper.updateUserLocalDatabase(String.valueOf(userId),userDataResponseModel.getUsers().getStock(),userDataResponseModel.getUsers().getBonds(),userDataResponseModel.getUsers().getFirstname(),userDataResponseModel.getUsers().getLastname(),userDataResponseModel.getUsers().getTradername(),userDataResponseModel.getUsers().getEmail(),userDataResponseModel.getUsers().getYearOfStudy(),userDataResponseModel.getUsers().getUniversity(),userDataResponseModel.getUsers().getCoursename(),userDataResponseModel.getUsers().getPhonenumber(),userDataResponseModel.getUsers().getRole(),userDataResponseModel.getUsers().getVirtualmoney(),userDataResponseModel.getUsers().getGender(),DbContract.SYNC_STATUS_FAILED,userDataResponseModel.getUsers().getPortfolioValue(),database);
                     readFromLocalDb();
                     //dbHelper.close();
                 }
@@ -634,5 +552,124 @@ public class HomeActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void droptableLivedata(){
+        String query = "DELETE FROM "+ DbContract.LIVE_MARKET__TABLE;
+        database.execSQL(query);
+    }
+
+    /*public void readLivedatafromlocal(){
+        livePrices = new OOUArrayOfSecurityLivePrice();
+        DbHelper dbHelper = new DbHelper(this);
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = dbHelper.readLiveDataFromLocalDatabase(database);
+        String Change="";
+        String Board="";
+        String Closee="";
+        String Company="";
+        String High="";
+        String LastDealPrice="";
+        String LastTradedQuantity="";
+        String OpeningPrice="";
+        String Low="";
+        String MarketCap="";
+        String Time="";
+        String Volume="";
+        int i=0;
+        while(cursor.moveToNext()){
+            Change = cursor.getString(cursor.getColumnIndex(DbContract.Change));
+            Board = cursor.getString(cursor.getColumnIndex(DbContract.Board));
+            Closee = cursor.getString(cursor.getColumnIndex(DbContract.Closee));
+            Company = cursor.getString(cursor.getColumnIndex(DbContract.Company));
+            High = cursor.getString(cursor.getColumnIndex(DbContract.High));
+            LastDealPrice = cursor.getString(cursor.getColumnIndex(DbContract.LastDealPrice));
+            LastTradedQuantity = cursor.getString(cursor.getColumnIndex(DbContract.LastTradedQuantity));
+            OpeningPrice = cursor.getString(cursor.getColumnIndex(DbContract.openingPrice));
+            Low = cursor.getString(cursor.getColumnIndex(DbContract.Low));
+            MarketCap = cursor.getString(cursor.getColumnIndex(DbContract.MarketCap));
+            Time = cursor.getString(cursor.getColumnIndex(DbContract.Time));
+            Volume = cursor.getString(cursor.getColumnIndex(DbContract.Volume));
+
+            OOUSecurityLivePrice securityLivePrice = new OOUSecurityLivePrice(Board, BigDecimal.valueOf(Double.valueOf(Change).longValue()),BigDecimal.valueOf(Double.valueOf(Closee).longValue()), Company,BigDecimal.valueOf(Double.valueOf(High).longValue()),BigDecimal.valueOf(Double.valueOf(LastDealPrice).longValue()),Double.valueOf(LastTradedQuantity).longValue(),BigDecimal.valueOf(Double.valueOf(Low).longValue()),BigDecimal.valueOf(Double.valueOf(MarketCap).longValue()),BigDecimal.valueOf(Double.valueOf(OpeningPrice)),formatstringtodate(Time),Double.valueOf(Volume).longValue());
+            livePrices.add(securityLivePrice);
+            margeetxt.append(" " + (livePrices.get(i).Company) + " " + (formatter.format((livePrices.get(i).OpeningPrice)))+ "  ");
+            i++;
+        }
+        prgs.setVisibility(View.INVISIBLE);
+        liveMarketAdapter = new LiveMarketAdapter(HomeActivity.this, livePrices);
+        livemarketpricerecyclerview.setHasFixedSize(true);
+        livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        livemarketpricerecyclerview.setAdapter(liveMarketAdapter);
+        cursor.close();
+        dbHelper.close();
+    }*/
+
+    public Date formatstringtodate(String date){
+        DateFormat df = new SimpleDateFormat("dd-MMM-yyyy hh:mm");
+        Date dt=null;
+        try {
+            dt = df.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dt;
+    }
+
+    public void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(parentLayout, message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED);
+        View snackView = snackbar.getView();
+        TextView textView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        snackbar.show();
+    }
+
+    public void getliveData(){
+        Call<LiveDataResponseModel> call = RetrofitClient
+                .getInstance().getApi().fetchLiveData("Bearer " +  _token);
+
+        String s = call.toString();
+        call.enqueue(new Callback<LiveDataResponseModel>() {
+            @Override
+            public void onResponse(Call<LiveDataResponseModel> call, Response<LiveDataResponseModel> response) {
+                if(response.isSuccessful()){
+                    LiveDataResponseModel liveDataResponseModel = response.body();
+                    if ( liveDataResponseModel.isSuccess()){
+
+                       /*     droptableLivedata();
+                            for(int i = 0; i< livePrices.size(); i++){
+                                dbHelper.saveLiveDataTolocalDatabase(livePrices.get(i).Board,String.valueOf(livePrices.get(i).Change),String.valueOf(livePrices.get(i).Close), livePrices.get(i).Company,String.valueOf(livePrices.get(i).High),String.valueOf(livePrices.get(i).LastDealPrice),String.valueOf(livePrices.get(i).LastTradedQuantity),String.valueOf(livePrices.get(i).Low),String.valueOf(livePrices.get(i).MarketCap),String.valueOf(livePrices.get(i).OpeningPrice),String.valueOf(livePrices.get(i).Time),String.valueOf(livePrices.get(i).Volume),database);
+                            }
+
+                            readLivedatafromlocal();*/
+
+                        LiveMarketAdapter liveMarketAdapter = new LiveMarketAdapter(HomeActivity.this, liveDataResponseModel.getData().getLiveMarketPricesResult().getSecurityLivePrice());
+                        livemarketpricerecyclerview.setHasFixedSize(true);
+                        livemarketpricerecyclerview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        livemarketpricerecyclerview.setAdapter(liveMarketAdapter);
+                        txttrandingstats.setText("Real-Time Market Prices");
+                        prgs.setVisibility(View.INVISIBLE);
+                        DecimalFormat format = new DecimalFormat("0.#");
+
+                        if(liveMarketAdapter!=  null){
+                            for (int i = 0; i < liveMarketAdapter.getItemCount(); i++) {
+                                margeetxt.append(" " + (liveDataResponseModel.getData().getLiveMarketPricesResult().getSecurityLivePrice().get(i).getCompany()) + " " + (format.format(Double.valueOf(liveDataResponseModel.getData().getLiveMarketPricesResult().getSecurityLivePrice().get(i).getOpeningPrice())))+ "  ");
+
+                            }
+                        }
+                    }
+                    else{
+                        Toast.makeText(HomeActivity.this,liveDataResponseModel.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    Toast.makeText(HomeActivity.this,"Server error no response",Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LiveDataResponseModel> call, Throwable t) {
+
+            }
+        });
+    }
 }
 

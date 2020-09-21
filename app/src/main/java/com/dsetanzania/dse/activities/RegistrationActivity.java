@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dsetanzania.dse.R;
@@ -42,8 +44,7 @@ import retrofit2.Response;
 public class RegistrationActivity extends AppCompatActivity {
 
     Button registerbtn;
-    Button btnuniversity;
-    AlertDialog _builder;
+    TextInputEditText btnuniversity;
     TextInputEditText firstname;
     TextInputEditText lastname;
     TextInputEditText tradername;
@@ -60,6 +61,7 @@ public class RegistrationActivity extends AppCompatActivity {
     RadioButton maleRadio;
     RadioButton femaleRadio;
     Toolbar toolbar;
+    String gender = "Male";
     RelativeLayout registrationLayout;
     public static final  String sharedPrefrences = "sharedpref";
     public static final  String emailAddress = "Email";
@@ -82,7 +84,7 @@ public class RegistrationActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setTitle("Registration");
         }
-        btnuniversity = (Button) findViewById(R.id.btnuniversity);
+        btnuniversity = (TextInputEditText) findViewById(R.id.btnuniversity);
         progressBar = (ProgressBar)  findViewById(R.id.RegistrationLoaderketLoader2);
 
         radiogroupGender = (RadioGroup) findViewById(R.id.radioGender);
@@ -98,18 +100,32 @@ public class RegistrationActivity extends AppCompatActivity {
         registerbtn = (Button) findViewById(R.id.btnregister);
         maleRadio = (RadioButton) findViewById(R.id.radioButton1);
         femaleRadio = (RadioButton) findViewById(R.id.radioButton2);
-        btnuniversity.setOnClickListener(new View.OnClickListener() {
+        maleRadio.setChecked(true);
+        maleRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gender = "Male";
+            }
+        });
+
+        femaleRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gender = "Female";
+            }
+        });
+/*        btnuniversity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(RegistrationActivity.this, SearchUniversityActivity.class);
                 RegistrationActivity.this.startActivity(myIntent);
             }
-        });
+        });*/
         registerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(TextUtils.isEmpty(firstname.getText().toString().trim()) && TextUtils.isEmpty(lastname.getText().toString().trim()) && TextUtils.isEmpty(email.getText().toString().trim()) && TextUtils.isEmpty(tradername.getText().toString().trim()) && TextUtils.isEmpty(coursename.getText().toString().trim()) && TextUtils.isEmpty(yearOfStudy.getText().toString().trim()) && TextUtils.isEmpty(phoneNumber.getText().toString().trim()) && TextUtils.isEmpty(passoword.getText().toString().trim()) && TextUtils.isEmpty(confirmpassword.getText().toString().trim()) && btnuniversity.getText().equals("University")){
+                if(TextUtils.isEmpty(firstname.getText().toString().trim()) && TextUtils.isEmpty(lastname.getText().toString().trim()) && TextUtils.isEmpty(email.getText().toString().trim()) && TextUtils.isEmpty(tradername.getText().toString().trim()) && TextUtils.isEmpty(coursename.getText().toString().trim()) && TextUtils.isEmpty(yearOfStudy.getText().toString().trim()) && TextUtils.isEmpty(phoneNumber.getText().toString().trim()) && TextUtils.isEmpty(passoword.getText().toString().trim()) && TextUtils.isEmpty(confirmpassword.getText().toString().trim()) && TextUtils.isEmpty(btnuniversity.getText().toString().trim())){
                     new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
                             .setTitle("Problem!")
                             .setMessage("All fields must be entered")
@@ -117,13 +133,6 @@ public class RegistrationActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(!maleRadio.isChecked() && !femaleRadio.isChecked()){
-                    new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
-                            .setTitle("Problem!")
-                            .setMessage("Please select gender")
-                            .setPositiveButton("Ok",null).show();
-                    return;
-                }
 
                 if(firstname.getText().toString().trim().isEmpty()){
                     firstname.setError("Required");
@@ -163,11 +172,8 @@ public class RegistrationActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(btnuniversity.getText().equals("University")){
-                    new AlertDialog.Builder(RegistrationActivity.this,R.style.Mydialogtheme)
-                            .setTitle("Alert!")
-                            .setMessage("Please select university")
-                            .setPositiveButton("Ok",null).show();
+                if(btnuniversity.getText().toString().trim().isEmpty()){
+                    btnuniversity.setError("Required");
                     return;
                 }
                 if(! passoword.getText().toString().equals(confirmpassword.getText().toString())){
@@ -204,15 +210,13 @@ public class RegistrationActivity extends AppCompatActivity {
                                             try {
                                                 registerUser(token);
                                             } catch (Exception e) {
-                                                Toast.makeText(RegistrationActivity.this,"System error",Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(RegistrationActivity.this,"Exception error",Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
                         }
                         else if(result == "NoAccess"){
-                            Snackbar snackbar = Snackbar
-                                    .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
-                            snackbar.show();
+                            showSnackbar("No internet access");
                             progressBar.setVisibility(View.INVISIBLE);
                             registrationLayout.setVisibility(View.VISIBLE);
                         }
@@ -265,42 +269,37 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
 
-    public  void checkbtn(View view){
-        int radioId = radiogroupGender.getCheckedRadioButtonId();
-        radiobtn = findViewById(radioId);
-
-        //Toast.makeText(RegistrationActivity.this,"Selected : " + radiobtn.getText().toString(),Toast.LENGTH_SHORT).show();
-    }
-
-
     public void registerUser(String FirebaseTOken){
         Call<AuthResponseModel> call = RetrofitClient
-                .getInstance().getApi().register(firstname.getText().toString().trim(),lastname.getText().toString().trim(),radiobtn.getText().toString(),tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),btnuniversity.getText().toString().trim(),coursename.getText().toString().trim(),passoword.getText().toString().trim(),confirmpassword.getText().toString().trim(),phoneNumber.getText().toString().trim(),FirebaseTOken);
+                .getInstance().getApi().register(firstname.getText().toString().trim(),lastname.getText().toString().trim(),gender,tradername.getText().toString().trim(),email.getText().toString().trim(),yearOfStudy.getText().toString().trim(),btnuniversity.getText().toString().trim(),coursename.getText().toString().trim(),passoword.getText().toString().trim(),confirmpassword.getText().toString().trim(),phoneNumber.getText().toString().trim(),FirebaseTOken);
         call.enqueue(new Callback<AuthResponseModel>() {
             @Override
             public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
-                AuthResponseModel regsterResponse = response.body();
+                if(response.isSuccessful()){
+                    AuthResponseModel regsterResponse = response.body();
+                    if (regsterResponse.isSuccess()){
 
-                if (regsterResponse.isSuccess()){
+                        Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
+                        saveLoginData(regsterResponse.getUser().getToken(),regsterResponse.getUser().getId(),regsterResponse.getUser().getFirebaseToken(),regsterResponse.getUser().getEmail());
+                        saveToLocalDb(regsterResponse.getUser().getId(),regsterResponse.getUser().getStock(),regsterResponse.getUser().getBonds(),regsterResponse.getUser().getFirstname(),regsterResponse.getUser().getLastname(),regsterResponse.getUser().getTradername(),regsterResponse.getUser().getEmail(),regsterResponse.getUser().getYearOfStudy(),regsterResponse.getUser().getUniversity(),regsterResponse.getUser().getCoursename(),regsterResponse.getUser().getPhonenumber(),regsterResponse.getUser().getRole(),regsterResponse.getUser().getVirtualmoney(),regsterResponse.getUser().getPortfolioValue(),regsterResponse.getUser().getGender());
+                        progressBar.setVisibility(View.INVISIBLE);
+                        //registrationLayout.setVisibility(View.VISIBLE);
 
-                    Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
-                    saveLoginData(regsterResponse.getUser().getToken(),regsterResponse.getUser().getId(),regsterResponse.getUser().getFirebaseToken(),regsterResponse.getUser().getEmail());
-                    saveToLocalDb(regsterResponse.getUser().getId(),regsterResponse.getUser().getStock(),regsterResponse.getUser().getBonds(),regsterResponse.getUser().getFirstname(),regsterResponse.getUser().getLastname(),regsterResponse.getUser().getTradername(),regsterResponse.getUser().getEmail(),regsterResponse.getUser().getYearOfStudy(),regsterResponse.getUser().getUniversity(),regsterResponse.getUser().getCoursename(),regsterResponse.getUser().getPhonenumber(),regsterResponse.getUser().getRole(),regsterResponse.getUser().getVirtualmoney(),regsterResponse.getUser().getGender());
-                    progressBar.setVisibility(View.INVISIBLE);
-                    //registrationLayout.setVisibility(View.VISIBLE);
+                        Intent NextActivity = new Intent(RegistrationActivity.this, HomeActivity.class);
+                        RegistrationActivity.this.startActivity(NextActivity);
+                        Toast.makeText(RegistrationActivity.this,"You are logged in.",Toast.LENGTH_LONG).show();
+                        finish();
 
-                    Intent NextActivity = new Intent(RegistrationActivity.this, HomeActivity.class);
-                    RegistrationActivity.this.startActivity(NextActivity);
-                    Toast.makeText(RegistrationActivity.this,"You are logged in.",Toast.LENGTH_LONG).show();
-                    finish();
-
+                    }
+                    else{
+                        Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.INVISIBLE);
+                        registrationLayout.setVisibility(View.VISIBLE);
+                    }
                 }
-                else{
-                    Toast.makeText(RegistrationActivity.this, regsterResponse.getMessage(),Toast.LENGTH_LONG).show();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    registrationLayout.setVisibility(View.VISIBLE);
+                else {
+                    Toast.makeText(RegistrationActivity.this,"Server error",Toast.LENGTH_LONG).show();
                 }
-
             }
 
             @Override
@@ -310,20 +309,20 @@ public class RegistrationActivity extends AppCompatActivity {
         });
     }
 
-    public void saveLoginData(String accsesstoken,int id,String _firebasetoken,String email){
+    public void saveLoginData(String accsesstoken, String id, String _firebasetoken, String email){
         SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(emailAddress,email);
         editor.putString(token, accsesstoken);
         editor.putString(firebasetoken, _firebasetoken);
-        editor.putInt(userId,id);
+        editor.putString(userId,id);
         editor.apply();
     }
 
-    public void saveToLocalDb(int id,int stock,int bond,String firstname,String lastname,String tradername,String email,String yearOfStrudy,String university,String coursename,String phonenumber,String role,Double virtualmoney,String gender){
+    public void saveToLocalDb(String id, int stock, int bond, String firstname, String lastname, String tradername, String email, String yearOfStrudy, String university, String coursename, String phonenumber, String role, Double virtualmoney,Integer portfolio, String gender){
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        dbHelper.saveUserTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,database);
+        dbHelper.saveUserTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,portfolio,database);
         dbHelper.close();
     }
 
@@ -337,10 +336,10 @@ public class RegistrationActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        SharedPreferences sp = getSharedPreferences("universitypref", 0);
+       /* SharedPreferences sp = getSharedPreferences("universitypref", 0);
         String  universityname= sp.getString("universityname", "University");
         String newstr = capitalize(universityname.toLowerCase());
-        btnuniversity.setText(newstr);
+        btnuniversity.setText(newstr);*/
         super.onResume();
     }
 
@@ -395,5 +394,13 @@ public class RegistrationActivity extends AppCompatActivity {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1);
     }
 
+    public void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(parentLayout, message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED);
+        View snackView = snackbar.getView();
+        TextView textView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        snackbar.show();
+    }
 
 }

@@ -8,55 +8,52 @@
     android:background="@color/colorWhite"
     android:id="@+id/layout">
 
-   <ImageView
-    android:id="@+id/imageView"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_marginStart="10dp"
-    android:layout_marginTop="32dp"
-       android:padding="70dp"
-    android:layout_marginEnd="10dp"
-    android:layout_marginBottom="32dp"
-    android:transitionName="logo_image"
-    android:src="@drawable/logo_app_alt_down"
-    app:layout_constraintBottom_toTopOf="@+id/textView"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.0"
-    app:layout_constraintStart_toStartOf="parent"
-   app:layout_constraintTop_toTopOf="parent"></ImageView>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:padding="90dp"
+        android:src="@drawable/logo_app_alt_down"
+        android:transitionName="logo_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-   <TextView
-    android:id="@+id/textView"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="1dp"
-    android:fontFamily="@font/bungee_regular"
-    android:text="powered by"
-       android:textColor="@color/colorPrimary"
-    android:textAlignment="center"
-    android:transitionName="logo_text"
-    android:textSize="30sp"
-    app:layout_constraintBottom_toTopOf="@+id/textView2"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.0"
-    app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintTop_toBottomOf="@+id/imageView"></TextView>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        app:layout_constraintTop_toTopOf="@+id/imageView">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gibsonsemibold"
+            android:text="Sponsored by"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25dp"></TextView>
 
-    <TextView
-    android:id="@+id/textView2"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="32dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-    android:fontFamily="@font/montserrat"
-    android:text="DSE tanzania"
-    android:textAlignment="center"
-        android:textColor="@color/colorBlack"
-    android:textSize="15sp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"></TextView>
+
+        <ImageView
+            android:id="@+id/sponsor"
+            android:layout_width="90dp"
+            android:layout_height="80dp"
+            android:background="@drawable/azania_bank"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.97"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"></ImageView>
+    </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

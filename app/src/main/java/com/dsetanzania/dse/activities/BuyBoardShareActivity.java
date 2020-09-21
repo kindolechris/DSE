@@ -3,6 +3,7 @@ package com.dsetanzania.dse.activities;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -17,21 +18,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.api.RetrofitClient;
+import com.dsetanzania.dse.helperClasses.CustomMarker;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.interfaces.InternetcheckInterface;
 import com.dsetanzania.dse.models.graphdata.GraphDataResponseModel;
 import com.dsetanzania.dse.models.transactions.buy.transaction.shares.board.BuyFromBoardResponseModel;
 import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -41,11 +43,8 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +58,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     String companyname;
     String boardid;
     Button buybtn;
+    RadioButton radiobtn;
     TextView txtshares;
     TextView txtvirtualmoney;
     TextInputEditText txtprice;
@@ -69,11 +69,19 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     DbHelper dbHelper;
     LinearLayout graphviewLoader;
     SQLiteDatabase database;
+    RadioGroup radiotransactiontype;
     private SharedPreferences sharedPreferences;
     private ProgressBar buyBoardSharesLoader;
     private LinearLayout buyBoardSharesLayout;
     private LineChart linechart;
-     List<String> xAxisLabel;
+    final ArrayList<String> xAxisLabel = new ArrayList<>();
+    Call<GraphDataResponseModel> base_call_back;
+    final List<Entry> entries = new ArrayList<>();
+    CustomMarker marker;
+    String transactiontype = "Instant";
+    RadioButton pendingradio;
+    RadioButton instantbtn;
+    final String[] time = new String[0];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,20 +89,23 @@ public class BuyBoardShareActivity extends AppCompatActivity {
         setContentView(R.layout.activity_buy_or_sale_board_share);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         toolBarElevation(7);
         //titletext = (TextView) findViewById(R.id.titlebuyshares);
         txtprice = (TextInputEditText) findViewById(R.id.txtprice);
         txtAmountofshares = (TextInputEditText) findViewById(R.id.txtquantity);
         txtshares = (TextView) findViewById(R.id.txshares);
-        txtvirtualmoney = (TextView) findViewById(R.id.txtvirtualmoney);
+        radiotransactiontype = (RadioGroup) findViewById(R.id.radiotransactiontype);
+        //txtvirtualmoney = (TextView) findViewById(R.id.txtvirtualmoney);
         buyBoardSharesLoader = (ProgressBar) findViewById(R.id.buyBoardSharesLoader);
         buyBoardSharesLayout = (LinearLayout) findViewById(R.id.buyBoardSharesLayout);
         graphviewLoader = (LinearLayout) findViewById(R.id.graphviewLayoutLoader);
         dbHelper = new DbHelper(this);
         parentLayout = findViewById(android.R.id.content);
         database = dbHelper.getWritableDatabase();
-
+        marker = new CustomMarker (getApplicationContext(), R.layout.graph_pointer);
+        pendingradio = (RadioButton) findViewById(R.id.btnpending);
+        instantbtn = (RadioButton) findViewById(R.id.btninstant);
+        txtprice.setVisibility(View.GONE);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             openingprice = extras.getString("OpeningPrice");
@@ -113,13 +124,42 @@ public class BuyBoardShareActivity extends AppCompatActivity {
         _token = sharedPreferences.getString("token", "");
         buybtn = (Button) findViewById(R.id.btnBuyshares);
         readFromLocalDb();
+        instantbtn.setChecked(true);
+        pendingradio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtAmountofshares.setVisibility(View.VISIBLE);
+                txtprice.setVisibility(View.VISIBLE);
+                transactiontype = "Pending";
+            }
+        });
+
+        instantbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtAmountofshares.setVisibility(View.VISIBLE);
+                txtprice.setVisibility(View.GONE);
+                transactiontype = "Instant";
+            }
+        });
         buybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(txtAmountofshares.getText().toString().trim()) || TextUtils.isEmpty(txtprice.getText().toString().trim())){
-                    Toast.makeText(getApplicationContext(),"Please place your quantity and price to buy",Toast.LENGTH_SHORT).show();
+                if(TextUtils.isEmpty(txtAmountofshares.getText().toString().trim()) && instantbtn.isChecked()){
+                    Toast.makeText(getApplicationContext(),"Please place your quantity to buy",Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                if(TextUtils.isEmpty(txtAmountofshares.getText().toString().trim()) && TextUtils.isEmpty(txtprice.getText().toString().trim()) && pendingradio.isChecked()){
+                    Toast.makeText(getApplicationContext(),"Please place your quantity and amount to buy",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(TextUtils.isEmpty(txtAmountofshares.getText().toString().trim()) || TextUtils.isEmpty(txtprice.getText().toString().trim()) && pendingradio.isChecked()){
+                    Toast.makeText(getApplicationContext(),"Please place your quantity or amount to buy",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
 
                 checkInternet task = new checkInternet(getApplicationContext(), new InternetcheckInterface() {
                     @Override
@@ -127,18 +167,17 @@ public class BuyBoardShareActivity extends AppCompatActivity {
 
                         if(result == "Access"){
                             try {
+
                                 buyBoardSharesLoader.setVisibility(View.VISIBLE);
                                 buyBoardSharesLayout.setVisibility(View.INVISIBLE);
-                                buyShares("buy",txtAmountofshares.getText().toString().trim(),txtprice.getText().toString().trim(),"board",boardid);
+                                buyShares("buy",txtAmountofshares.getText().toString().trim(),txtprice.getText().toString().trim(),transactiontype,"board",boardid);
                             } catch (Exception e) {
                                 Toast.makeText(BuyBoardShareActivity.this,"System error",Toast.LENGTH_SHORT).show();
                             }
 
                         }
                         else if(result == "NoAccess"){
-                            Snackbar snackbar = Snackbar
-                                    .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
-                            snackbar.show();
+                          showSnackbar("No internet access");
                         }
                     }
                 });
@@ -147,14 +186,13 @@ public class BuyBoardShareActivity extends AppCompatActivity {
             }
         });
 
-        initGraph("d");
+        try {
+            initGraph("d");
+        } catch (Exception e) {
+            Toast.makeText(BuyBoardShareActivity.this,"Exception thrown",Toast.LENGTH_SHORT).show();
+        }
 
-    }
 
-
-    private String generateguid(){
-        String  ticketId = UUID.randomUUID().toString();
-        return ticketId.substring(0,3);
     }
 
     public void toolBarElevation(int size){
@@ -166,41 +204,33 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     }
 
 
-    public static String getdate(){
-        try {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-            String currentDateTime = dateFormat.format(new Date()); // Find todays date
-
-            return currentDateTime;
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            return null;
-        }
-    }
-
-    public void buyShares(String transactiontype,String shareAmount,String price,String transactionFrom,String boardId){
+    public void buyShares(String transactiontype,String shareAmount,String price,String buy_type,String transactionFrom,String boardId){
         Call<BuyFromBoardResponseModel> call = RetrofitClient
-                .getInstance().getApi().buyShareFromBoard(transactiontype,shareAmount,price,transactionFrom,boardId,"Bearer " + _token);
+                .getInstance().getApi().buyShareFromBoard(transactiontype,shareAmount,price,buy_type,transactionFrom,boardId,"Bearer " + _token);
         call.enqueue(new Callback<BuyFromBoardResponseModel>() {
             @Override
             public void onResponse(Call<BuyFromBoardResponseModel> call, Response<BuyFromBoardResponseModel> response) {
-                BuyFromBoardResponseModel buyboardshareresponse = response.body();
-
-                if (buyboardshareresponse.isSuccess()){
-                    buyBoardSharesLoader.setVisibility(View.INVISIBLE);
-                    buyBoardSharesLayout.setVisibility(View.VISIBLE);
-                    dbHelper.updateUserLocalDatabase(String.valueOf(buyboardshareresponse.getData().getUser().getId()),buyboardshareresponse.getData().getUser().getStock(),buyboardshareresponse.getData().getUser().getBonds(),buyboardshareresponse.getData().getUser().getFirstname(),buyboardshareresponse.getData().getUser().getLastname(),buyboardshareresponse.getData().getUser().getTradername(),buyboardshareresponse.getData().getUser().getEmail(),buyboardshareresponse.getData().getUser().getYearOfStudy(),buyboardshareresponse.getData().getUser().getUniversity(),buyboardshareresponse.getData().getUser().getCoursename(),buyboardshareresponse.getData().getUser().getPhonenumber(),buyboardshareresponse.getData().getUser().getRole(),buyboardshareresponse.getData().getUser().getVirtualmoney(),buyboardshareresponse.getData().getUser().getGender(),DbContract.SYNC_STATUS_FAILED,database);
-                    dbHelper.saveShareTransactionTolocalDatabase(buyboardshareresponse.getData().getPersonalsharesTransaction().getId(),String.valueOf(buyboardshareresponse.getData().getPersonalsharesTransaction().getSharesamount()),buyboardshareresponse.getData().getPersonalsharesTransaction().getCreatedAt(),buyboardshareresponse.getData().getPersonalsharesTransaction().getTimeago(),buyboardshareresponse.getData().getPersonalsharesTransaction().getCompanyname(),buyboardshareresponse.getData().getPersonalsharesTransaction().getPrice(),buyboardshareresponse.getData().getPersonalsharesTransaction().getTransactiontype(),buyboardshareresponse.getData().getPersonalsharesTransaction().getStatus(),database);
-                    readFromLocalDb();
-                    Toast.makeText(BuyBoardShareActivity.this, buyboardshareresponse.getMessage(),Toast.LENGTH_LONG).show();
-                    finish();
+                if(response.isSuccessful()){
+                    BuyFromBoardResponseModel buyboardshareresponse = response.body();
+                    if (buyboardshareresponse.isSuccess()){
+                        buyBoardSharesLoader.setVisibility(View.INVISIBLE);
+                        buyBoardSharesLayout.setVisibility(View.VISIBLE);
+                        //dbHelper.updateUserLocalDatabase(String.valueOf(buyboardshareresponse.getData().getUser().getId()),buyboardshareresponse.getData().getUser().getStock(),buyboardshareresponse.getData().getUser().getBonds(),buyboardshareresponse.getData().getUser().getFirstname(),buyboardshareresponse.getData().getUser().getLastname(),buyboardshareresponse.getData().getUser().getTradername(),buyboardshareresponse.getData().getUser().getEmail(),buyboardshareresponse.getData().getUser().getYearOfStudy(),buyboardshareresponse.getData().getUser().getUniversity(),buyboardshareresponse.getData().getUser().getCoursename(),buyboardshareresponse.getData().getUser().getPhonenumber(),buyboardshareresponse.getData().getUser().getRole(),buyboardshareresponse.getData().getUser().getVirtualmoney(),buyboardshareresponse.getData().getUser().getGender(),DbContract.SYNC_STATUS_FAILED,database);
+                        dbHelper.saveShareTransactionTolocalDatabase(buyboardshareresponse.getData().getPersonalsharesTransaction().getId(),String.valueOf(buyboardshareresponse.getData().getPersonalsharesTransaction().getSharesamount()),buyboardshareresponse.getData().getPersonalsharesTransaction().getCreatedAt(),buyboardshareresponse.getData().getPersonalsharesTransaction().getTimeago(),buyboardshareresponse.getData().getPersonalsharesTransaction().getCompanyname(),buyboardshareresponse.getData().getPersonalsharesTransaction().getPrice(),buyboardshareresponse.getData().getPersonalsharesTransaction().getTransactiontype(),buyboardshareresponse.getData().getPersonalsharesTransaction().getStatus(),database);
+                        readFromLocalDb();
+                        Toast.makeText(BuyBoardShareActivity.this, buyboardshareresponse.getMessage(),Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                    else{
+                        buyBoardSharesLoader.setVisibility(View.INVISIBLE);
+                        buyBoardSharesLayout.setVisibility(View.VISIBLE);
+                        Toast.makeText(BuyBoardShareActivity.this, buyboardshareresponse.getMessage(),Toast.LENGTH_LONG).show();
+                    }
                 }
-                else{
+                else {
                     buyBoardSharesLoader.setVisibility(View.INVISIBLE);
                     buyBoardSharesLayout.setVisibility(View.VISIBLE);
-                    Toast.makeText(BuyBoardShareActivity.this, buyboardshareresponse.getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -215,7 +245,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     public void updateFieldsOnChange(String stock,Double virtualmoney){
         NumberFormat formatter = new DecimalFormat("#,###");
         txtshares.setText(stock);
-        txtvirtualmoney.setText(String.valueOf(formatter.format(virtualmoney)));
+        //txtvirtualmoney.setText(String.valueOf(formatter.format(virtualmoney)));
     }
 
     public void readFromLocalDb(){
@@ -235,16 +265,13 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     }
 
     public void initGraph(String duration){
-        //xAxisLabel.clear();
+        entries.clear();
         linechart = findViewById(R.id.chart1);
         linechart.getDescription().setEnabled(false);
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
-        linechart.setMaxVisibleValueCount(60);
-
+        linechart.setMaxVisibleValueCount(5);
         // scaling can now only be done on x- and y-axis separately
         linechart.setPinchZoom(false);
-
+        linechart.setMarker(marker);
         linechart.setDrawGridBackground(false);
 
         XAxis xAxis = linechart.getXAxis();
@@ -259,7 +286,7 @@ public class BuyBoardShareActivity extends AppCompatActivity {
         xAxis.setDrawGridLines(false);
         linechart.getAxisLeft().setDrawGridLines(false);
         // add a nice and smooth animation
-        linechart.animateY(1500);
+        linechart.animateX(2500, Easing.Linear);
         linechart.getLegend().setEnabled(false);
 
         switch(duration) {
@@ -278,32 +305,45 @@ public class BuyBoardShareActivity extends AppCompatActivity {
     }
 
     public void setDaily(){
-        List<Entry> entries = new ArrayList<>();
-        Call<GraphDataResponseModel> call = RetrofitClient
-                .getInstance().getApi().fetchDailyBoardGraphData("Bearer " + _token);
-        call.enqueue(new Callback<GraphDataResponseModel>() {
+        xAxisLabel.clear();
+        base_call_back = RetrofitClient
+                .getInstance().getApi().fetchDailyBoardGraphData(boardid,"Bearer " + _token);
+        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
             @Override
             public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
-                GraphDataResponseModel dailygraphdata = response.body();
-                xAxisLabel = new ArrayList<>();
-                if (dailygraphdata.isSuccess()){
-                    for(int i=0; i<dailygraphdata.getData().size(); i++) {
-                        xAxisLabel.add(dailygraphdata.getData().get(i).getFullDateData());
-                        entries.add(new Entry(Float.valueOf(i), Float.valueOf(dailygraphdata.getData().get(i).getOpeningPrice())));
-                    }
-                    
-                    LineDataSet set = new LineDataSet(entries, "Market Price");
-                    set.setColors(getResources().getColor(R.color.colorPrimary));
-                    set.setDrawFilled(true);
-                    set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
-                    set.setDrawValues(false);
-                    LineData data = new LineData(set);
-                    linechart.setData(data);
-                    linechart.invalidate();
-                }
-                else{
+                if(response.isSuccessful()){
+                    GraphDataResponseModel dailygraphdata = response.body();
+                    if (dailygraphdata.isSuccess()){
+                        String[] xdata = dailygraphdata.getData().getX().split(",");
+                        String[] ydata = dailygraphdata.getData().getY().split(",");
+                        for(int i=0; i<xdata.length; i++) {
+                            xAxisLabel.add(xdata[i]);
+                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
 
+                        }
+
+
+                        LineDataSet set = new LineDataSet(entries, "Market Price");
+                        set.setColors(getResources().getColor(R.color.colorPrimary));
+                        set.setDrawFilled(true);
+                        set.setDrawVerticalHighlightIndicator(true);
+                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
+                        set.setDrawValues(false);
+                        set.setDrawCircles(false);
+                        LineData data = new LineData(set);
+                        linechart.setData(data);
+                        linechart.invalidate();
+                        graphviewLoader.setVisibility(View.INVISIBLE);
+                        linechart.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(BuyPersonShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
+                    }
                 }
+                else {
+                    Toast.makeText(BuyBoardShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
+                }
+
             }
 
             @Override
@@ -311,64 +351,98 @@ public class BuyBoardShareActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     public void setWeekly(){
-        xAxisLabel.add("Mon");
-        xAxisLabel.add("Tue");
-        xAxisLabel.add("Wed");
-        xAxisLabel.add("Thu");
-        xAxisLabel.add("Fri");
-        xAxisLabel.add("Sat");
-        xAxisLabel.add("Sun");
+        xAxisLabel.clear();
+        base_call_back = RetrofitClient
+                .getInstance().getApi().fetchWeeklyBoardGraphData(boardid,"Bearer " + _token);
+        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
+            @Override
+            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
+                if(response.isSuccessful()){
+                    GraphDataResponseModel dailygraphdata = response.body();
+                    if (dailygraphdata.isSuccess()){
+                        String[] xdata = dailygraphdata.getData().getX().split(",");
+                        String[] ydata = dailygraphdata.getData().getY().split(",");
+                        for(int i=0; i<xdata.length; i++) {
+                            xAxisLabel.add(xdata[i]);
+                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
 
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0f, 95f));
-        entries.add(new Entry(1f, 85f));
-        entries.add(new Entry(2f, 82f));
-        entries.add(new Entry(3f, 90f));
-        entries.add(new Entry(4f, 98f));
-        entries.add(new Entry(5f, 115f));
-        entries.add(new Entry(6f, 102f));
+                        }
 
-        LineDataSet set = new LineDataSet(entries, "Market Price");
-        set.setColors(getResources().getColor(R.color.colorPrimary));
-        set.setDrawValues(false);
-        set.setDrawFilled(true);
-        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
-        LineData data = new LineData(set);
-        linechart.setData(data);
-        linechart.invalidate();
+                        LineDataSet set = new LineDataSet(entries, "Market Price");
+                        set.setColors(getResources().getColor(R.color.colorPrimary));
+                        set.setDrawFilled(true);
+                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
+                        set.setDrawValues(false);
+                        set.setDrawCircles(false);
+                        LineData data = new LineData(set);
+                        linechart.setData(data);
+                        linechart.invalidate();
+                        graphviewLoader.setVisibility(View.INVISIBLE);
+                        linechart.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(BuyBoardShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(BuyBoardShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
+            }
+        });
     }
 
     public void setMonthly(){
-        xAxisLabel.add("Jan1");
-        xAxisLabel.add("Feb1");
-        xAxisLabel.add("March1");
-        xAxisLabel.add("April1");
-        xAxisLabel.add("May1");
-        xAxisLabel.add("June1");
-        xAxisLabel.add("Jully1");
+        xAxisLabel.clear();
+        base_call_back = RetrofitClient
+                .getInstance().getApi().fetchMonthlyBoardGraphData(boardid,"Bearer " + _token);
+        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
+            @Override
+            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
+                if(response.isSuccessful()){
+                    GraphDataResponseModel dailygraphdata = response.body();
+                    if (dailygraphdata.isSuccess()){
+                        String[] xdata = dailygraphdata.getData().getX().split(",");
+                        String[] ydata = dailygraphdata.getData().getY().split(",");
+                        for(int i=0; i<xdata.length; i++) {
+                            xAxisLabel.add(xdata[i]);
+                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
+                        }
 
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0f, 115f));
-        entries.add(new Entry(1f, 88f));
-        entries.add(new Entry(2f, 85f));
-        entries.add(new Entry(3f, 86f));
-        entries.add(new Entry(4f, 90f));
-        entries.add(new Entry(5f, 90f));
-        entries.add(new Entry(6f, 95f));
 
-        LineDataSet set = new LineDataSet(entries, "Market Price");
-        set.setColors(getResources().getColor(R.color.colorPrimary));
-        set.setDrawValues(false);
-        set.setDrawFilled(true);
-        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
-        LineData data = new LineData(set);
-        linechart.setData(data);
-        linechart.invalidate();
+                        LineDataSet set = new LineDataSet(entries, "Market Price");
+                        set.setColors(getResources().getColor(R.color.colorPrimary));
+                        set.setDrawFilled(true);
+                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_box));
+                        set.setDrawValues(false);
+                        set.setDrawCircles(false);
+                        LineData data = new LineData(set);
+                        linechart.setData(data);
+                        linechart.invalidate();
+                        graphviewLoader.setVisibility(View.INVISIBLE);
+                        linechart.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(BuyPersonShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(BuyBoardShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
+            }
+        });
     }
 
     @Override
@@ -384,42 +458,38 @@ public class BuyBoardShareActivity extends AppCompatActivity {
             finish();
         }
         else if (item.getItemId() == R.id.sortbyday) {
-            graphviewLoader.setVisibility(View.VISIBLE);
             linechart.setVisibility(View.INVISIBLE);
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    initGraph("d");
-                    graphviewLoader.setVisibility(View.INVISIBLE);
-                    linechart.setVisibility(View.VISIBLE);
-                }
-            }, 2000);
+            graphviewLoader.setVisibility(View.VISIBLE);
+            initGraph("d");
         }
         else if (item.getItemId() == R.id.sortbyweek) {
-            graphviewLoader.setVisibility(View.VISIBLE);
             linechart.setVisibility(View.INVISIBLE);
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    initGraph("w");
-                    graphviewLoader.setVisibility(View.INVISIBLE);
-                    linechart.setVisibility(View.VISIBLE);
-                }
-            }, 2000);
+            graphviewLoader.setVisibility(View.VISIBLE);
+            initGraph("w");
         }
         else if (item.getItemId() == R.id.sortbymonth) {
-            graphviewLoader.setVisibility(View.VISIBLE);
             linechart.setVisibility(View.INVISIBLE);
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    initGraph("m");
-                    graphviewLoader.setVisibility(View.INVISIBLE);
-                    linechart.setVisibility(View.VISIBLE);
-                }
-            }, 2000);
+            graphviewLoader.setVisibility(View.VISIBLE);
+            initGraph("m");
 
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    public  void checktransactionType(View view){
+        int radioId = radiotransactiontype.getCheckedRadioButtonId();
+        radiobtn = findViewById(radioId);
+        //Toast.makeText(RegistrationActivity.this,"Selected : " + radiobtn.getText().toString(),Toast.LENGTH_SHORT).show();
+    }
+
+    public void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(parentLayout, message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED);
+        View snackView = snackbar.getView();
+        TextView textView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        snackbar.show();
+    }
 
 }

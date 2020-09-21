@@ -47,6 +47,7 @@
                 android:background="@null"
                 android:gravity="center" />
         </LinearLayout>
+
         <com.balysv.materialripple.MaterialRippleLayout xmlns:app2="http://schemas.android.com/tools"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
@@ -84,7 +85,7 @@
                             android:layout_height="40dp"
                             android:layout_gravity="center"
                             android:background="@drawable/ic_buy"
-                            android:backgroundTint="@color/colorBlack">
+                            android:backgroundTint="@color/colorPrimary">
                         </ImageView>
                     </LinearLayout>
                     <LinearLayout

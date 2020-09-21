@@ -81,9 +81,9 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
         NumberFormat formatter = new DecimalFormat("#,###");
         holder.itemView.setTag(personalShareData.get(position));
         holder.txtcompanyname.setText(personalShareData.get(position).getCompanyname());
-        holder.txtprice.setText("Opened at " + formatter.format(personalShareData.get(position).getPrice()));
-        holder.txtlquantity.setText("Quantity :" + formatter.format(personalShareData.get(position).getSharesamount()));
-        holder.txtstatus.setText("Status :" + personalShareData.get(position).getStatus());
+        holder.txtprice.setText("Sold at : " + formatter.format(personalShareData.get(position).getPrice()));
+        holder.txtlquantity.setText("Quantity : " + formatter.format(personalShareData.get(position).getSharesamount()));
+        holder.txtstatus.setText("Time : " + personalShareData.get(position).getTimeago());
 
         holder.personalshareLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +91,7 @@ public class PersonalSharesAdapter extends RecyclerView.Adapter<PersonalSharesAd
                 Intent myIntent = new Intent(mycontext, BuyPersonShareActivity.class);
                 myIntent.putExtra("OpeningPrice", String.valueOf(personalShareData.get(position).getPrice()));
                 myIntent.putExtra("Companyname", personalShareData.get(position).getCompanyname());
+                myIntent.putExtra("boardshare_id", String.valueOf(personalShareData.get(position).getBoardshareId()));
                 myIntent.putExtra("peerid", String.valueOf(personalShareData.get(position).getId()));
                 mycontext.startActivity(myIntent);
             }

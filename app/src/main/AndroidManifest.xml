@@ -16,10 +16,15 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_custom"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activities.ValueVsPriceActivity"></activity>
+        <activity android:name=".activities.TheRoleOfInvestmentActivity" />
+        <activity android:name=".activities.ActiveShareHoldersActivity" />
+        <activity android:name=".activities.TipsForInvestmentActivity" />
         <activity android:name=".activities.TotalBondsHoldingsActivity" />
         <activity android:name=".activities.TotalSharesHoldingsActivity" />
         <activity android:name=".activities.NewsWebActivity" />
@@ -46,7 +51,8 @@
             android:name=".activities.BuyBoardShareActivity"
             android:label="@string/title_activity_buy_share"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activities.BuyPersonShareActivity"
             android:label="@string/title_activity_buy_share"
@@ -74,7 +80,7 @@
             android:name=".activities.AboutUsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.FaqsActivity"
+            android:name=".activities.LearningActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.EquityActivity"
@@ -108,17 +114,10 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <!--
- Set custom default icon. This is used when no icon is set for incoming notification messages.
- See README(https://goo.gl/l4GJaQ) for more.
-        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notifications_white" />
-        <!--
- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more.
-        -->
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />

@@ -2,6 +2,8 @@ package com.dsetanzania.dse.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.activities.RegistrationActivity;
+import com.dsetanzania.dse.api.RetrofitClient;
 import com.dsetanzania.dse.models.PersonalsharesTransactionModel;
+import com.dsetanzania.dse.models.transactions.transactionlist.PersonalShareTransactionListResponseModel;
 import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
 
@@ -28,6 +34,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.dsetanzania.dse.activities.LoginActivity.sharedPrefrences;
 
 public class ListofSharesTransactionAdapter extends RecyclerSwipeAdapter<ListofSharesTransactionAdapter.ViewHolder> {
 
@@ -35,9 +50,12 @@ public class ListofSharesTransactionAdapter extends RecyclerSwipeAdapter<ListofS
     Context context;
     DbHelper dbHelper;
     SQLiteDatabase database;
+    private String _token;
+    private SharedPreferences sharedPreferences;
 
 
     public ListofSharesTransactionAdapter(Context context, List<PersonalsharesTransactionModel> transactions) {
+
         this.transactions = transactions;
         this.context = context;
     }
@@ -166,13 +184,29 @@ public class ListofSharesTransactionAdapter extends RecyclerSwipeAdapter<ListofS
                     Toast.makeText(v.getContext(), "Transaction is closed, can't be cancelled", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mItemManger.removeShownLayouts(holder.swipeLayout);
-                transactions.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, transactions.size());
-                mItemManger.closeAllItems();
-                deleteRow(String.valueOf(item.getId()));
-                Toast.makeText(v.getContext(), "Transaction " + holder.txtcompanyname.getText().toString() + " cancelled", Toast.LENGTH_SHORT).show();
+
+                new AlertDialog.Builder(context,R.style.Mydialogtheme)
+                        .setTitle("Confirmation")
+                        .setMessage("Are you sure you want to cancel this transaction?")
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mItemManger.removeShownLayouts(holder.swipeLayout);
+                                transactions.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position, transactions.size());
+                                mItemManger.closeAllItems();
+                                deleteRow(String.valueOf(item.getId()));
+                                cancellTransaction(String.valueOf(item.getId()));
+                            }
+                        }).show();
+                //Toast.makeText(v.getContext(), "Transaction " + holder.txtcompanyname.getText().toString() + " cancelled", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -350,7 +384,7 @@ public class ListofSharesTransactionAdapter extends RecyclerSwipeAdapter<ListofS
         database.close();
     }
     private void setDataToView(TextView description,TextView date,TextView companyname,int position) {
-        date.setText(transactions.get(position).getCreatedAt().substring(0,10));
+        date.setText(transactions.get(position).getCreatedAt());
         companyname.setText(transactions.get(position).getCompanyname());
         if(transactions.get(position).getStatus().equalsIgnoreCase("opened")){
             if(transactions.get(position).getTransactiontype().equalsIgnoreCase("sell")){
@@ -363,5 +397,49 @@ public class ListofSharesTransactionAdapter extends RecyclerSwipeAdapter<ListofS
         }
         description.setText("Transaction closed");
 
+    }
+
+    public String utcToLocal(String dateStr){
+
+        try {
+           // String dateStr = "Jul 16, 2013 12:08:59 AM";
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",Locale.ENGLISH);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = null;
+            date = df.parse(dateStr);
+            df.setTimeZone(TimeZone.getDefault());
+            String formattedDate = df.format(date);
+            return  formattedDate;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+   return "";
+
+    }
+
+    public void cancellTransaction(String id){
+        sharedPreferences = context.getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+        _token = sharedPreferences.getString("token", "");
+        Call<PersonalShareTransactionListResponseModel> call = RetrofitClient
+                .getInstance().getApi().cancelShareTransaction(id,"Bearer " +  _token);
+
+        call.enqueue(new Callback<PersonalShareTransactionListResponseModel>() {
+            @Override
+            public void onResponse(Call<PersonalShareTransactionListResponseModel> call, Response<PersonalShareTransactionListResponseModel> response) {
+                PersonalShareTransactionListResponseModel personalTransactionListResponseModel = response.body();
+                if (personalTransactionListResponseModel.isSuccess()){
+                    Toast.makeText(context,"Transaction cancelled",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(context,personalTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PersonalShareTransactionListResponseModel> call, Throwable t) {
+
+            }
+        });
     }
 }

@@ -28,6 +28,7 @@ public class PortfolioActivity extends AppCompatActivity {
     TextView txtshares;
     TextView txtuniversity;
     TextView txtvirtualmoney;
+    TextView txtportfolio;
     LinearLayout cardshares;
     LinearLayout cardbonds;
     //TextView txtshares;
@@ -43,6 +44,7 @@ public class PortfolioActivity extends AppCompatActivity {
         txtbonds  = (TextView) findViewById(R.id.bondtxt);
         txtshares  = (TextView) findViewById(R.id.sharestxt);
         txtuniversity  = (TextView) findViewById(R.id.txtuniversity);
+        txtportfolio  = (TextView) findViewById(R.id.txtportfoliovalue);
         cardshares = (LinearLayout) findViewById(R.id.cardshares);
         cardbonds = (LinearLayout) findViewById(R.id.cardbonds);
 
@@ -106,12 +108,14 @@ public class PortfolioActivity extends AppCompatActivity {
         String tradername="";
         String university="";
         String virtualmoney="";
+        String portfolio="";
         int stock=0;
         int id=-1;
         int bonds=0;
         int sync_status;
         while(cursor.moveToNext()){
             tradername = cursor.getString(cursor.getColumnIndex(DbContract.tradername));
+            portfolio = cursor.getString(cursor.getColumnIndex(DbContract.portfolio_value));
             virtualmoney = cursor.getString(cursor.getColumnIndex(DbContract.virtualmoney));
             university = cursor.getString(cursor.getColumnIndex(DbContract.university));
             stock = cursor.getInt(cursor.getColumnIndex(DbContract.stock));
@@ -119,18 +123,19 @@ public class PortfolioActivity extends AppCompatActivity {
             bonds = cursor.getInt(cursor.getColumnIndex(DbContract.bonds));
 
         }
-        updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),university,virtualmoney);
+        updateFieldsOnChange(tradername,String.valueOf(stock),String.valueOf(bonds),university,virtualmoney,portfolio);
         cursor.close();
         dbHelper.close();
     }
 
 
-    public void updateFieldsOnChange(String fullname,String stock,String bonds,String university,String virtualmoney){
+    public void updateFieldsOnChange(String fullname,String stock,String bonds,String university,String virtualmoney,String portfolio){
         NumberFormat formatter = new DecimalFormat("#,###");
         txtusername.setText(fullname);
         txtshares.setText(stock);
         txtbonds.setText(bonds);
         txtuniversity.setText(university);
         txtvirtualmoney.setText(formatter.format((Double.parseDouble(virtualmoney))));
+        txtportfolio.setText(formatter.format((Double.parseDouble(portfolio))));
     }
 }

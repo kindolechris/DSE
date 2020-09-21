@@ -42,7 +42,7 @@
                 app:autoPlay="false"
                 app:showFullScreenButton="false"
                 app:showYouTubeButton="true"
-                app:videoId="d8ppL4ms9WA&amp;list=PL_CY933-3vejeKzqyJqVYGaEOo4ISk3ds&amp;index=4" />
+                app:videoId="d8ppL4ms9WA&amp;t=" />
 
             <View
                 android:layout_width="match_parent"

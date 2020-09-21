@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class BoardSharesModel {
 
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
     private String Id;
 
@@ -48,6 +48,9 @@ public class BoardSharesModel {
     @SerializedName("openingPrice")
     @Expose
     private String OpeningPrice;
+    @SerializedName("Time")
+    @Expose
+    private String time;
 
     @SerializedName("volume")
     @Expose
@@ -139,6 +142,14 @@ public class BoardSharesModel {
 
     public void setOpeningPrice(String openingPrice) {
         OpeningPrice = openingPrice;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getVolume() {

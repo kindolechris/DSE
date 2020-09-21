@@ -15,6 +15,8 @@ import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.models.BondHoldingsModel;
 import com.dsetanzania.dse.models.PersonalBondHoldingsModel;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 public class ListOfBondsHoldingsAdapter extends RecyclerView.Adapter<ListOfBondsHoldingsAdapter.ViewHolder> {
@@ -56,7 +58,6 @@ public class ListOfBondsHoldingsAdapter extends RecyclerView.Adapter<ListOfBonds
             txtinterestrate = (TextView)itemView.findViewById(R.id.txtinterestrate);
             txtprice = (TextView)itemView.findViewById(R.id.txtbondprice);
             txtquantity = (TextView)itemView.findViewById(R.id.txtquantity);
-            txtduration = (TextView)itemView.findViewById(R.id.txtdurationdate);
             bongholdingLayout = (LinearLayout) itemView.findViewById(R.id.bongholdingLayout);
 
         }
@@ -64,18 +65,16 @@ public class ListOfBondsHoldingsAdapter extends RecyclerView.Adapter<ListOfBonds
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-
+        NumberFormat formatter = new DecimalFormat("#,###");
         holder.itemView.setTag(bondholdings.get(position));
-        holder.txtbondnumber.setText("No. " + String.valueOf(bondholdings.get(position).getBondnumber()));
-        holder.txtinterestrate.setText("Interest per month : " + String.valueOf(bondholdings.get(position).getInterestRate() + "%"));
-        holder.txtprice.setText("Price : "+ String.valueOf(bondholdings.get(position).getPrice()));
-        holder.txtquantity.setText("Quantity : "+ String.valueOf(bondholdings.get(position).getAmount()));
-        holder.txtduration.setText("Untill : " + String.valueOf(bondholdings.get(position).getDuration().substring(0,10)));
+        holder.txtbondnumber.setText("Auction date: " + String.valueOf(bondholdings.get(position).getBondnumber()));
+        holder.txtinterestrate.setText("Coupon rate : " + String.valueOf(bondholdings.get(position).getInterestRate() + "%"));
+        holder.txtprice.setText("Price : "+ String.valueOf(formatter.format(Double.valueOf(bondholdings.get(position).getPrice()))));
+        holder.txtquantity.setText("Bond tenure' : " + String.valueOf(bondholdings.get(position).getDuration()) + " year (s)");
 
         holder.bongholdingLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
             }
         });

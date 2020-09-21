@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
 public class PersonalsharesTransactionModel {
     @SerializedName("user_id")
     @Expose
-    private Integer userId;
+    private String userId;
     @SerializedName("boardshare_id")
     @Expose
-    private Integer boardshareId;
+    private String boardshareId;
     @SerializedName("personalshare_id")
     @Expose
-    private Integer personalshareId;
+    private String personalshareId;
     @SerializedName("transactiontype")
     @Expose
     private String transactiontype;
@@ -37,9 +37,9 @@ public class PersonalsharesTransactionModel {
     @SerializedName("created_at")
     @Expose
     private String createdAt;
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("timeago")
     @Expose
     private String timeago;
@@ -48,7 +48,7 @@ public class PersonalsharesTransactionModel {
     private String companyname;
 
 
-    public PersonalsharesTransactionModel(Integer sharesamount , Integer price , String status,String createdAt, String timeago, Integer id, String companyname, String transactiontype) {
+    public PersonalsharesTransactionModel(Integer sharesamount , Integer price , String status, String createdAt, String timeago, String id, String companyname, String transactiontype) {
         this.transactiontype = transactiontype;
         this.sharesamount = sharesamount;
         this.price = price;
@@ -59,27 +59,27 @@ public class PersonalsharesTransactionModel {
         this.companyname = companyname;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public Integer getBoardshareId() {
+    public String getBoardshareId() {
         return boardshareId;
     }
 
-    public void setBoardshareId(Integer boardshareId) {
+    public void setBoardshareId(String boardshareId) {
         this.boardshareId = boardshareId;
     }
 
-    public Integer getPersonalshareId() {
+    public String getPersonalshareId() {
         return personalshareId;
     }
 
-    public void setPersonalshareId(Integer personalshareId) {
+    public void setPersonalshareId(String personalshareId) {
         this.personalshareId = personalshareId;
     }
 
@@ -147,11 +147,11 @@ public class PersonalsharesTransactionModel {
         this.createdAt = createdAt;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -91,18 +91,22 @@ public class PersonSharesFragment extends Fragment {
         call.enqueue(new Callback<PersonalShareResponseModel>() {
             @Override
             public void onResponse(Call<PersonalShareResponseModel> call, Response<PersonalShareResponseModel> response) {
-                personalShareResponseModel = response.body();
-                if ( personalShareResponseModel.isSuccess()){
-                    personalShareData.clear();
-                    personalSharesAdapter = new PersonalSharesAdapter(getContext(), personalShareResponseModel.getData());
-                    personalSharesRecyclerView.setHasFixedSize(true);
-                    personalSharesRecyclerView.setLayoutManager(layoutManager);
-                    personalSharesRecyclerView.setAdapter(personalSharesAdapter);
-                    personalSharesLoader.setVisibility(View.INVISIBLE);
+                if(response.isSuccessful()){
+                    personalShareResponseModel = response.body();
+                    if ( personalShareResponseModel.isSuccess()){
+                        personalShareData.clear();
+                        personalSharesAdapter = new PersonalSharesAdapter(getContext(), personalShareResponseModel.getData());
+                        personalSharesRecyclerView.setHasFixedSize(true);
+                        personalSharesRecyclerView.setLayoutManager(layoutManager);
+                        personalSharesRecyclerView.setAdapter(personalSharesAdapter);
+                        personalSharesLoader.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                       // Toast.makeText(getContext(),"Nothing..",Toast.LENGTH_LONG).show();
+                    }
                 }
                 else{
-                    Toast.makeText(getContext(),"Nothing..",Toast.LENGTH_LONG).show();
-                    //Log.i("Check this ","not workinnnnnnnng");
+                    Toast.makeText(getContext(),"Server error",Toast.LENGTH_LONG).show();
                 }
             }
 

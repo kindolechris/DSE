@@ -4,16 +4,16 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class BondModel {
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
-    @SerializedName("bondnumber")
+    @SerializedName("auction_date")
     @Expose
     private String bondnumber;
     @SerializedName("issuer")
@@ -25,21 +25,21 @@ public class BondModel {
     @SerializedName("price")
     @Expose
     private String price;
-    @SerializedName("duration")
+    @SerializedName("bond_tenure")
     @Expose
     private String duration;
-    @SerializedName("interest_rate")
+    @SerializedName("coupon_rate")
     @Expose
-    private Integer interestRate;
+    private String interestRate;
     @SerializedName("deleted_at")
     @Expose
     private Object deletedAt;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -99,11 +99,11 @@ public class BondModel {
         this.duration = duration;
     }
 
-    public Integer getInterestRate() {
+    public String getInterestRate() {
         return interestRate;
     }
 
-    public void setInterestRate(Integer interestRate) {
+    public void setInterestRate(String interestRate) {
         this.interestRate = interestRate;
     }
 

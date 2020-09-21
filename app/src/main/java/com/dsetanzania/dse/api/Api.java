@@ -2,9 +2,11 @@ package com.dsetanzania.dse.api;
 
 import com.dsetanzania.dse.models.AuthResponseModel;
 import com.dsetanzania.dse.models.BaseResponseModel;
+import com.dsetanzania.dse.models.LeaderBoardResponseModel;
 import com.dsetanzania.dse.models.bond_holdings.PersonalBondHoldingResponseModal;
 import com.dsetanzania.dse.models.bonds.BondResponseModel;
 import com.dsetanzania.dse.models.graphdata.GraphDataResponseModel;
+import com.dsetanzania.dse.models.live_data.LiveDataResponseModel;
 import com.dsetanzania.dse.models.shares.BoardShareResponseModel;
 import com.dsetanzania.dse.models.shares.PersonalShareResponseModel;
 import com.dsetanzania.dse.models.transactions.buy.transaction.bonds.BuyBondResponseModel;
@@ -22,13 +24,15 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface Api {
     @FormUrlEncoded
     @POST("login")
     Call<AuthResponseModel> login(
             @Field("email") String email,
-            @Field("password") String password
+            @Field("password") String password,
+            @Field("firebaseToken") String firebaseToken
     );
 
     @FormUrlEncoded
@@ -48,34 +52,32 @@ public interface Api {
             @Field("firebaseToken") String firebaseToken
     );
 
-    @FormUrlEncoded
-    @POST("pushfirebasetoken")
-    Call<BaseResponseModel> pushFirebaseToken(
-            @Field("id") int id,
-            @Field("firebaseToken") String firebaseToken,
-            @Header("Authorization") String token
-    );
 
-
-    @FormUrlEncoded
     @POST("get/user")
     Call<UserDataResponseModel> fetchUserdata(
-            @Field("id") int id,
+            @Header("Authorization") String token
+    );
+
+    @POST("get/leaderboards")
+    Call<LeaderBoardResponseModel> fetchLeaderBoardsdata(
             @Header("Authorization") String token
     );
 
 
-    @FormUrlEncoded
     @POST("get/personalsharetransaction")
     Call<PersonalShareTransactionListResponseModel> fetchUserShareTransaction(
-            @Field("userid") int id,
             @Header("Authorization") String token
     );
 
-    @FormUrlEncoded
     @POST("get/userbond/transaction")
     Call<PersonalBondTransactionListResponseModel> fetchUserBondTransaction(
-            @Field("user_id") int id,
+            @Header("Authorization") String token
+    );
+
+
+    @GET("cancel/transaction/{id}")
+    Call<PersonalShareTransactionListResponseModel> cancelShareTransaction(
+            @Path("id") String transactionisId,
             @Header("Authorization") String token
     );
 
@@ -84,10 +86,29 @@ public interface Api {
             @Header("Authorization") String token
     );
 
-    @GET(" get/share/data/1/day")
+    @GET(" get/share/data/{id}/day")
     Call<GraphDataResponseModel> fetchDailyBoardGraphData(
+            @Path("id") String boardid,
             @Header("Authorization") String token
     );
+
+    @GET(" get/share/data/{id}/week")
+    Call<GraphDataResponseModel> fetchWeeklyBoardGraphData(
+            @Path("id") String boardid,
+            @Header("Authorization") String token
+    );
+
+    @GET(" get/share/data/{id}/month")
+    Call<GraphDataResponseModel> fetchMonthlyBoardGraphData(
+            @Path("id") String boardid,
+            @Header("Authorization") String token
+    );
+
+    @GET("getlivedata")
+    Call<LiveDataResponseModel> fetchLiveData(
+            @Header("Authorization") String token
+    );
+
 
     @GET("get/bond/all")
     Call<BondResponseModel> fetchBondsList(
@@ -98,7 +119,7 @@ public interface Api {
     @POST("buybond")
     Call<BuyBondResponseModel> buyBonds(
             @Field("board_bond_id") String board_bond_id,
-            @Field("bond_amount") String bond_amount,
+            @Field("price") String bond_amount,
             @Header("Authorization") String token
     );
 
@@ -112,10 +133,8 @@ public interface Api {
             @Header("Authorization") String token
     );
 
-    @FormUrlEncoded
     @POST("get/userbond/holdings")
     Call<PersonalBondHoldingResponseModal> fetchPersonalBondeHoldings(
-            @Field("user_id") String id,
             @Header("Authorization") String token
     );
 
@@ -126,6 +145,7 @@ public interface Api {
             @Field("transactiontype") String transactiontype,
             @Field("sharesamount") String sharesamount,
             @Field("price") String price,
+            @Field("buy_type") String buy_type,
             @Field("transactionfrom") String transactionfrom,
             @Field("boardShareId") String boardShareId,
             @Header("Authorization") String token
@@ -149,6 +169,5 @@ public interface Api {
             @Field("boardShareId") String boardShareId,
             @Header("Authorization") String token
     );
-
 
 }

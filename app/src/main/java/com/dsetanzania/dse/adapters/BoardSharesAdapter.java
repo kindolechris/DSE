@@ -25,15 +25,8 @@ import java.util.Vector;
 public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.ViewHolder>  {
 
     private List<BoardSharesModel> marketcksimulator;
-    final Vector<ViewHolder> securityPriceListViewHold = new Vector<>();
     Context mycontext;
     int _position;
-    int selectedPosition=-1;
-    ItemClicked fragmentActivity;
-    int position = 1;
-    public  interface  ItemClicked{
-        void OnServerItemClicked(int index);
-    }
 
     public BoardSharesAdapter(Context context, List<BoardSharesModel> list) {
         this.marketcksimulator = list;
@@ -87,7 +80,6 @@ public class BoardSharesAdapter extends RecyclerView.Adapter<BoardSharesAdapter.
         holder.txtprice.setText("Opened at " + formatter.format(Double.parseDouble(marketcksimulator.get(position).getOpeningPrice())));
         holder.txtlasttradequantity.setText("LTQ :" + formatter.format(Double.parseDouble(marketcksimulator.get(position).getLastTradedQuantity())));
         holder.txtvolume.setText("Volume :" + formatter.format(Double.parseDouble(marketcksimulator.get(position).getVolume())));
-
         holder.boardsharelayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

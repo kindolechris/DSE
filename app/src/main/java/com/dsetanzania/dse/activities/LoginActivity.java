@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Fade;
@@ -15,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dsetanzania.dse.R;
@@ -130,62 +132,68 @@ public class LoginActivity extends AppCompatActivity {
 
                             else{
                                 try {
-                                    loginBtn.setEnabled(false);
-                                    SignInLoader.setVisibility(View.VISIBLE);
-                                    Call<AuthResponseModel> call = RetrofitClient
-                                            .getInstance().getApi().login(emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim());
-                                    call.enqueue(new Callback<AuthResponseModel>() {
+
+                                    FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                                         @Override
-                                        public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
-                                            AuthResponseModel loginresponse = response.body();
-                                            if (loginresponse.isSuccess()){
-                                                //checkRole("Admin");
-                                                saveToLocalDb(loginresponse.getUser().getId(),loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
-                                                        loginresponse.getUser().getFirstname(),loginresponse.getUser().getLastname(),
-                                                        loginresponse.getUser().getTradername(),loginresponse.getUser().getEmail(),
-                                                        loginresponse.getUser().getYearOfStudy(),
-                                                        loginresponse.getUser().getUniversity(),loginresponse.getUser().getCoursename(),
-                                                        loginresponse.getUser().getPhonenumber(),loginresponse.getUser().getRole(),
-                                                        loginresponse.getUser().getVirtualmoney(),loginresponse.getUser().getGender());
-                                                FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                                        String token = task.getResult().getToken();
-                                                        saveLoginData(loginresponse.getUser().getToken(),loginresponse.getUser().getId(),token);
-                                                        pushFirebaseToken(loginresponse.getUser().getId(),token,loginresponse.getUser().getToken());
-                                                        //Log.i("Valuuuuuuues", token + "\n" + loginresponse.getUser().getToken() + "\n" + loginresponse.getUser().getId());
-                                                        SignInLoader.setVisibility(View.INVISIBLE);
+                                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                            String token = task.getResult().getToken();
+                                            loginBtn.setEnabled(false);
+                                            SignInLoader.setVisibility(View.VISIBLE);
+                                            Call<AuthResponseModel> call = RetrofitClient
+                                                    .getInstance().getApi().login(emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim(),token);
+                                            call.enqueue(new Callback<AuthResponseModel>() {
+                                                @Override
+                                                public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
+                                                    if(response.isSuccessful()){
+                                                        AuthResponseModel loginresponse = response.body();
+                                                        if (loginresponse.isSuccess()){
+                                                            //checkRole("Admin");
+                                                            saveToLocalDb(loginresponse.getUser().getId(),loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
+                                                                    loginresponse.getUser().getFirstname(),loginresponse.getUser().getLastname(),
+                                                                    loginresponse.getUser().getTradername(),loginresponse.getUser().getEmail(),
+                                                                    loginresponse.getUser().getYearOfStudy(),
+                                                                    loginresponse.getUser().getUniversity(),loginresponse.getUser().getCoursename(),
+                                                                    loginresponse.getUser().getPhonenumber(),loginresponse.getUser().getRole(),
+                                                                    loginresponse.getUser().getVirtualmoney(),loginresponse.getUser().getPortfolioValue(),loginresponse.getUser().getGender());
+
+                                                            saveLoginData(loginresponse.getUser().getToken(),loginresponse.getUser().getId(),token);
+                                                            //Log.i("Valuuuuuuues", token + "\n" + loginresponse.getUser().getToken() + "\n" + loginresponse.getUser().getId());
+                                                            SignInLoader.setVisibility(View.INVISIBLE);
+                                                            loginBtn.setEnabled(true);
+
+                                                            Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
+                                                            LoginActivity.this.startActivity(NextActivity);
+                                                            finish();
+                                                            Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                                                        }
+                                                        else{
+                                                            SignInLoader.setVisibility(View.INVISIBLE);
+                                                            loginBtn.setEnabled(true);
+                                                            Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                                                        }
+                                                    }else {
                                                         loginBtn.setEnabled(true);
+                                                        Toast.makeText(LoginActivity.this,"Server error",Toast.LENGTH_LONG).show();
                                                     }
-                                                });
+                                                }
 
-                                                Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
-                                                LoginActivity.this.startActivity(NextActivity);
-                                                finish();
-                                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
-                                            }
-                                            else{
-                                                SignInLoader.setVisibility(View.INVISIBLE);
-                                                loginBtn.setEnabled(true);
-                                                Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
-                                            }
-                                        }
+                                                @Override
+                                                public void onFailure(Call<AuthResponseModel> call, Throwable t) {
 
-                                        @Override
-                                        public void onFailure(Call<AuthResponseModel> call, Throwable t) {
-
+                                                }
+                                            });
                                         }
                                     });
+
                                 } catch (Exception e) {
-                                    Toast.makeText(LoginActivity.this,"System error",Toast.LENGTH_SHORT).show();
+                                    loginBtn.setEnabled(true);
+                                    Toast.makeText(LoginActivity.this,"Exception thrown",Toast.LENGTH_SHORT).show();
                                 }
 
                             }
                         }
                         else if(result == "NoAccess"){
-                            Snackbar snackbar = Snackbar
-                                    .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
-                            snackbar.show();
+                            showSnackbar("No internet access");
                         }
                         else{
 
@@ -216,13 +224,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    public void saveLoginData(String accsesstoken,int id,String _firebasetoken){
+    public void saveLoginData(String accsesstoken, String id, String _firebasetoken){
         SharedPreferences sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(emailAddress, emailtxt.getText().toString().trim());
         editor.putString(token, accsesstoken);
         editor.putString(firebasetoken, _firebasetoken);
-        editor.putInt(userId,id);
+        editor.putString(userId,id);
         editor.apply();
     }
 
@@ -250,34 +258,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public void saveToLocalDb(int id,int stock,int bond,String firstname,String lastname,String tradername,String email,String yearOfStrudy,String university,String coursename,String phonenumber,String role,Double virtualmoney,String gender){
+    public void saveToLocalDb(String id, int stock, int bond, String firstname, String lastname, String tradername, String email, String yearOfStrudy, String university, String coursename, String phonenumber, String role, Double virtualmoney,Integer portfoliovalue, String gender){
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        dbHelper.saveUserTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,database);
+        dbHelper.saveUserTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,portfoliovalue,database);
         dbHelper.close();
     }
 
-    public void pushFirebaseToken(int id,String firebasetoken,String token){
-        Call<BaseResponseModel> call = RetrofitClient
-                .getInstance().getApi().pushFirebaseToken(id,firebasetoken,"Bearer " + token);
-        call.enqueue(new Callback<BaseResponseModel>() {
-            @Override
-            public void onResponse(Call<BaseResponseModel> call, Response<BaseResponseModel> response) {
-                BaseResponseModel loginresponse = response.body();
-                if (loginresponse.isSuccess()){
-
-                    //Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
-                }
-                else{
-                    //Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponseModel> call, Throwable t) {
-
-            }
-        });
+    public void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(parentLayout, message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED);
+        View snackView = snackbar.getView();
+        TextView textView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        snackbar.show();
     }
 
 }

@@ -40,7 +40,7 @@ public class BondsTransactionFragment extends Fragment {
     private int page;
     TextView txtnotransaction;
     View view;
-    private int userId;
+    private String userId;
     private String _token;
     DbHelper dbHelper;
     SQLiteDatabase database;
@@ -77,7 +77,7 @@ public class BondsTransactionFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_bonds_transaction, container, false);
             layoutManager = new LinearLayoutManager(getActivity());
             sharedPreferences = getActivity().getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
-            userId = sharedPreferences.getInt("userid", -1);
+            userId = sharedPreferences.getString("userid", "");
             _token = sharedPreferences.getString("token", "");
             txtnotransaction = (TextView) view.findViewById(R.id.txtnotransaction);
             dbHelper = new DbHelper(getActivity());
@@ -122,34 +122,39 @@ public class BondsTransactionFragment extends Fragment {
 
     public void getlivePersonalbondTransaction(){
         Call<PersonalBondTransactionListResponseModel> call = RetrofitClient
-                .getInstance().getApi().fetchUserBondTransaction(userId,"Bearer " +  _token);
+                .getInstance().getApi().fetchUserBondTransaction("Bearer " +  _token);
 
         call.enqueue(new Callback<PersonalBondTransactionListResponseModel>() {
             @Override
             public void onResponse(Call<PersonalBondTransactionListResponseModel> call, Response<PersonalBondTransactionListResponseModel> response) {
-                PersonalBondTransactionListResponseModel personalBondTransactionListResponseModel = response.body();
-                if (personalBondTransactionListResponseModel.isSuccess()){
-                    if(transactionTableIsEmpty()){
-                        for(int i=0; i<personalBondTransactionListResponseModel.getPersonalBondTransactionModel().size(); i++) {
-                            dbHelper.saveBondTransactionTolocalDatabase((personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getId()),String.valueOf(personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBondnumber()),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getStatus(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getUnits(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCreatedAt(),database);
+                if(response.isSuccessful()){
+                    PersonalBondTransactionListResponseModel personalBondTransactionListResponseModel = response.body();
+                    if (personalBondTransactionListResponseModel.isSuccess()){
+                        if(transactionTableIsEmpty()){
+                            for(int i=0; i<personalBondTransactionListResponseModel.getPersonalBondTransactionModel().size(); i++) {
+                                dbHelper.saveBondTransactionTolocalDatabase((personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getId()),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBondnumber(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getStatus(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBond_tenure(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCoupon_rate(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getUnits(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCreatedAt(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getTimeago(),database);
+                            }
                         }
+                        else{
+                            droptabletransaction();
+                            for(int i=0; i<personalBondTransactionListResponseModel.getPersonalBondTransactionModel().size(); i++) {
+                                dbHelper.saveBondTransactionTolocalDatabase((personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getId()),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBondnumber(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getStatus(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBond_tenure(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCoupon_rate(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getUnits(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCreatedAt(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getTimeago(),database);
+                            }
+
+                        }
+                        //Toast.makeText(getActivity(),personalBondTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                        readPersonalTransactionFromLocalDb();
+                        bondstransactionLoader.setVisibility(View.INVISIBLE);
                     }
                     else{
-                        droptabletransaction();
-                        for(int i=0; i<personalBondTransactionListResponseModel.getPersonalBondTransactionModel().size(); i++) {
-                            dbHelper.saveBondTransactionTolocalDatabase((personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getId()),String.valueOf(personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getBondnumber()),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getStatus(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getUnits(),personalBondTransactionListResponseModel.getPersonalBondTransactionModel().get(i).getCreatedAt(),database);
-                        }
-
+                        txtnotransaction.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.INVISIBLE);
+                        bondstransactionLoader.setVisibility(View.INVISIBLE);
+                        //Toast.makeText(getActivity(),personalBondTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
                     }
-                    //Toast.makeText(getActivity(),personalBondTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
-                    readPersonalTransactionFromLocalDb();
-                    bondstransactionLoader.setVisibility(View.INVISIBLE);
                 }
                 else{
-                    txtnotransaction.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    bondstransactionLoader.setVisibility(View.INVISIBLE);
-                    //Toast.makeText(getActivity(),personalBondTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Server error",Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -175,18 +180,20 @@ public class BondsTransactionFragment extends Fragment {
             DbHelper dbHelper = new DbHelper(getActivity());
             SQLiteDatabase database = dbHelper.getReadableDatabase();
             Cursor cursor = dbHelper.readBondTransactionFromLocalDatabase(database);
-            int id=0;
+            String id="";
             Integer units=0;
             String bondtransactiondate="";
+            String bondtransactionTimeAgo="";
             String bondnumber="";
             String bondstatus="";
             while(cursor.moveToNext()){
-                id = cursor.getInt(cursor.getColumnIndex("id"));
-                units = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.bondunit)));
+                id = cursor.getString(cursor.getColumnIndex("id"));
+                units = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.bond_price)));
                 bondtransactiondate = cursor.getString(cursor.getColumnIndex(DbContract.bondtransactiondate));
-                bondnumber = cursor.getString(cursor.getColumnIndex(DbContract.bondnumber));
+                bondtransactionTimeAgo = cursor.getString(cursor.getColumnIndex(DbContract.bondtransactionTimeAgo));
+                bondnumber = cursor.getString(cursor.getColumnIndex(DbContract.auction_date));
                 bondstatus = cursor.getString(cursor.getColumnIndex(DbContract.bondstatus));
-                PersonalBondTransactionModel personalBondTransactionModel = new PersonalBondTransactionModel(String.valueOf(units),bondtransactiondate,id,bondnumber,bondstatus);
+                PersonalBondTransactionModel personalBondTransactionModel = new PersonalBondTransactionModel(String.valueOf(units),bondtransactiondate,bondtransactionTimeAgo,id,bondnumber,bondstatus);
                 transaction.add(personalBondTransactionModel);
             }
 

@@ -47,9 +47,9 @@ public class ListofLeaderBoardAdapter extends RecyclerView.Adapter<ListofLeaderB
             txtuniversity = (TextView)itemView.findViewById(R.id.txtuniversity);
             txtgender = (TextView)itemView.findViewById(R.id.txtgender);
             txtrate = (TextView)itemView.findViewById(R.id.txtportfoliovalue);
-
             txtname.setSelected(true);
             txtuniversity.setSelected(true);
+            txtrate.setSelected(true);
         }
     }
 
@@ -59,6 +59,7 @@ public class ListofLeaderBoardAdapter extends RecyclerView.Adapter<ListofLeaderB
         holder.txtname.setText(users.get(position).getTradername());
         holder.txtuniversity.setText(users.get(position).getUniversity());
         holder.txtgender.setText(users.get(position).getGender());
+        holder.txtrate.setText(String.valueOf( "P.V : " + users.get(position).getPortfolioValue()));
     }
 
     @Override

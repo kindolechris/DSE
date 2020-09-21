@@ -20,6 +20,7 @@ public class StartUpActivity extends AppCompatActivity {
     //Variables
     Animation topAnim, bottomAnim;
     ImageView image;
+    ImageView sponsor;
     TextView poweredtxt, companynametxt;
     private SharedPreferences sharedPreferences;
     public static final  String sharedPrefrences = "sharedpref";
@@ -33,17 +34,17 @@ public class StartUpActivity extends AppCompatActivity {
 
 
         image = findViewById(R.id.imageView);
+        sponsor = findViewById(R.id.sponsor);
         poweredtxt = findViewById(R.id.textView);
-        companynametxt = findViewById(R.id.textView2);
 
-        //Animations
+        //AnimationsS
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
         bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
 
         //Set animation to elements
         image.setAnimation(topAnim);
         poweredtxt.setAnimation(bottomAnim);
-        companynametxt.setAnimation(bottomAnim);
+        sponsor.setAnimation(bottomAnim);
 
         sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
         String _token = sharedPreferences.getString(token, "");

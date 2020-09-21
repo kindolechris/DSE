@@ -1,132 +1,55 @@
 package com.dsetanzania.dse.models.graphdata;
 
-import com.dsetanzania.dse.models.BaseResponseModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class GraphDataModel  {
-    @SerializedName("id")
-    @Expose
-    private Integer id;
-    @SerializedName("created_at")
-    @Expose
-    private String createdAt;
-    @SerializedName("updated_at")
-    @Expose
-    private String updatedAt;
-    @SerializedName("boardshare_id")
-    @Expose
-    private Integer boardshareId;
-    @SerializedName("openingPrice")
-    @Expose
-    private Integer openingPrice;
-    @SerializedName("date")
-    @Expose
-    private String date;
-    @SerializedName("full_date_data")
-    @Expose
-    private String fullDateData;
-    @SerializedName("dayOfMonth")
-    @Expose
-    private Integer dayOfMonth;
-    @SerializedName("dayOfYear")
-    @Expose
-    private Integer dayOfYear;
+
     @SerializedName("x")
     @Expose
-    private Integer x;
+    private String x;
     @SerializedName("y")
     @Expose
-    private Integer y;
+    private String y;
+    @SerializedName("beginDate")
+    @Expose
+    private String beginDate;
+    @SerializedName("endDate")
+    @Expose
+    private String endDate;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Integer getBoardshareId() {
-        return boardshareId;
-    }
-
-    public void setBoardshareId(Integer boardshareId) {
-        this.boardshareId = boardshareId;
-    }
-
-    public Integer getOpeningPrice() {
-        return openingPrice;
-    }
-
-    public void setOpeningPrice(Integer openingPrice) {
-        this.openingPrice = openingPrice;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getFullDateData() {
-        return fullDateData;
-    }
-
-    public void setFullDateData(String fullDateData) {
-        this.fullDateData = fullDateData;
-    }
-
-    public Integer getDayOfMonth() {
-        return dayOfMonth;
-    }
-
-    public void setDayOfMonth(Integer dayOfMonth) {
-        this.dayOfMonth = dayOfMonth;
-    }
-
-    public Integer getDayOfYear() {
-        return dayOfYear;
-    }
-
-    public void setDayOfYear(Integer dayOfYear) {
-        this.dayOfYear = dayOfYear;
-    }
-
-    public Integer getX() {
+    public String getX() {
         return x;
     }
 
-    public void setX(Integer x) {
+    public void setX(String x) {
         this.x = x;
     }
 
-    public Integer getY() {
+    public String getY() {
         return y;
     }
 
-    public void setY(Integer y) {
+    public void setY(String y) {
         this.y = y;
+    }
+
+    public String getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(String beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
 }

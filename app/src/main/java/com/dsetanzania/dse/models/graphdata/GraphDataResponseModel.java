@@ -4,18 +4,19 @@ import com.dsetanzania.dse.models.BaseResponseModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class GraphDataResponseModel extends BaseResponseModel {
+
     @SerializedName("data")
     @Expose
-    private List<GraphDataModel> graphDataModel = null;
+    private GraphDataModel data;
 
-    public List<GraphDataModel> getData() {
-        return graphDataModel;
+    public GraphDataModel getData() {
+        return data;
     }
 
-    public void setData(List<GraphDataModel> data) {
-        this.graphDataModel = data;
+    public void setData(GraphDataModel data) {
+        this.data = data;
     }
 }

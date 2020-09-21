@@ -46,7 +46,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center"
                         android:background="@drawable/ic_equity_share"
-                        android:backgroundTint="@color/colorBlack">
+                        android:backgroundTint="@color/colorPrimary">
                     </ImageView>
                 </LinearLayout>
                 <LinearLayout

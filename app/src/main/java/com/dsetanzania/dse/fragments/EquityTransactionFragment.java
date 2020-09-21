@@ -43,7 +43,7 @@ public class EquityTransactionFragment extends Fragment {
     private int page;
     View view;
     TextView txtnotransaction;
-    private int userId;
+    private String userId;
     private String _token;
     DbHelper dbHelper;
     SQLiteDatabase database;
@@ -81,7 +81,7 @@ public class EquityTransactionFragment extends Fragment {
             sharedPreferences = getActivity().getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
             sharestransactionLoader = (ProgressBar)view.findViewById(R.id.sharestransactionLoader);
             txtnotransaction = (TextView) view.findViewById(R.id.txtnotransaction);
-            userId = sharedPreferences.getInt("userid", -1);
+            userId = sharedPreferences.getString("userid", "");
             _token = sharedPreferences.getString("token", "");
             dbHelper = new DbHelper(getActivity());
             database = dbHelper.getWritableDatabase();
@@ -95,10 +95,11 @@ public class EquityTransactionFragment extends Fragment {
             public void checkMethod(String result) {
 
                 if(result == "Access"){
+                    getlivePersonalSharesTransaction();
                     try {
                         getlivePersonalSharesTransaction();
                     } catch (Exception e) {
-                        Toast.makeText(getActivity(),"System error",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"Exceptio thrown",Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -134,86 +135,94 @@ public class EquityTransactionFragment extends Fragment {
 
 
     public void readPersonalTransactionFromLocalDb(){
-        if(transactionTableIsEmpty()){
-            txtnotransaction.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.INVISIBLE);
-            sharestransactionLoader.setVisibility(View.INVISIBLE);
-        }
-        else{
-            txtnotransaction.setVisibility(View.INVISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
-            sharestransactionLoader.setVisibility(View.INVISIBLE);
-            transaction = new ArrayList<PersonalsharesTransactionModel>();
-            transaction.clear();
-            DbHelper dbHelper = new DbHelper(getActivity());
-            SQLiteDatabase database = dbHelper.getReadableDatabase();
-            Cursor cursor = dbHelper.readShareTransactionFromLocalDatabase(database);
-            int id=0;
-            Integer sharesAmount=0;
-            String transactiondate="";
-            String boardShareName="";
-            Integer price=0;
-            String transactiontype="";
-            String elapsetime="";
-            String transactionstatus="";
-            while(cursor.moveToNext()){
-                id = cursor.getInt(cursor.getColumnIndex("id"));
-                sharesAmount = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.sharesAmout)));
-                transactiondate = cursor.getString(cursor.getColumnIndex(DbContract.sharetransactiondate));
-                boardShareName = cursor.getString(cursor.getColumnIndex(DbContract.boardShareName));
-                price = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.sharePrice)));
-                transactiontype = cursor.getString(cursor.getColumnIndex(DbContract.transactiontype));
-                transactionstatus = cursor.getString(cursor.getColumnIndex(DbContract.transactionstatus));
-                elapsetime = cursor.getString(cursor.getColumnIndex(DbContract.elapsetime));
-                PersonalsharesTransactionModel buyerSharesTransaction = new PersonalsharesTransactionModel(sharesAmount,price,transactionstatus,transactiondate,elapsetime,id,boardShareName,transactiontype);
-                transaction.add(buyerSharesTransaction);
+        try{
+            if(transactionTableIsEmpty()){
+                txtnotransaction.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+                sharestransactionLoader.setVisibility(View.INVISIBLE);
             }
+            else{
+                txtnotransaction.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+                sharestransactionLoader.setVisibility(View.INVISIBLE);
+                transaction = new ArrayList<PersonalsharesTransactionModel>();
+                transaction.clear();
+                DbHelper dbHelper = new DbHelper(getActivity());
+                SQLiteDatabase database = dbHelper.getReadableDatabase();
+                Cursor cursor = dbHelper.readShareTransactionFromLocalDatabase(database);
+                String id="";
+                Integer sharesAmount=0;
+                String transactiondate="";
+                String boardShareName="";
+                Integer price=0;
+                String transactiontype="";
+                String elapsetime="";
+                String transactionstatus="";
+                while(cursor.moveToNext()){
+                    id = cursor.getString(cursor.getColumnIndex("id"));
+                    sharesAmount = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.sharesAmout)));
+                    transactiondate = cursor.getString(cursor.getColumnIndex(DbContract.sharetransactiondate));
+                    boardShareName = cursor.getString(cursor.getColumnIndex(DbContract.boardShareName));
+                    price = Integer.valueOf(cursor.getString(cursor.getColumnIndex(DbContract.sharePrice)));
+                    transactiontype = cursor.getString(cursor.getColumnIndex(DbContract.transactiontype));
+                    transactionstatus = cursor.getString(cursor.getColumnIndex(DbContract.transactionstatus));
+                    elapsetime = cursor.getString(cursor.getColumnIndex(DbContract.elapsetime));
+                    PersonalsharesTransactionModel buyerSharesTransaction = new PersonalsharesTransactionModel(sharesAmount,price,transactionstatus,transactiondate,elapsetime,id,boardShareName,transactiontype);
+                    transaction.add(buyerSharesTransaction);
+                }
 
-            listOfTransactionAdapter = new ListofSharesTransactionAdapter(getActivity(), transaction);
-            recyclerView.setAdapter(listOfTransactionAdapter);
-            ((ListofSharesTransactionAdapter) listOfTransactionAdapter).setMode(Attributes.Mode.Single);
-            cursor.close();
-            dbHelper.close();
+                listOfTransactionAdapter = new ListofSharesTransactionAdapter(getActivity(), transaction);
+                recyclerView.setAdapter(listOfTransactionAdapter);
+                ((ListofSharesTransactionAdapter) listOfTransactionAdapter).setMode(Attributes.Mode.Single);
+                cursor.close();
+                dbHelper.close();
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity(),"System error (Db)",Toast.LENGTH_SHORT).show();
         }
 
     }
 
     public void getlivePersonalSharesTransaction(){
         Call<PersonalShareTransactionListResponseModel> call = RetrofitClient
-                .getInstance().getApi().fetchUserShareTransaction(userId,"Bearer " +  _token);
+                .getInstance().getApi().fetchUserShareTransaction("Bearer " +  _token);
 
         call.enqueue(new Callback<PersonalShareTransactionListResponseModel>() {
             @Override
             public void onResponse(Call<PersonalShareTransactionListResponseModel> call, Response<PersonalShareTransactionListResponseModel> response) {
-                PersonalShareTransactionListResponseModel personalTransactionListResponseModel = response.body();
-                if (personalTransactionListResponseModel.isSuccess()){
+                if(response.isSuccessful()){
+                    PersonalShareTransactionListResponseModel personalTransactionListResponseModel = response.body();
+                    if (personalTransactionListResponseModel.isSuccess()){
 
-
-                    if(transactionTableIsEmpty()){
-                        for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
-                            dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTimeago(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
+                        if(transactionTableIsEmpty()){
+                            for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
+                                dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTimeago(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
+                            }
                         }
-                    }
-                    else{
-                        droptabletransaction();
-                        for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
-                            dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTimeago(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
-                        }
+                        else{
+                            droptabletransaction();
+                            for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
+                                dbHelper.saveShareTransactionTolocalDatabase((personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTimeago(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
+                            }
 
                        /* for(int i=0; i<personalTransactionListResponseModel.getPersonalsharesTransactionModel().size(); i++) {
                             dbHelper.updateShareTransactionTolocalDatabase(String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getId()),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getSharesamount()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCreatedAt(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getCompanyname(),String.valueOf(personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getPrice()),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getTransactiontype(),personalTransactionListResponseModel.getPersonalsharesTransactionModel().get(i).getStatus(),database);
                         }*/
 
-                    }
+                        }
 
-                    readPersonalTransactionFromLocalDb();
-                    sharestransactionLoader.setVisibility(View.INVISIBLE);
+                        readPersonalTransactionFromLocalDb();
+                        sharestransactionLoader.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        txtnotransaction.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.INVISIBLE);
+                        sharestransactionLoader.setVisibility(View.INVISIBLE);
+                        //Toast.makeText(getActivity(),personalTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else{
-                    txtnotransaction.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    sharestransactionLoader.setVisibility(View.INVISIBLE);
-                    //Toast.makeText(getActivity(),personalTransactionListResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Server error",Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -223,6 +232,8 @@ public class EquityTransactionFragment extends Fragment {
             }
         });
     }
+
+
 
     public boolean transactionTableIsEmpty(){
         String count = "SELECT count(*) FROM " + DbContract.SHARE_TRANSACTION_TABLE;

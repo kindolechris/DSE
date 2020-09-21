@@ -72,18 +72,23 @@ public class TotalSharesHoldingsActivity extends AppCompatActivity {
         call.enqueue(new Callback<PersonalShareHoldingsResponseModal>() {
             @Override
             public void onResponse(Call<PersonalShareHoldingsResponseModal> call, Response<PersonalShareHoldingsResponseModal> response) {
-                personalShareHoldingsResponseModal = response.body();
-                if ( personalShareHoldingsResponseModal.isSuccess()){
-                    listOfShareHoldingsAdapter = new ListOfShareHoldingsAdapter(TotalSharesHoldingsActivity.this, personalShareHoldingsResponseModal.getPersonalShareHoldingDataModel().getPersonalShares());
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setAdapter(listOfShareHoldingsAdapter);
-                    Log.i("Check this ","share holdings found");
-                    sharesholdingLoader.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    //Toast.makeText(HomeActivity.this,"Nothing",Toast.LENGTH_LONG).show();
-                    Log.i("Check this ","No share holdings found");
+                if(response.isSuccessful()){
+                    personalShareHoldingsResponseModal = response.body();
+                    if ( personalShareHoldingsResponseModal.isSuccess()){
+                        listOfShareHoldingsAdapter = new ListOfShareHoldingsAdapter(TotalSharesHoldingsActivity.this, personalShareHoldingsResponseModal.getPersonalShareHoldingDataModel().getPersonalShares());
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setLayoutManager(layoutManager);
+                        recyclerView.setAdapter(listOfShareHoldingsAdapter);
+                        Log.i("Check this ","share holdings found");
+                        sharesholdingLoader.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        sharesholdingLoader.setVisibility(View.INVISIBLE);
+                        //Toast.makeText(HomeActivity.this,"Nothing",Toast.LENGTH_LONG).show();
+                        Log.i("Check this ","No share holdings found");
+                    }
+                }else {
+                    Toast.makeText(TotalSharesHoldingsActivity.this,"Server error",Toast.LENGTH_LONG).show();
                 }
             }
 

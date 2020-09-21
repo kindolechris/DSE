@@ -2,6 +2,7 @@ package com.dsetanzania.dse.activities;
 
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,8 +22,10 @@ import android.widget.Toast;
 
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.api.RetrofitClient;
+import com.dsetanzania.dse.helperClasses.CustomMarker;
 import com.dsetanzania.dse.helperClasses.checkInternet;
 import com.dsetanzania.dse.interfaces.InternetcheckInterface;
+import com.dsetanzania.dse.models.graphdata.GraphDataResponseModel;
 import com.dsetanzania.dse.models.transactions.sell.PersonalShareSalesResponseModel;
 import com.dsetanzania.dse.storage.DbHelper;
 import com.github.mikephil.charting.animation.Easing;
@@ -32,11 +35,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -49,7 +50,7 @@ public class SellShareActivity extends AppCompatActivity {
 
     int availableSharesAmount;
     String companyname;
-    int boardshareid;
+    String boardshareid;
     TextView txtshareavailabe;
     EditText txtshareprice;
     EditText txtquantity;
@@ -62,9 +63,11 @@ public class SellShareActivity extends AppCompatActivity {
     DbHelper dbHelper;
     View parentLayout;
     SQLiteDatabase database;
+    final ArrayList<String> xAxisLabel = new ArrayList<>();
     private LineChart linechart;
-    ArrayList<ILineDataSet> dataSets;
-    final List<String> xAxisLabel = new ArrayList<>();
+    Call<GraphDataResponseModel> base_call_back;
+    final List<Entry> entries = new ArrayList<>();
+    CustomMarker marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,17 +83,15 @@ public class SellShareActivity extends AppCompatActivity {
         sellShareLoader = (ProgressBar) findViewById(R.id.sellShareLoader);
         parentLayout = findViewById(android.R.id.content);
         graphviewLoader = (LinearLayout) findViewById(R.id.graphviewLayoutLoader);
+        marker = new CustomMarker (getApplicationContext(), R.layout.graph_pointer);
         dbHelper = new DbHelper(this);
         database = dbHelper.getWritableDatabase();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             companyname = extras.getString("companyname");
             availableSharesAmount = extras.getInt("availableSharesAmount");
-            boardshareid = extras.getInt("boardshareid");
+            boardshareid = extras.getString("boardshareid");
         }
-        dataSets = new ArrayList<>();
-        float defaultBarWidth = -1;
-        List<String> xAxisValues = new ArrayList<>(Arrays.asList("Jan", "Feb", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"));
         linechart = findViewById(R.id.chart1);
         sellshabtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,9 +116,7 @@ public class SellShareActivity extends AppCompatActivity {
 
                         }
                         else if(result == "NoAccess"){
-                            Snackbar snackbar = Snackbar
-                                    .make(parentLayout, "No internet access", Snackbar.LENGTH_LONG);
-                            snackbar.show();
+                            showSnackbar("No internet access");
                         }
                     }
                 });
@@ -135,52 +134,13 @@ public class SellShareActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Sell " + companyname +" shares");
         }
 
-        initGraph("m");
+        try {
+            initGraph("d");
+        } catch (Exception e) {
+            Toast.makeText(SellShareActivity.this,"Exception thrown",Toast.LENGTH_SHORT).show();
+        }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Handler handler = new Handler();
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        else if (item.getItemId() == R.id.sortbyday) {
-            graphviewLoader.setVisibility(View.VISIBLE);
-            linechart.setVisibility(View.INVISIBLE);
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    initGraph("d");
-                    graphviewLoader.setVisibility(View.INVISIBLE);
-                    linechart.setVisibility(View.VISIBLE);
-                }
-            }, 2000);
-        }
-        else if (item.getItemId() == R.id.sortbyweek) {
-            graphviewLoader.setVisibility(View.VISIBLE);
-            linechart.setVisibility(View.INVISIBLE);
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    initGraph("w");
-                    graphviewLoader.setVisibility(View.INVISIBLE);
-                    linechart.setVisibility(View.VISIBLE);
-                }
-            }, 2000);
-        }
-        else if (item.getItemId() == R.id.sortbymonth) {
-            graphviewLoader.setVisibility(View.VISIBLE);
-            linechart.setVisibility(View.INVISIBLE);
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    initGraph("m");
-                    graphviewLoader.setVisibility(View.INVISIBLE);
-                    linechart.setVisibility(View.VISIBLE);
-                }
-            }, 2000);
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     public void sellShares(String transactiontype,String shareAmount,String price,String transactionFrom,String boarsharedId){
         Call<PersonalShareSalesResponseModel> call = RetrofitClient
@@ -215,19 +175,17 @@ public class SellShareActivity extends AppCompatActivity {
     }
 
     public void initGraph(String duration){
-        xAxisLabel.clear();
+        entries.clear();
         linechart = findViewById(R.id.chart1);
         linechart.getDescription().setEnabled(false);
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
         linechart.setMaxVisibleValueCount(60);
-
         // scaling can now only be done on x- and y-axis separately
         linechart.setPinchZoom(false);
-
+        linechart.setMarker(marker);
         linechart.setDrawGridBackground(false);
 
         XAxis xAxis = linechart.getXAxis();
+        xAxis.setLabelCount(5,true);
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -238,7 +196,7 @@ public class SellShareActivity extends AppCompatActivity {
         xAxis.setDrawGridLines(false);
         linechart.getAxisLeft().setDrawGridLines(false);
         // add a nice and smooth animation
-        linechart.animateY(1500);
+        linechart.animateX(2500, Easing.Linear);
         linechart.getLegend().setEnabled(false);
 
         switch(duration) {
@@ -257,86 +215,144 @@ public class SellShareActivity extends AppCompatActivity {
     }
 
     public void setDaily(){
-        xAxisLabel.add("7:00AM");
-        xAxisLabel.add("8:00AM");
-        xAxisLabel.add("9:00AM");
-        xAxisLabel.add("10:00AM");
-        xAxisLabel.add("11:00AM");
-        xAxisLabel.add("12:00PM");
-        xAxisLabel.add("13:00PM");
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0f, 85f));
-        entries.add(new Entry(1f, 90f));
-        entries.add(new Entry(2f, 106f));
-        entries.add(new Entry(3f, 86f));
-        entries.add(new Entry(4f, 92f));
-        entries.add(new Entry(5f, 110f));
-        entries.add(new Entry(6f, 100f));
+        xAxisLabel.clear();
+        base_call_back = RetrofitClient
+                .getInstance().getApi().fetchDailyBoardGraphData(boardshareid,"Bearer " + _token);
+        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
+            @Override
+            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
+                GraphDataResponseModel dailygraphdata = response.body();
+                if(response.isSuccessful()){
+                    if (dailygraphdata.isSuccess()){
+                        String[] xdata = dailygraphdata.getData().getX().split(",");
+                        String[] ydata = dailygraphdata.getData().getY().split(",");
+                        for(int i=0; i<xdata.length; i++) {
+                            xAxisLabel.add(xdata[i]);
+                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
 
-        LineDataSet set = new LineDataSet(entries, "Market Price");
-        set.setColors(getResources().getColor(R.color.colorPrimary));
-        set.setDrawFilled(true);
-        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
-        set.setDrawValues(false);
-        LineData data = new LineData(set);
-        linechart.setData(data);
-        linechart.invalidate();
+                        }
+
+
+                        LineDataSet set = new LineDataSet(entries, "Market Price");
+                        set.setColors(getResources().getColor(R.color.colorPrimary));
+                        set.setDrawFilled(true);
+                        set.setDrawVerticalHighlightIndicator(true);
+                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
+                        set.setDrawValues(false);
+                        set.setDrawCircles(false);
+                        LineData data = new LineData(set);
+                        linechart.setData(data);
+                        linechart.invalidate();
+                        graphviewLoader.setVisibility(View.INVISIBLE);
+                        linechart.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(BuyPersonShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(SellShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
+            }
+        });
+
     }
 
     public void setWeekly(){
-        xAxisLabel.add("Mon");
-        xAxisLabel.add("Tue");
-        xAxisLabel.add("Wed");
-        xAxisLabel.add("Thu");
-        xAxisLabel.add("Fri");
-        xAxisLabel.add("Sat");
-        xAxisLabel.add("Sun");
+        xAxisLabel.clear();
+        base_call_back = RetrofitClient
+                .getInstance().getApi().fetchWeeklyBoardGraphData(boardshareid,"Bearer " + _token);
+        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
+            @Override
+            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
+                GraphDataResponseModel dailygraphdata = response.body();
+                if(response.isSuccessful()){
+                    if (dailygraphdata.isSuccess()){
+                        String[] xdata = dailygraphdata.getData().getX().split(",");
+                        String[] ydata = dailygraphdata.getData().getY().split(",");
+                        for(int i=0; i<xdata.length; i++) {
+                            xAxisLabel.add(xdata[i]);
+                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
 
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0f, 95f));
-        entries.add(new Entry(1f, 85f));
-        entries.add(new Entry(2f, 82f));
-        entries.add(new Entry(3f, 90f));
-        entries.add(new Entry(4f, 98f));
-        entries.add(new Entry(5f, 115f));
-        entries.add(new Entry(6f, 102f));
+                        }
 
-        LineDataSet set = new LineDataSet(entries, "Market Price");
-        set.setColors(getResources().getColor(R.color.colorPrimary));
-        set.setDrawValues(false);
-        set.setDrawFilled(true);
-        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
-        LineData data = new LineData(set);
-        linechart.setData(data);
-        linechart.invalidate();
+                        LineDataSet set = new LineDataSet(entries, "Market Price");
+                        set.setColors(getResources().getColor(R.color.colorPrimary));
+                        set.setDrawFilled(true);
+                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
+                        set.setDrawValues(false);
+                        set.setDrawCircles(false);
+                        LineData data = new LineData(set);
+                        linechart.setData(data);
+                        linechart.invalidate();
+                        graphviewLoader.setVisibility(View.INVISIBLE);
+                        linechart.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(BuyBoardShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(SellShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
+            }
+        });
     }
 
     public void setMonthly(){
-        xAxisLabel.add("Jan1");
-        xAxisLabel.add("Feb1");
-        xAxisLabel.add("March1");
-        xAxisLabel.add("April1");
-        xAxisLabel.add("May1");
-        xAxisLabel.add("June1");
-        xAxisLabel.add("Jully1");
+        xAxisLabel.clear();
+        base_call_back = RetrofitClient
+                .getInstance().getApi().fetchMonthlyBoardGraphData(boardshareid,"Bearer " + _token);
+        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
+            @Override
+            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
+                GraphDataResponseModel dailygraphdata = response.body();
+                if(response.isSuccessful()){
+                    if (dailygraphdata.isSuccess()){
+                        String[] xdata = dailygraphdata.getData().getX().split(",");
+                        String[] ydata = dailygraphdata.getData().getY().split(",");
+                        for(int i=0; i<xdata.length; i++) {
+                            xAxisLabel.add(xdata[i]);
+                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
+                        }
 
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(0f, 115f));
-        entries.add(new Entry(1f, 88f));
-        entries.add(new Entry(2f, 85f));
-        entries.add(new Entry(3f, 86f));
-        entries.add(new Entry(4f, 90f));
-        entries.add(new Entry(5f, 90f));
-        entries.add(new Entry(6f, 95f));
 
-        LineDataSet set = new LineDataSet(entries, "Market Price");
-        set.setColors(getResources().getColor(R.color.colorPrimary));
-        set.setDrawValues(false);
-        set.setDrawFilled(true);
-        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_graph));
-        LineData data = new LineData(set);
-        linechart.setData(data);
-        linechart.invalidate();
+                        LineDataSet set = new LineDataSet(entries, "Market Price");
+                        set.setColors(getResources().getColor(R.color.colorPrimary));
+                        set.setDrawFilled(true);
+                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_box));
+                        set.setDrawValues(false);
+                        set.setDrawCircles(false);
+                        LineData data = new LineData(set);
+                        linechart.setData(data);
+                        linechart.invalidate();
+                        graphviewLoader.setVisibility(View.INVISIBLE);
+                        linechart.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(BuyPersonShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(SellShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
+            }
+        });
     }
 
     @Override
@@ -344,6 +360,42 @@ public class SellShareActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.sort_menu, menu);
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Handler handler = new Handler();
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        else if (item.getItemId() == R.id.sortbyday) {
+            linechart.setVisibility(View.INVISIBLE);
+            graphviewLoader.setVisibility(View.VISIBLE);
+            initGraph("d");
+        }
+        else if (item.getItemId() == R.id.sortbyweek) {
+            linechart.setVisibility(View.INVISIBLE);
+            graphviewLoader.setVisibility(View.VISIBLE);
+            initGraph("w");
+        }
+        else if (item.getItemId() == R.id.sortbymonth) {
+            linechart.setVisibility(View.INVISIBLE);
+            graphviewLoader.setVisibility(View.VISIBLE);
+            initGraph("m");
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(parentLayout, message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED);
+        View snackView = snackbar.getView();
+        TextView textView = snackView.findViewById(com.google.android.material.R.id.snackbar_text);
+        textView.setTextColor(Color.WHITE);
+        snackbar.show();
+    }
+
 
 }
 

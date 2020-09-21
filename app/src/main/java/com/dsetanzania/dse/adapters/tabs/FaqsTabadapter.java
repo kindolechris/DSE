@@ -4,12 +4,14 @@ package com.dsetanzania.dse.adapters.tabs;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import com.dsetanzania.dse.fragments.ArticlesFragment;
 import com.dsetanzania.dse.fragments.FaqLisFragment;
 import com.dsetanzania.dse.fragments.TutorialFragment;
 
 public class FaqsTabadapter extends FragmentPagerAdapter {
-    private static int NUM_ITEMS = 2;
-    private String tabTitles[] = new String[] { "Faqs", "Tutorials & Insight"};
+    private static int NUM_ITEMS = 3;
+    private String tabTitles[] = new String[] { "Faqs","Articles", "Insight"};
 
     public FaqsTabadapter(FragmentManager fragmentManager) {
         super(fragmentManager,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -29,7 +31,10 @@ public class FaqsTabadapter extends FragmentPagerAdapter {
             case 0: // Fragment # 0 - This will show FirstFragment
                 return FaqLisFragment.newInstance(0, "Faqs");
             case 1: // Fragment # 0 - This will show FirstFragment different title
-                return TutorialFragment.newInstance(1, "Tutorials & Insight");
+                return ArticlesFragment.newInstance(1, "Articles");
+            case 2: // Fragment # 0 - This will show FirstFragment different title
+                return TutorialFragment.newInstance(1, "Insight");
+
             default:
                 return null;
         }

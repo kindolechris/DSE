@@ -4,9 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class PersonalBondHoldingsModel {
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -15,34 +15,32 @@ public class PersonalBondHoldingsModel {
     private String updatedAt;
     @SerializedName("user_id")
     @Expose
-    private Integer userId;
+    private String userId;
     @SerializedName("boardbond_id")
     @Expose
-    private Integer boardbondId;
-    @SerializedName("amount")
-    @Expose
-    private Integer amount;
+    private String boardbondId;
+
     @SerializedName("deleted_at")
     @Expose
     private Object deletedAt;
-    @SerializedName("bondnumber")
+    @SerializedName("auction_date")
     @Expose
     private String bondnumber;
-    @SerializedName("duration")
+    @SerializedName("bond_tenure")
     @Expose
     private String duration;
     @SerializedName("price")
     @Expose
     private String price;
-    @SerializedName("interest_rate")
+    @SerializedName("coupon_rate")
     @Expose
-    private Integer interestRate;
+    private String interestRate;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -62,28 +60,20 @@ public class PersonalBondHoldingsModel {
         this.updatedAt = updatedAt;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public Integer getBoardbondId() {
+    public String getBoardbondId() {
         return boardbondId;
     }
 
-    public void setBoardbondId(Integer boardbondId) {
+    public void setBoardbondId(String boardbondId) {
         this.boardbondId = boardbondId;
-    }
-
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Integer amount) {
-        this.amount = amount;
     }
 
     public Object getDeletedAt() {
@@ -118,11 +108,11 @@ public class PersonalBondHoldingsModel {
         this.price = price;
     }
 
-    public Integer getInterestRate() {
+    public String getInterestRate() {
         return interestRate;
     }
 
-    public void setInterestRate(Integer interestRate) {
+    public void setInterestRate(String interestRate) {
         this.interestRate = interestRate;
     }
 

@@ -1,17 +1,33 @@
 package com.dsetanzania.dse.activities;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.dsetanzania.dse.R;
+import com.dsetanzania.dse.adapters.BoardSharesAdapter;
 import com.dsetanzania.dse.adapters.ListofLeaderBoardAdapter;
+import com.dsetanzania.dse.api.RetrofitClient;
+import com.dsetanzania.dse.models.AuthResponseModel;
+import com.dsetanzania.dse.models.LeaderBoardResponseModel;
 import com.dsetanzania.dse.models.UserModel;
+
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.dsetanzania.dse.activities.LoginActivity.sharedPrefrences;
 
 public class LeaderBoardActivity extends AppCompatActivity {
 
@@ -21,6 +37,9 @@ public class LeaderBoardActivity extends AppCompatActivity {
     RecyclerView leaderboardrecycler;
     TextView txtusername;
     TextView txtuniversity;
+    private SharedPreferences sharedPreferences;
+    private String _token;
+    ProgressBar leaderboardloader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +50,16 @@ public class LeaderBoardActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolBarElevation(7);
         leaderboardrecycler = (RecyclerView) findViewById(R.id.leaderboardrecycler);
+        leaderboardloader = (ProgressBar) findViewById(R.id.leaderboardloader);
         txtusername = (TextView) findViewById(R.id.txtusername);
         txtuniversity = (TextView) findViewById(R.id.txtuniversity);
+        sharedPreferences = getSharedPreferences(sharedPrefrences,MODE_PRIVATE);
+        _token = sharedPreferences.getString("token", "");
 
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Leader board");
+            getSupportActionBar().setTitle("Top 10 Leaderboard");
         }
 
         getleaderboards();
@@ -54,16 +76,36 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private void  getleaderboards(){
         //serverpgsBar.setVisibility(View.VISIBLE);
 
-        leaderboardusers = new ArrayList<UserModel>();
-        leaderboardusers.clear();
+        Call<LeaderBoardResponseModel> call = RetrofitClient
+                .getInstance().getApi().fetchLeaderBoardsdata("Bearer " +  _token);
 
-        listofLeaderBoardAdapter = new ListofLeaderBoardAdapter(LeaderBoardActivity.this, leaderboardusers);
+        call.enqueue(new Callback<LeaderBoardResponseModel>() {
+            @Override
+            public void onResponse(Call<LeaderBoardResponseModel> call, Response<LeaderBoardResponseModel> response) {
+                if(response.isSuccessful()){
+                    LeaderBoardResponseModel leaderboards = response.body();
+                    if (leaderboards.isSuccess()){
+                        listofLeaderBoardAdapter = new ListofLeaderBoardAdapter(LeaderBoardActivity.this, leaderboards.getUserModel());
+                        leaderboardrecycler.setHasFixedSize(true);
+                        leaderboardrecycler.setLayoutManager(new LinearLayoutManager(LeaderBoardActivity.this));
+                        leaderboardrecycler.setAdapter(listofLeaderBoardAdapter);
+                        leaderboardloader.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(HomeActivity.this,"leaders boards",Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
+                    leaderboardloader.setVisibility(View.INVISIBLE);
+                    Toast.makeText(LeaderBoardActivity.this,"Server error",Toast.LENGTH_LONG).show();
+                }
+            }
 
-        leaderboardrecycler.setHasFixedSize(true);
-        leaderboardrecycler.setLayoutManager(new LinearLayoutManager(LeaderBoardActivity.this));
-        leaderboardrecycler.setAdapter(listofLeaderBoardAdapter);
-        leaderboardrecycler.setLayoutManager(new LinearLayoutManager(LeaderBoardActivity.this));
+            @Override
+            public void onFailure(Call<LeaderBoardResponseModel> call, Throwable t) {
 
+            }
+        });
     }
 
     @Override

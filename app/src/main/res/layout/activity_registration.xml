@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    android:background="@color/colorWhite"
+    android:background="@color/colorPrimary"
     tools:context=".activities.RegistrationActivity">
 
     <RelativeLayout
@@ -66,7 +66,7 @@
                         android:layout_marginEnd="20dp"
                         android:gravity="left|center"
                         android:text="Gender"
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@color/colorWhite"
                         android:textSize="17dp"></TextView>
 
                     <RadioGroup
@@ -82,22 +82,20 @@
                             android:id="@+id/radioButton1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:onClick="checkbtn"
                             android:text="Male"
                             android:theme="@style/MyRadioButton"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="17dp" />
+                            android:textColor="@color/colorWhite"
+                            android:textSize="17dp" />S
 
                         <RadioButton
                             android:id="@+id/radioButton2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="50dp"
-                            android:onClick="checkbtn"
                             android:paddingLeft="16dp"
                             android:text="Female"
                             android:theme="@style/MyRadioButton"
-                            android:textColor="@color/colorBlack"
+                            android:textColor="@color/colorWhite"
                             android:textSize="17dp" />
                     </RadioGroup>
 
@@ -108,8 +106,7 @@
                     android:layout_width="match_parent"
                     android:layout_below="@+id/gendetlayout"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/colorBlack"
-                    android:theme="@style/MyTextInputLayout"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:layout_editor_absoluteY="201dp">
 
@@ -123,10 +120,9 @@
                         android:maxLength="20"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
+                        android:textCursorDrawable="@drawable/white_cursor"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -134,11 +130,9 @@
                     android:id="@+id/lastnamelayout"
                     android:layout_below="@id/firstnamelayout"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/colorBlack"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:theme="@style/MyTextInputLayout"
                     tools:layout_editor_absoluteY="201dp">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/txtlastname"
                         android:layout_width="match_parent"
@@ -149,10 +143,9 @@
                         android:maxLength="20"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite"
+                        android:textCursorDrawable="@drawable/white_cursor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -161,8 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_below="@+id/lastnamelayout"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/colorBlack"
-                    android:theme="@style/MyTextInputLayout"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:layout_editor_absoluteY="274dp">
 
@@ -176,10 +168,9 @@
                         android:maxLength="20"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite"
+                        android:textCursorDrawable="@drawable/white_cursor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -188,9 +179,8 @@
                     android:layout_width="match_parent"
                     android:layout_below="@id/tradernamelayout"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/colorBlack"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:theme="@style/MyTextInputLayout"
                     tools:layout_editor_absoluteY="274dp">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -203,10 +193,9 @@
                         android:maxLength="40"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite"
+                        android:textCursorDrawable="@drawable/white_cursor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -215,8 +204,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/emaillayout"
-                    android:textColorHint="@color/colorBlack"
-                    android:theme="@style/MyTextInputLayout"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:layout_editor_absoluteY="347dp">
 
@@ -230,10 +218,9 @@
                         android:maxLength="10"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite"
+                        android:textCursorDrawable="@drawable/white_cursor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -246,7 +233,31 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:layout_editor_absoluteY="365dp">
 
-                    <LinearLayout
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutuniversity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/universitylayout"
+                        android:textColorHint="@color/colorWhite"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:layout_editor_absoluteY="421dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/btnuniversity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat"
+                            android:hint="University"
+                            android:inputType="textPersonName|textCapWords"
+                            android:maxLength="20"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.App.TextInputLayout"
+                            android:textColor="@color/colorWhite"
+                            android:textCursorDrawable="@drawable/white_cursor"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                   <!-- <LinearLayout
                         android:id="@+id/coutrycodeLayout"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
@@ -264,7 +275,7 @@
                             android:scrollHorizontally="true"
                             android:lines="1"
                             android:ellipsize="end"
-                            android:textColor="@color/colorBlack"
+                            android:textColor="@color/colorWhite"
                             android:textAllCaps="false"
                             android:background="@null">
                         </Button>
@@ -272,9 +283,9 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@color/colorBlack">
+                            android:background="@color/colorWhite">
                         </LinearLayout>
-                    </LinearLayout>
+                    </LinearLayout>-->
                 </LinearLayout>
 
 
@@ -283,8 +294,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/universitylayout"
-                    android:textColorHint="@color/colorBlack"
-                    android:theme="@style/MyTextInputLayout"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:layout_editor_absoluteY="421dp">
 
@@ -298,10 +308,9 @@
                         android:maxLength="20"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite"
+                        android:textCursorDrawable="@drawable/white_cursor"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -311,8 +320,7 @@
                     android:layout_width="match_parent"
                     android:layout_below="@id/courselayout"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/colorBlack"
-                    android:theme="@style/MyTextInputLayout"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:layout_editor_absoluteY="421dp">
 
@@ -326,11 +334,10 @@
                         android:maxLength="1"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
+                        android:textColor="@color/colorWhite"
                         android:textColorHint="@color/colorWhite"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textCursorDrawable="@drawable/white_cursor" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -339,8 +346,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/yearofstudylayout"
-                    android:textColorHint="@color/colorBlack"
-                    android:theme="@style/MyTextInputLayout"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:layout_editor_absoluteY="494dp">
 
@@ -354,10 +360,9 @@
                         android:maxLength="20"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite"
+                        android:textCursorDrawable="@drawable/white_cursor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -366,8 +371,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/passworLayout"
-                    android:textColorHint="@color/colorBlack"
-                    android:theme="@style/MyTextInputLayout"
+                    android:textColorHint="@color/colorWhite"
                     app:layout_constraintEnd_toEndOf="parent"
                     tools:layout_editor_absoluteY="494dp">
 
@@ -381,10 +385,9 @@
                         android:maxLength="20"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:theme="@style/MyTextInputLayout"
                         android:textAppearance="@style/TextAppearance.App.TextInputLayout"
-                        android:textColor="@color/colorBlack"
-                        android:textCursorDrawable="@drawable/cursor" />
+                        android:textColor="@color/colorWhite"
+                        android:textCursorDrawable="@drawable/white_cursor" />
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <TextView
@@ -395,9 +398,9 @@
                     android:paddingEnd="20dp"
                     android:layout_below="@id/confirmpasslayout"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat"
+                    android:fontFamily="@font/fontawesome"
                     android:gravity="center"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/colorWhite"
                     android:text="By creating an account you agree to terms of use and Privacy Policy"
                     android:textSize="13dp" />
 
@@ -420,10 +423,10 @@
                         android:fontFamily="@font/montserrat"
                         android:text="Sign Up"
                         android:textAllCaps="false"
-                        android:textColor="@color/colorWhite"
+                        android:textColor="@color/colorBlack"
                         android:textSize="20sp"
                         android:theme="@style/Theme.MaterialComponents.NoActionBar"
-                        app:backgroundTint="@color/colorPrimary"
+                        app:backgroundTint="@color/colorWhite"
                         app:rippleColor="@color/colorAccent"></com.google.android.material.button.MaterialButton>
 
                 </LinearLayout>
@@ -443,7 +446,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         android:indeterminateTintMode="src_atop"
-        android:indeterminateTint="@color/colorPrimary"
+        android:indeterminateTint="@color/colorWhite"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />

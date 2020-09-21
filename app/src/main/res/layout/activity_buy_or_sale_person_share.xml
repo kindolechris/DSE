@@ -44,6 +44,7 @@
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chart1"
+                android:visibility="invisible"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
         </LinearLayout>
@@ -120,7 +121,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Holdings  (shareAmount) :"
+                    android:text="Holdings  (Share) :"
                     android:textSize="15dp"
                     android:fontFamily="@font/montserrat"
                     android:textColor="@color/colorBlack">
@@ -191,7 +192,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         android:gravity="center"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.25" >

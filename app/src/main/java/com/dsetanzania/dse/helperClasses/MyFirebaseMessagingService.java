@@ -64,7 +64,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
            Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_1_ID)
                    .setSmallIcon(R.drawable.logo_app_alt_down)
                    .setContentTitle(remoteMessage.getNotification().getTitle())
-                   .setContentText("SIC notification")
+                   .setContentText(remoteMessage.getNotification().getBody())
                    .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
                    .setStyle(new NotificationCompat.BigTextStyle()
                            .bigText(remoteMessage.getNotification().getBody()))

@@ -6,11 +6,11 @@ import com.google.gson.annotations.SerializedName;
 public class PersonalBondTransactionModel {
     @SerializedName("boardbond_id")
     @Expose
-    private Integer boardbondId;
+    private String boardbondId;
     @SerializedName("personalbond_id")
     @Expose
-    private Integer personalbondId;
-    @SerializedName("units")
+    private String personalbondId;
+    @SerializedName("price")
     @Expose
     private String units;
     @SerializedName("status")
@@ -18,41 +18,53 @@ public class PersonalBondTransactionModel {
     private String status;
     @SerializedName("user_id")
     @Expose
-    private Integer userId;
+    private String userId;
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    private Integer id;
-    @SerializedName("bondnumber")
+    private String id;
+    @SerializedName("auction_date")
     @Expose
     private String bondnumber;
 
-    public PersonalBondTransactionModel(String units, String createdAt, Integer id, String bondnumber,String status) {
+    @SerializedName("bond_tenure")
+    @Expose
+    private String bond_tenure;
+
+    @SerializedName("coupon_rate")
+    @Expose
+    private String coupon_rate;
+    @SerializedName("timeago")
+    @Expose
+    private String timeago;
+
+    public PersonalBondTransactionModel(String units, String createdAt,String timeago, String id, String bondnumber, String status) {
         this.units = units;
         this.createdAt = createdAt;
+        this.timeago = timeago;
         this.id = id;
         this.bondnumber = bondnumber;
         this.status = status;
     }
 
-    public Integer getBoardbondId() {
+    public String getBoardbondId() {
         return boardbondId;
     }
 
-    public void setBoardbondId(Integer boardbondId) {
+    public void setBoardbondId(String boardbondId) {
         this.boardbondId = boardbondId;
     }
 
-    public Integer getPersonalbondId() {
+    public String getPersonalbondId() {
         return personalbondId;
     }
 
-    public void setPersonalbondId(Integer personalbondId) {
+    public void setPersonalbondId(String personalbondId) {
         this.personalbondId = personalbondId;
     }
 
@@ -72,11 +84,11 @@ public class PersonalBondTransactionModel {
         this.status = status;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -96,11 +108,11 @@ public class PersonalBondTransactionModel {
         this.createdAt = createdAt;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -110,6 +122,30 @@ public class PersonalBondTransactionModel {
 
     public void setBondnumber(String bondnumber) {
         this.bondnumber = bondnumber;
+    }
+
+    public String getTimeago() {
+        return timeago;
+    }
+
+    public void setTimeago(String timeago) {
+        this.timeago = timeago;
+    }
+
+    public String getBond_tenure() {
+        return bond_tenure;
+    }
+
+    public void setBond_tenure(String bond_tenure) {
+        this.bond_tenure = bond_tenure;
+    }
+
+    public String getCoupon_rate() {
+        return coupon_rate;
+    }
+
+    public void setCoupon_rate(String coupon_rate) {
+        this.coupon_rate = coupon_rate;
     }
 }
 

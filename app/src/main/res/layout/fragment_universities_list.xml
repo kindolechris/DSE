@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
-    android:background="@color/colorWhite"
+    android:background="@color/colorPrimary"
     android:layout_height="match_parent"
     >
 
@@ -13,7 +13,7 @@
         android:id="@+id/account_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorWhite"
+        android:background="@color/colorPrimary"
         android:fillViewport="true"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
@@ -25,13 +25,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite">
+            android:background="@color/colorPrimary">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listofuniversitiesrecycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorWhite">
+                android:background="@color/colorPrimary">
             </androidx.recyclerview.widget.RecyclerView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

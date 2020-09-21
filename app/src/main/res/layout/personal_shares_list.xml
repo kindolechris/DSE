@@ -46,7 +46,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center"
                         android:background="@drawable/ic_equity_share"
-                        android:backgroundTint="@color/colorBlack">
+                        android:backgroundTint="@color/colorPrimary">
                     </ImageView>
                 </LinearLayout>
                 <LinearLayout
@@ -72,7 +72,8 @@
                         android:layout_height="wrap_content"
                         android:textSize="11sp"
                         android:text="status"
-                        android:layout_marginTop="5dp"
+                        android:paddingBottom="2dp"
+                        android:paddingTop="2dp"
                         android:textColor="@color/colorBlack"
                         android:fontFamily="@font/fontawesome">
                     </TextView>
@@ -82,7 +83,8 @@
                         android:layout_height="wrap_content"
                         android:textSize="11sp"
                         android:text="ltq"
-                        android:layout_marginTop="5dp"
+                        android:paddingBottom="2dp"
+                        android:paddingTop="2dp"
                         android:textColor="@color/colorBlack"
                         android:fontFamily="@font/fontawesome">
                     </TextView>

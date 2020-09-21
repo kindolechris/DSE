@@ -65,10 +65,10 @@ public class ListOfBondsAdapter extends RecyclerView.Adapter<ListOfBondsAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
         holder.itemView.setTag(bonds.get(position));
-        holder.txtbonnumber.setText("No. " + String.valueOf(bonds.get(position).getBondnumber()));
-        holder.txtbonddate.setText(bonds.get(position).getCreatedAt().substring(0,10));
-        holder.txtbondmonth.setText("Duration : "+ String.valueOf(bonds.get(position).getDuration()) + " Month (s)");
-        holder.txtbondrate.setText("Interest rate : " + String.valueOf(bonds.get(position).getInterestRate()) + " %");
+        holder.txtbonnumber.setText("Auction date. " + String.valueOf(bonds.get(position).getBondnumber()));
+        //holder.txtbonddate.setText(bonds.get(position).getCreatedAt().substring(0,10));
+        holder.txtbondmonth.setText("Bond tenure : "+ String.valueOf(bonds.get(position).getDuration()) + " Year (s)");
+        holder.txtbondrate.setText("Coupon rate : " + String.valueOf(bonds.get(position).getInterestRate()) + " %");
 
         holder.bondlayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,9 +77,7 @@ public class ListOfBondsAdapter extends RecyclerView.Adapter<ListOfBondsAdapter.
                 myIntent.putExtra("Bondnumber",bonds.get(position).getBondnumber());
                 myIntent.putExtra("Rate",String.valueOf(bonds.get(position).getInterestRate()));
                 myIntent.putExtra("Duration",bonds.get(position).getDuration());
-                myIntent.putExtra("issuer",bonds.get(position).getIssuer());
-                myIntent.putExtra("bondprice",bonds.get(position).getPrice());
-                myIntent.putExtra("bondid",String.valueOf(bonds.get(position).getId()));
+                myIntent.putExtra("bondid",(bonds.get(position).getId()));
                 context.startActivity(myIntent);
             }
         });

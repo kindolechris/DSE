@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -86,18 +88,22 @@ public class BoardSharesFragment extends Fragment {
         call.enqueue(new Callback<BoardShareResponseModel>() {
             @Override
             public void onResponse(Call<BoardShareResponseModel> call, Response<BoardShareResponseModel> response) {
-                boardShareResponseModel = response.body();
-                if ( boardShareResponseModel != null){
-                    simulatedMarketAdapter = new BoardSharesAdapter(getContext(), boardShareResponseModel.getBoardSharesModel());
-                    boardSharesrerecyclerview.setHasFixedSize(true);
-                    boardSharesrerecyclerview.setLayoutManager(layoutManager);
-                    boardSharesrerecyclerview.setAdapter(simulatedMarketAdapter);
-                    Log.i("Check this ","boards found");
-                    boardSharesLoader.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    //Toast.makeText(HomeActivity.this,"Nothing",Toast.LENGTH_LONG).show();
-                    //Log.i("Check this ","not workinnnnnnnng");
+                if(response.isSuccessful()){
+                    boardShareResponseModel = response.body();
+                    if ( boardShareResponseModel != null){
+                        simulatedMarketAdapter = new BoardSharesAdapter(getContext(), boardShareResponseModel.getBoardSharesModel());
+                        boardSharesrerecyclerview.setHasFixedSize(true);
+                        boardSharesrerecyclerview.setLayoutManager(layoutManager);
+                        boardSharesrerecyclerview.setAdapter(simulatedMarketAdapter);
+                        Log.i("Check this ","boards found");
+                        boardSharesLoader.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(HomeActivity.this,"Nothing",Toast.LENGTH_LONG).show();
+                        //Log.i("Check this ","not workinnnnnnnng");
+                    }
+                }else{
+                    Toast.makeText(getActivity(),"Server error",Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -106,6 +112,17 @@ public class BoardSharesFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        boardSharesLoader.setVisibility(View.VISIBLE);
+        try {
+            getboards();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(),"System error",Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

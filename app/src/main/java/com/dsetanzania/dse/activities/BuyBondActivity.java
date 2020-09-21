@@ -46,7 +46,6 @@ public class BuyBondActivity extends AppCompatActivity {
     String bondrate;
     String bondduration;
     String bondid;
-    String bondissuer;
     String bondprice;
     ProgressBar bondprogressbar;
     LinearLayout buybondLayout;
@@ -78,7 +77,6 @@ public class BuyBondActivity extends AppCompatActivity {
             bondnumber = extras.getString("Bondnumber");
             bondrate = extras.getString("Rate");
             bondduration = extras.getString("Duration");
-            bondissuer = extras.getString("issuer");
             bondprice = extras.getString("bondprice");
             bondid = extras.getString("bondid");
         }
@@ -96,15 +94,15 @@ public class BuyBondActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     if(TextUtils.isEmpty(txtquantity.getText().toString().trim())){
-                        Toast.makeText(getApplicationContext(),"Place quantity in order to buy",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"Place your price to buy",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     bondprogressbar.setVisibility(View.VISIBLE);
                     buybondLayout.setVisibility(View.INVISIBLE);
                     buybond(bondid,txtquantity.getText().toString().trim());
-                } catch (Exception e) {
+                   } catch (Exception e) {
                     Toast.makeText(BuyBondActivity.this,"System error",Toast.LENGTH_SHORT).show();
-                }
+               }
             }
         });
 
@@ -159,9 +157,9 @@ public class BuyBondActivity extends AppCompatActivity {
     }
 
 
-    public void buybond(String bondid,String bondamount){
+    public void buybond(String bondid,String price){
         Call<BuyBondResponseModel> call = RetrofitClient
-                .getInstance().getApi().buyBonds(bondid,bondamount,"Bearer " + _token);
+                .getInstance().getApi().buyBonds(bondid,price,"Bearer " + _token);
         call.enqueue(new Callback<BuyBondResponseModel>() {
             @Override
             public void onResponse(Call<BuyBondResponseModel> call, Response<BuyBondResponseModel> response) {
@@ -170,8 +168,8 @@ public class BuyBondActivity extends AppCompatActivity {
                 if (buyBondResponseModel.isSuccess()){
                     bondprogressbar.setVisibility(View.INVISIBLE);
                     buybondLayout.setVisibility(View.VISIBLE);
-                    dbHelper.updateUserLocalDatabase(String.valueOf(buyBondResponseModel.getData().getUser().getId()),buyBondResponseModel.getData().getUser().getStock(),buyBondResponseModel.getData().getUser().getBonds(),buyBondResponseModel.getData().getUser().getFirstname(),buyBondResponseModel.getData().getUser().getLastname(),buyBondResponseModel.getData().getUser().getTradername(),buyBondResponseModel.getData().getUser().getEmail(),buyBondResponseModel.getData().getUser().getYearOfStudy(),buyBondResponseModel.getData().getUser().getUniversity(),buyBondResponseModel.getData().getUser().getCoursename(),buyBondResponseModel.getData().getUser().getPhonenumber(),buyBondResponseModel.getData().getUser().getRole(),buyBondResponseModel.getData().getUser().getVirtualmoney(),buyBondResponseModel.getData().getUser().getGender(), DbContract.SYNC_STATUS_FAILED,database);
-                    dbHelper.saveBondTransactionTolocalDatabase(buyBondResponseModel.getData().getPersonalBondsTransaction().getId(),bondnumber,buyBondResponseModel.getData().getPersonalBondsTransaction().getStatus(),buyBondResponseModel.getData().getPersonalBondsTransaction().getUnits(),buyBondResponseModel.getData().getPersonalBondsTransaction().getCreatedAt(),database);
+                    //dbHelper.updateUserLocalDatabase(String.valueOf(buyBondResponseModel.getData().getUser().getId()),buyBondResponseModel.getData().getUser().getStock(),buyBondResponseModel.getData().getUser().getBonds(),buyBondResponseModel.getData().getUser().getFirstname(),buyBondResponseModel.getData().getUser().getLastname(),buyBondResponseModel.getData().getUser().getTradername(),buyBondResponseModel.getData().getUser().getEmail(),buyBondResponseModel.getData().getUser().getYearOfStudy(),buyBondResponseModel.getData().getUser().getUniversity(),buyBondResponseModel.getData().getUser().getCoursename(),buyBondResponseModel.getData().getUser().getPhonenumber(),buyBondResponseModel.getData().getUser().getRole(),buyBondResponseModel.getData().getUser().getVirtualmoney(),buyBondResponseModel.getData().getUser().getGender(), DbContract.SYNC_STATUS_FAILED,database);
+                    dbHelper.saveBondTransactionTolocalDatabase(buyBondResponseModel.getData().getPersonalBondsTransaction().getId(),bondnumber,buyBondResponseModel.getData().getPersonalBondsTransaction().getStatus(),bondduration,bondrate,txtquantity.getText().toString().trim(),buyBondResponseModel.getData().getPersonalBondsTransaction().getCreatedAt(),buyBondResponseModel.getData().getPersonalBondsTransaction().getTimeago(),database);
                     Toast.makeText(BuyBondActivity.this, buyBondResponseModel.getMessage(),Toast.LENGTH_LONG).show();
                     finish();
                 }

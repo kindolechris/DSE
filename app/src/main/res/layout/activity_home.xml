@@ -158,17 +158,11 @@
                     android:paddingEnd="10dp" />
             </LinearLayout>
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swiperefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listoflivemarket"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         </LinearLayout>
 
@@ -358,7 +352,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Activities"
+                        android:text="Market"
                         android:gravity="bottom"
                         android:fontFamily="@font/fontawesome"
                         android:layout_gravity="bottom"
@@ -614,7 +608,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="FAQ"
+                            android:text="Learning"
                             android:fontFamily="@font/fontawesome"
                             android:gravity="center"
                             android:layout_gravity="center"

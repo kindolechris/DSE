@@ -4,9 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class PersonalShareHoldingsModel {
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -15,10 +15,10 @@ public class PersonalShareHoldingsModel {
     private String updatedAt;
     @SerializedName("boardshare_id")
     @Expose
-    private Integer boardshareId;
+    private String boardshareId;
     @SerializedName("user_id")
     @Expose
-    private Integer userId;
+    private String userId;
     @SerializedName("sharesamount")
     @Expose
     private Integer sharesamount;
@@ -32,11 +32,11 @@ public class PersonalShareHoldingsModel {
     @Expose
     private String company;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -56,19 +56,19 @@ public class PersonalShareHoldingsModel {
         this.updatedAt = updatedAt;
     }
 
-    public Integer getBoardshareId() {
+    public String getBoardshareId() {
         return boardshareId;
     }
 
-    public void setBoardshareId(Integer boardshareId) {
+    public void setBoardshareId(String boardshareId) {
         this.boardshareId = boardshareId;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

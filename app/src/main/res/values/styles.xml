@@ -142,6 +142,11 @@
     </style>
 
     <style name="MyRadioButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="colorControlActivated">@color/colorWhite</item>
+    </style>
+
+    <style name="MyRadioButtonPrimary" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/colorBlack</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
     </style>

@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class UserModel {
 
-    @SerializedName("id")
+    @SerializedName("_id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("firstname")
     @Expose
     private String firstname;
@@ -63,11 +63,15 @@ public class UserModel {
     @Expose
     private String updatedAt;
 
-    public Integer getId() {
+    @SerializedName("portfolio_value")
+    @Expose
+    private Integer portfolioValue;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -215,4 +219,11 @@ public class UserModel {
         this.updatedAt = updatedAt;
     }
 
+    public Integer getPortfolioValue() {
+        return portfolioValue;
+    }
+
+    public void setPortfolioValue(Integer portfolioValue) {
+        this.portfolioValue = portfolioValue;
+    }
 }

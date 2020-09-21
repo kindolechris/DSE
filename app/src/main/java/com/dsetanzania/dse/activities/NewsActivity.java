@@ -43,9 +43,7 @@ public class NewsActivity extends AppCompatActivity  {
 
         tabLayout.setupWithViewPager(vpPager);
 
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

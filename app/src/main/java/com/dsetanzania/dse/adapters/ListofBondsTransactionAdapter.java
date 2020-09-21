@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dsetanzania.dse.R;
 import com.dsetanzania.dse.models.PersonalBondTransactionModel;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -105,12 +107,12 @@ public class ListofBondsTransactionAdapter extends RecyclerView.Adapter<ListofBo
 
     @Override
     public void onBindViewHolder(@NonNull ListofBondsTransactionAdapter.ViewHolder holder, final int position) {
-        String gettimeAgo = format(bonds.get(position).getCreatedAt());
+        NumberFormat formatter = new DecimalFormat("#,###");
         holder.itemView.setTag(bonds.get(position));
-        holder.txtbonddate.setText(parseDate(gettimeAgo));
+        holder.txtbonddate.setText(bonds.get(position).getTimeago());
         holder.txtbongnumber.setText(bonds.get(position).getBondnumber());
         holder.txtstatus.setText("Status : " + bonds.get(position).getStatus());
-        holder.txtbonunits.setText("Units : " + bonds.get(position).getUnits());
+        holder.txtbonunits.setText("Price : " + formatter.format(Double.valueOf(bonds.get(position).getUnits())));
         holder.bondtransactionlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
