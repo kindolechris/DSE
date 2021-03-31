@@ -18,7 +18,7 @@ public class DbHelper extends SQLiteOpenHelper {
             " text,"+DbContract.university+" text," +DbContract.yearOfStudy+
             " text,"+DbContract.coursename+" text," +DbContract.email+
             " text,"+DbContract.bonds+" integer," +DbContract.stock+
-            " integer,"+DbContract.virtualmoney+" double,"+DbContract.portfolio_value+" integer,"+DbContract.role+
+            " integer,"+DbContract.virtualmoney+" double,"+DbContract.portfolio_value+" double,"+DbContract.role+
             " text," +DbContract.SYNC_STATUS+
             " integer);";
 
@@ -82,7 +82,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     //////////////////////////////////////////////////////////////////
-    public void saveUserTolocalDatabase(String id, int stock, int bonds, String firstname, String lastname, String tradername, String email, String yearOfStudy, String university, String coursename, String phonenumber, String role, double virtualmoney, String gender, int sync_status,Integer portfolio_value, SQLiteDatabase database){
+    public void saveUserTolocalDatabase(String id, int stock, int bonds, String firstname, String lastname, String tradername, String email, String yearOfStudy, String university, String coursename, String phonenumber, String role, double virtualmoney, String gender, int sync_status,double portfolio_value, SQLiteDatabase database){
         ContentValues contentValues = new ContentValues();
         contentValues.put("id",id);
         contentValues.put(DbContract.firstname,firstname);
@@ -108,7 +108,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return (database.query(DbContract.USER_TABLE,projection,null,null,null,null,null));
     }
 
-    public boolean updateUserLocalDatabase(String id, int stock, int bonds, String firstname, String lastname, String tradername, String email, String yearOfStudy, String university, String coursename, String phonenumber, String role, double virtualmoney, String gender, int sync_status,Integer portfolio_value, SQLiteDatabase database){
+    public boolean updateUserLocalDatabase(String id, int stock, int bonds, String firstname, String lastname, String tradername, String email, String yearOfStudy, String university, String coursename, String phonenumber, String role, double virtualmoney, String gender, int sync_status,double portfolio_value, SQLiteDatabase database){
         ContentValues contentValues = new ContentValues();
         contentValues.put(DbContract.firstname,firstname);
         contentValues.put(DbContract.lastname,lastname);

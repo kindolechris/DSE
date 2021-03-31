@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.transition.Fade;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -35,7 +36,11 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.gson.JsonObject;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -137,48 +142,57 @@ public class LoginActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<InstanceIdResult> task) {
                                             String token = task.getResult().getToken();
-                                            loginBtn.setEnabled(false);
+                                            //loginBtn.setEnabled(false);
                                             SignInLoader.setVisibility(View.VISIBLE);
-                                            Call<AuthResponseModel> call = RetrofitClient
+                                            Call<JsonObject> call = RetrofitClient
                                                     .getInstance().getApi().login(emailtxt.getText().toString().trim(),passswordtxt.getText().toString().trim(),token);
-                                            call.enqueue(new Callback<AuthResponseModel>() {
+                                            call.enqueue(new Callback<JsonObject>() {
                                                 @Override
-                                                public void onResponse(Call<AuthResponseModel> call, Response<AuthResponseModel> response) {
+                                                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                                                     if(response.isSuccessful()){
-                                                        AuthResponseModel loginresponse = response.body();
-                                                        if (loginresponse.isSuccess()){
-                                                            //checkRole("Admin");
-                                                            saveToLocalDb(loginresponse.getUser().getId(),loginresponse.getUser().getStock(),loginresponse.getUser().getBonds(),
-                                                                    loginresponse.getUser().getFirstname(),loginresponse.getUser().getLastname(),
-                                                                    loginresponse.getUser().getTradername(),loginresponse.getUser().getEmail(),
-                                                                    loginresponse.getUser().getYearOfStudy(),
-                                                                    loginresponse.getUser().getUniversity(),loginresponse.getUser().getCoursename(),
-                                                                    loginresponse.getUser().getPhonenumber(),loginresponse.getUser().getRole(),
-                                                                    loginresponse.getUser().getVirtualmoney(),loginresponse.getUser().getPortfolioValue(),loginresponse.getUser().getGender());
+                                                        JsonObject responseResult = response.body();
+                                                        if (responseResult.get("success").getAsBoolean()) {
+                                                            JSONObject obj = null;
+                                                            try {
+                                                                obj = new JSONObject(String.valueOf(responseResult));
+                                                                JSONObject data = obj.getJSONObject("data");
+                                                                //checkRole("Admin");
+                                                                saveToLocalDb(data.getString("_id"),data.getInt("shares"),data.getInt("bonds"),
+                                                                        data.getString("firstname"),data.getString("lastname"),
+                                                                        data.getString("tradername"), data.getString("email"),
+                                                                        data.getString("yearOfStudy"),
+                                                                        data.getString("university"), data.getString("coursename"),
+                                                                        data.getString("phonenumber"),data.getString("role"),
+                                                                        data.getDouble("virtualmoney"),data.getDouble("portfolio_value"),data.getString("gender"));
 
-                                                            saveLoginData(loginresponse.getUser().getToken(),loginresponse.getUser().getId(),token);
-                                                            //Log.i("Valuuuuuuues", token + "\n" + loginresponse.getUser().getToken() + "\n" + loginresponse.getUser().getId());
-                                                            SignInLoader.setVisibility(View.INVISIBLE);
-                                                            loginBtn.setEnabled(true);
-
-                                                            Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
-                                                            LoginActivity.this.startActivity(NextActivity);
-                                                            finish();
-                                                            Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                                                                saveLoginData(data.getString("token"),data.getString("_id"),token);
+                                                                //Log.i("Valuuuuuuues", token + "\n" + loginresponse.getUser().getToken() + "\n" + loginresponse.getUser().getId());
+                                                                SignInLoader.setVisibility(View.INVISIBLE);
+                                                                loginBtn.setEnabled(true);
+                                                                Log.v("dataaaaaazzz", data.getString("firstname"));
+                                                                Intent NextActivity = new Intent(LoginActivity.this, HomeActivity.class);
+                                                                LoginActivity.this.startActivity(NextActivity);
+                                                                finish();
+                                                                Toast.makeText(LoginActivity.this,responseResult.get("message").getAsString(),Toast.LENGTH_LONG).show();
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            responseResult.getAsJsonObject("data");
                                                         }
                                                         else{
                                                             SignInLoader.setVisibility(View.INVISIBLE);
                                                             loginBtn.setEnabled(true);
-                                                            Toast.makeText(LoginActivity.this,loginresponse.getMessage(),Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(LoginActivity.this,responseResult.get("message").getAsString(),Toast.LENGTH_LONG).show();
                                                         }
                                                     }else {
+                                                        SignInLoader.setVisibility(View.INVISIBLE);
                                                         loginBtn.setEnabled(true);
                                                         Toast.makeText(LoginActivity.this,"Server error",Toast.LENGTH_LONG).show();
                                                     }
                                                 }
 
                                                 @Override
-                                                public void onFailure(Call<AuthResponseModel> call, Throwable t) {
+                                                public void onFailure(Call<JsonObject> call, Throwable t) {
 
                                                 }
                                             });
@@ -258,7 +272,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public void saveToLocalDb(String id, int stock, int bond, String firstname, String lastname, String tradername, String email, String yearOfStrudy, String university, String coursename, String phonenumber, String role, Double virtualmoney,Integer portfoliovalue, String gender){
+    public void saveToLocalDb(String id, int stock, int bond, String firstname, String lastname, String tradername, String email, String yearOfStrudy, String university, String coursename, String phonenumber, String role, Double virtualmoney,Double portfoliovalue, String gender){
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         dbHelper.saveUserTolocalDatabase(id,stock,bond,firstname,lastname,tradername,email,yearOfStrudy,university,coursename,phonenumber,role,virtualmoney,gender, DbContract.SYNC_STATUS_FAILED,portfoliovalue,database);

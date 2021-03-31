@@ -45,7 +45,12 @@ import com.dsetanzania.dse.storage.DbContract;
 import com.dsetanzania.dse.storage.DbHelper;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -71,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout transactionlinearlayout;
     LinearLayout leaderboardlayout;
     Button btncloseChoice;
+    Button azania_link;
     LinearLayout aboutUstlinearlayout;
     TextView txttradername;
     Button avatornametxt;
@@ -123,6 +129,7 @@ public class HomeActivity extends AppCompatActivity {
         txtbondbalance = (TextView) findViewById(R.id.bondsbalance);
         txtvirtualshare = (TextView) findViewById(R.id.sharepricetxt);
         avatornametxt = (Button) findViewById(R.id.avatornametxt);
+        azania_link = (Button) findViewById(R.id.azania_link);
         livemarketlinearlayout = (LinearLayout) findViewById(R.id.livemarketLayout);
         newslinearlayout = (LinearLayout) findViewById(R.id.newsLayout);
         leaderboardlayout = (LinearLayout) findViewById(R.id.leaderboardLayout);
@@ -236,6 +243,13 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 }, 300);
             }
+        });
+
+
+        azania_link.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://azaniabank.co.tz/retail-banking-products-details?product_name=ASPIRE%20Account&what_is_active_product=2"));
+            startActivity(browserIntent);
+
         });
 
         portfoliolinearlayout.setOnClickListener(new View.OnClickListener() {
@@ -497,28 +511,40 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
     public void updatelocaUserInfoTodb(){
-        Call<UserDataResponseModel> call = RetrofitClient
+        Call<JsonObject> call = RetrofitClient
                 .getInstance().getApi().fetchUserdata("Bearer " +  _token);
 
-        call.enqueue(new Callback<UserDataResponseModel>() {
+        call.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<UserDataResponseModel> call, Response<UserDataResponseModel> response) {
-                UserDataResponseModel userDataResponseModel = response.body();
-                if (userDataResponseModel != null){
-                    dbHelper.updateUserLocalDatabase(String.valueOf(userId),userDataResponseModel.getUsers().getStock(),userDataResponseModel.getUsers().getBonds(),userDataResponseModel.getUsers().getFirstname(),userDataResponseModel.getUsers().getLastname(),userDataResponseModel.getUsers().getTradername(),userDataResponseModel.getUsers().getEmail(),userDataResponseModel.getUsers().getYearOfStudy(),userDataResponseModel.getUsers().getUniversity(),userDataResponseModel.getUsers().getCoursename(),userDataResponseModel.getUsers().getPhonenumber(),userDataResponseModel.getUsers().getRole(),userDataResponseModel.getUsers().getVirtualmoney(),userDataResponseModel.getUsers().getGender(),DbContract.SYNC_STATUS_FAILED,userDataResponseModel.getUsers().getPortfolioValue(),database);
-                    readFromLocalDb();
-                    //dbHelper.close();
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+
+                if(response.isSuccessful()){
+                    JsonObject responseResult = response.body();
+                    if (responseResult.get("success").getAsBoolean()) {
+                        JSONObject obj = null;
+                        try {
+                            obj = new JSONObject(String.valueOf(responseResult));
+                            JSONObject data = obj.getJSONObject("data");
+                            dbHelper.updateUserLocalDatabase(String.valueOf(userId),data.getInt("shares"),data.getInt("bonds"), data.getString("firstname"),data.getString("lastname"),data.getString("tradername"),data.getString("email"),data.getString("yearOfStudy"),data.getString("university"),data.getString("coursename"),data.getString("phonenumber"),data.getString("role"),   data.getDouble("virtualmoney"),data.getString("gender"),DbContract.SYNC_STATUS_FAILED,data.getDouble("portfolio_value"),database);
+                            readFromLocalDb();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        responseResult.getAsJsonObject("data");
+                    }
+                    else{
+                        //Toast.makeText(LoginActivity.this,responseResult.get("message").getAsString(),Toast.LENGTH_LONG).show();
+                    }
+                }else {
+
+                    //Toast.makeText(LoginActivity.this,"Server error",Toast.LENGTH_LONG).show();
                 }
-                else{
-                    //Toast.makeText(HomeActivity.this,"Nothing",Toast.LENGTH_LONG).show();
-                    //Log.i("Check this ","not workinnnnnnnng");
-                }
+
             }
 
             @Override
-            public void onFailure(Call<UserDataResponseModel> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
 
             }
         });

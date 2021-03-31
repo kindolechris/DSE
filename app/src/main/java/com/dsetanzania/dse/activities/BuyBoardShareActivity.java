@@ -304,6 +304,52 @@ public class BuyBoardShareActivity extends AppCompatActivity {
         }
     }
 
+    public void setMonthly(){
+        xAxisLabel.clear();
+        base_call_back = RetrofitClient
+                .getInstance().getApi().fetchMonthlyBoardGraphData(boardid,"Bearer " + _token);
+        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
+            @Override
+            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
+                if(response.isSuccessful()){
+                    GraphDataResponseModel dailygraphdata = response.body();
+                    if (dailygraphdata.isSuccess()){
+                        String[] xdata = dailygraphdata.getData().getX().split(",");
+                        String[] ydata = dailygraphdata.getData().getY().split(",");
+                        for(int i=0; i<xdata.length; i++) {
+                            xAxisLabel.add(xdata[i]);
+                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
+                        }
+
+
+                        LineDataSet set = new LineDataSet(entries, "Market Price");
+                        set.setColors(getResources().getColor(R.color.colorPrimary));
+                        set.setDrawFilled(true);
+                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_box));
+                        set.setDrawValues(false);
+                        set.setDrawCircles(false);
+                        LineData data = new LineData(set);
+                        linechart.setData(data);
+                        linechart.invalidate();
+                        graphviewLoader.setVisibility(View.INVISIBLE);
+                        linechart.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        //Toast.makeText(BuyPersonShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(BuyBoardShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
+            }
+        });
+    }
+
     public void setDaily(){
         xAxisLabel.clear();
         base_call_back = RetrofitClient
@@ -385,52 +431,6 @@ public class BuyBoardShareActivity extends AppCompatActivity {
                     }
                     else{
                         //Toast.makeText(BuyBoardShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    Toast.makeText(BuyBoardShareActivity.this,"Server error",Toast.LENGTH_SHORT).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<GraphDataResponseModel> call, Throwable t) {
-            }
-        });
-    }
-
-    public void setMonthly(){
-        xAxisLabel.clear();
-        base_call_back = RetrofitClient
-                .getInstance().getApi().fetchMonthlyBoardGraphData(boardid,"Bearer " + _token);
-        base_call_back.enqueue(new Callback<GraphDataResponseModel>() {
-            @Override
-            public void onResponse(Call<GraphDataResponseModel> call, Response<GraphDataResponseModel> response) {
-                if(response.isSuccessful()){
-                    GraphDataResponseModel dailygraphdata = response.body();
-                    if (dailygraphdata.isSuccess()){
-                        String[] xdata = dailygraphdata.getData().getX().split(",");
-                        String[] ydata = dailygraphdata.getData().getY().split(",");
-                        for(int i=0; i<xdata.length; i++) {
-                            xAxisLabel.add(xdata[i]);
-                            entries.add(new Entry(Float.valueOf(i), Float.valueOf(ydata[i]),xdata[i]));
-                        }
-
-
-                        LineDataSet set = new LineDataSet(entries, "Market Price");
-                        set.setColors(getResources().getColor(R.color.colorPrimary));
-                        set.setDrawFilled(true);
-                        set.setFillDrawable(getResources().getDrawable(R.drawable.gradient_box));
-                        set.setDrawValues(false);
-                        set.setDrawCircles(false);
-                        LineData data = new LineData(set);
-                        linechart.setData(data);
-                        linechart.invalidate();
-                        graphviewLoader.setVisibility(View.INVISIBLE);
-                        linechart.setVisibility(View.VISIBLE);
-                    }
-                    else{
-                        //Toast.makeText(BuyPersonShareActivity.this,"No data fiund",Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {

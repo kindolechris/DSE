@@ -17,6 +17,9 @@ import com.dsetanzania.dse.models.transactions.buy.transaction.shares.board.BuyF
 import com.dsetanzania.dse.models.transactions.sell.PersonalShareSalesResponseModel;
 import com.dsetanzania.dse.models.transactions.transactionlist.PersonalBondTransactionListResponseModel;
 import com.dsetanzania.dse.models.transactions.transactionlist.PersonalShareTransactionListResponseModel;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -29,7 +32,7 @@ import retrofit2.http.Path;
 public interface Api {
     @FormUrlEncoded
     @POST("login")
-    Call<AuthResponseModel> login(
+    Call<JsonObject> login(
             @Field("email") String email,
             @Field("password") String password,
             @Field("firebaseToken") String firebaseToken
@@ -54,7 +57,7 @@ public interface Api {
 
 
     @POST("get/user")
-    Call<UserDataResponseModel> fetchUserdata(
+    Call<JsonObject> fetchUserdata(
             @Header("Authorization") String token
     );
 
